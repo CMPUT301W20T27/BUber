@@ -13,6 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="58dp"
         android:background="#FFFFFF"
+        android:textColor="#000000"
         android:hint="Enter Username"
         android:inputType="textPersonName"
         app:layout_constraintBottom_toTopOf="@+id/loginPasswordEditText"
@@ -29,6 +30,7 @@
         android:background="#FFFFFF"
         android:hint="Enter Password"
         android:inputType="textPassword"
+        android:textColor="#000000"
         app:layout_constraintBottom_toBottomOf="@+id/loginCreateAccountButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.495"
@@ -85,5 +87,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.634" />
+
+    <Button
+        android:id="@+id/loginLoginButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="54dp"
+        android:text="Login"
+        app:layout_constraintBottom_toTopOf="@+id/loginCreateAccountButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/loginPasswordEditText" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
