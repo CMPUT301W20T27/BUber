@@ -1,4 +1,4 @@
-package com.example.buber.Views.Activities.Models;
+package com.example.buber.Views.Activities;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import com.google.firebase.auth.AuthResult;

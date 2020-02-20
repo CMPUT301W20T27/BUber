@@ -1,5 +1,8 @@
-package com.example.buber.Views.Activities.Models;
+package com.example.buber.Views.Activities;
 
+import com.example.buber.Views.Activities.Models.Driver;
+import com.example.buber.Views.Activities.Models.Rider;
+import com.example.buber.Views.Activities.Models.Trip;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.ArrayList;
