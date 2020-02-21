@@ -1,4 +1,4 @@
-package com.example.buber.Views.Activities;
+package com.example.buber.Services;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import com.google.firebase.auth.AuthResult;
@@ -12,6 +12,7 @@ public class LoginAuth{
 
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
+    private boolean pass; //on success return true else false (dummy variable)
 
     public LoginAuth(){
         mAuth = FirebaseAuth.getInstance();          //Initialize FirebaseAuth
@@ -24,27 +25,29 @@ public class LoginAuth{
      * @param password
      * Current User's entered email and password
      */
-    public void signIn(String email, String password){
-
+    public boolean signIn(String email, String password){
+        setpass(false);
         mAuth.signInWithEmailAndPassword(email,  password)
                 .addOnSuccessListener((AuthResult authResult) -> {
-
                     Log.d(TAG, "Sign In Worked");
                     currentUser = mAuth.getCurrentUser();
-
+                    setpass(true);
                 })
                 .addOnFailureListener((@NonNull Exception e) -> {
                     Log.d(TAG, "Sign In Failed", e);
                 });
+        return getpass();
     }
 
     /**
      * This method signs out the user
      */
-    public void signOut() {
+    public boolean signOut() {
+        setpass(true);
         mAuth.signOut();
         currentUser = mAuth.getCurrentUser();
         Log.d(TAG, "Signed out");
+        return getpass();
 
     }
 
@@ -54,28 +57,42 @@ public class LoginAuth{
      * @param password
      * New User's entered email and password
      */
-    public void createAccount(String email, String password){
+    public boolean createAccount(String email, String password){
+        setpass(false);
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnSuccessListener((AuthResult authResult) -> {
-
                     currentUser = mAuth.getCurrentUser();
                     Log.d(TAG, "User Created ");
-
+                    setpass(true);
                 })
                 .addOnFailureListener((@NonNull Exception e) -> {
                     Log.d(TAG, "Create Account Failed", e);
                 });
+        return getpass();
     }
+
+    private void setpass(boolean val){
+        this.pass = val;
+
+    }
+
+    private boolean getpass(){
+        return this.pass;
+    }
+
+
     /**
      * I used this for testing, and you are able to get things like  getcurrentUser().getEmail() ect..
      */
+
     public FirebaseUser getcurrentUser(){
         return  mAuth.getCurrentUser();
     }
+
     /**
-     * This method is specifically  for entering the UserID's into rider or driver class
+     * This method is specifically  for entering the DocID's into rider or driver DocID
      */
-    public String getcurrentUserID(){
+    public String getcurrentUserDocID(){
         return   mAuth.getCurrentUser().getUid();
     }
 

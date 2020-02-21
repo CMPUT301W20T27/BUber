@@ -1,7 +1,7 @@
 package com.example.buber.Model;
 
 public abstract class User {
-    private Contact contact;
+//    private Contact contact;        //not sure about this so commented for now
     private Location currentLocation;
     private Account account;
     private String username;
@@ -30,12 +30,12 @@ public abstract class User {
         this.username = username;
     }
 
-    public Contact getContact() {
-        return contact;
-    }
-
-    public void setContact(Contact contact) {
-        this.contact = contact;
-    }
+//    public Contact getContact() {
+//        return contact;
+//    }
+//
+//    public void setContact(Contact contact) {
+//        this.contact = contact;
+//    }
 
 }

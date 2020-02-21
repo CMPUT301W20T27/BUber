@@ -1,4 +1,4 @@
-package com.example.buber.Views.Activities;
+package com.example.buber.Services;
 
 import com.example.buber.Views.Activities.Models.Driver;
 import com.example.buber.Views.Activities.Models.Rider;
@@ -14,9 +14,9 @@ public class DatabaseManager {
     private FirebaseFirestore database;      // Database connection
 
     private CollectionReference collectionDriver, collectionRider, collectionTrip;
-    private ArrayList<Driver> dataDriver; //Array of class objects of Driver
-    private ArrayList<Rider> dataRider; //Array of class objects of Rider
-    private ArrayList<Trip> dataTrip; //Array of class objects of Trips
+//    private ArrayList<Driver> dataDriver; //Array of class objects of Driver
+//    private ArrayList<Rider> dataRider; //Array of class objects of Rider
+//    private ArrayList<Trip> dataTrip; //Array of class objects of Trips
 
 
     public DatabaseManager() {
@@ -26,29 +26,37 @@ public class DatabaseManager {
         collectionRider = database.collection("Rider");
         collectionTrip = database.collection("Trip");
 
-        dataDriver = new ArrayList<>();
-        dataRider = new ArrayList<>();
-        dataTrip = new ArrayList<>();
+//        dataDriver = new ArrayList<>();
+//        dataRider = new ArrayList<>();
+//        dataTrip = new ArrayList<>();
     }
 
-    public void populateAllTrips() {
-        //ToDo: List of all trips
-    }
-    public void populateAllDrivers() {
-        //ToDo: List of all trips
-    }
-    public void populateAllRiders() {
-        //ToDo: List of all trips
-    }
-    public void createRider() {
+//    public void populateAllTrips() {
+//        //ToDo: List of all trips
+//    }
+//    public void populateAllDrivers() {
+//        //ToDo: List of all trips
+//    }
+//    public void populateAllRiders() {
+//        //ToDo: List of all trips
+//    }
+    public void createRider(String docid) {
         //ToDo: Create a rider in db
     }
-    public void createDriver() {
+    public void createDriver(String docid) {
         //ToDo: Create a Driver in db
     }
     public void createTrip() {
         //ToDo: Create a trip  in db where @param: UserID driver, UserID rider
     }
-
+    public void updateRider(String docid) {
+        //ToDo: Create a rider in db
+    }
+    public void  updateDriver(String docid) {
+        //ToDo: Create a Driver in db
+    }
+    public void  updateTrip() {
+        //ToDo: Create a trip  in db where @param: UserID driver, UserID rider
+    }
 
 }
