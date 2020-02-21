@@ -16,19 +16,15 @@ public class MainActivity extends AppCompatActivity implements Observer {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        //
         //TODO:database connections, model, etc..
         super.onCreate(savedInstanceState);
+        ApplicationModel m = App.getModel();
+        m.addObserver(this);
 
         //setContentView(R.layout.activity_main);
-        startActivity(new Intent(MainActivity.this,Login.class));
+        startActivity(new Intent(MainActivity.this, LoginActivity.class));
 
         setContentView(R.layout.activity_main);
-
-        // HOW TO GET THE MODEL IN ANY VIEW, DO NOT DIRECTLY UPDATE
-        ApplicationModel m = App.getModel();
-        // HOW TO GET THE CONTROLLER IN ANY VIEW
-        ApplicationController c = App.getController();
     }
 
     @Override

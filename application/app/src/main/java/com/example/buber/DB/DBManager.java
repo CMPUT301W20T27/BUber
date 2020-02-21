@@ -1,13 +1,13 @@
-package com.example.buber.Views.Activities;
+package com.example.buber.DB;
 
-import com.example.buber.Views.Activities.Models.Driver;
-import com.example.buber.Views.Activities.Models.Rider;
-import com.example.buber.Views.Activities.Models.Trip;
+import com.example.buber.Model.Driver;
+import com.example.buber.Model.Rider;
+import com.example.buber.Model.Trip;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.ArrayList;
 
-public class DatabaseManager {
+public class DBManager {
 
     private static final String TAG = "In Database Manager";
 
@@ -19,18 +19,23 @@ public class DatabaseManager {
     private ArrayList<Trip> dataTrip; //Array of class objects of Trips
 
 
-    public DatabaseManager() {
+    public DBManager() {
         //_______________________Initialize Firebase adn collections _______________________________
         database = FirebaseFirestore.getInstance();
         collectionDriver = database.collection("Driver");
         collectionRider = database.collection("Rider");
         collectionTrip = database.collection("Trip");
 
+        // TODO: Remove, return result of any query instead
         dataDriver = new ArrayList<>();
         dataRider = new ArrayList<>();
         dataTrip = new ArrayList<>();
     }
 
+    // TODO: Implement Create, Read, ReadAll, Update and Delete for any document in the Driver,
+    // Rider and Trip Collection
+
+    // TODO: Remove populate -> replace w/ getAll
     public void populateAllTrips() {
         //ToDo: List of all trips
     }

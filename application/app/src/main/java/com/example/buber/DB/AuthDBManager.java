@@ -1,4 +1,4 @@
-package com.example.buber.Views.Activities;
+package com.example.buber.DB;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import com.google.firebase.auth.AuthResult;
@@ -6,14 +6,14 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 
-public class LoginAuth{
+public class AuthDBManager {
 
     private static final String TAG = "In Database Manager";
 
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
 
-    public LoginAuth(){
+    public AuthDBManager(){
         mAuth = FirebaseAuth.getInstance();          //Initialize FirebaseAuth
         currentUser = mAuth.getCurrentUser();
     }

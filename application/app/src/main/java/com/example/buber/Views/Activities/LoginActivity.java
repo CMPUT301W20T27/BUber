@@ -9,7 +9,9 @@ import android.widget.Button;
 
 import com.example.buber.R;
 
-public class Login extends AppCompatActivity implements View.OnClickListener{
+public class LoginActivity extends AppCompatActivity implements View.OnClickListener{
+    // TODO: Implement handler, perform validation and call controller
+    // TODO: Add in code to correctly interface w/ Model
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,6 +24,6 @@ public class Login extends AppCompatActivity implements View.OnClickListener{
 
     @Override
     public void onClick(View view){
-        startActivity(new Intent(Login.this,CreateAccountActivity.class));
+        startActivity(new Intent(LoginActivity.this,CreateAccountActivity.class));
     }
 }
