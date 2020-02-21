@@ -1,11 +1,7 @@
 package com.example.buber.Services;
 
-import com.example.buber.Views.Activities.Models.Driver;
-import com.example.buber.Views.Activities.Models.Rider;
-import com.example.buber.Views.Activities.Models.Trip;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import java.util.ArrayList;
 
 public class DatabaseManager {
 
