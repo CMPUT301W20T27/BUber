@@ -5,7 +5,7 @@ import java.util.Observable;
 
 public class ApplicationModel extends Observable {
     private User sessionUser;
-    private ArrayList<RideRequest> currentRequests;
+    private ArrayList<Trip> currentRequests;
 
 
     public User getSessionUser() {
@@ -17,11 +17,11 @@ public class ApplicationModel extends Observable {
         notifyObservers();
     }
 
-    public ArrayList<RideRequest> getCurrentRequests() {
+    public ArrayList<Trip> getCurrentRequests() {
         return currentRequests;
     }
 
-    public void setCurrentRequests(ArrayList<RideRequest> currentRequests) {
+    public void setCurrentRequests(ArrayList<Trip> currentRequests) {
         this.currentRequests = currentRequests;
         notifyObservers();
     }

@@ -1,4 +1,4 @@
-package com.example.bubertemplate;
+package com.example.buber;
 
 import org.junit.Test;
 
