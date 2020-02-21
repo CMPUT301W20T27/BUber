@@ -8,97 +8,30 @@
     android:layout_height="match_parent">
 
     <TextView
+        android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="64dp"
         android:text="CREATE AN ACCOUNT"
         android:textColor="#FFFFFF"
         android:textSize="38sp"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.407"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <LinearLayout
-        android:id="@+id/linearLayout"
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="56dp"
-        android:layout_marginRight="56dp"
-        android:layout_marginBottom="20dp"
-        android:gravity="center"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayoutCompat"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="ARE YOU A... "
-            android:textColor="#FFFFFF"
-            android:textSize="24sp" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="#B9613A3A"
-            android:orientation="horizontal">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginRight="150dp"
-                android:text="RIDER? "
-                android:textColor="#FFFFFF"
-                android:textSize="18sp" />
-            <CheckBox
-                android:id="@+id/createAccountRiderCheckbox"
-                android:layout_width="80dp"
-                android:layout_height="wrap_content"
-                android:text="Rider"
-                android:textColor="#FFFFFF"
-                tools:layout_editor_absoluteX="300dp"
-                tools:layout_editor_absoluteY="225dp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="#B9613A3A"
-            android:orientation="horizontal">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginRight="138.5dp"
-                android:text="DRIVER? "
-                android:textColor="#FFFFFF"
-                android:textSize="18sp" />
-            <CheckBox
-                android:id="@+id/createAccountDriverCheckbox"
-                android:layout_width="80dp"
-                android:layout_height="wrap_content"
-                android:text="Driver"
-                android:textColor="#FFFFFF"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.906"
-                app:layout_constraintStart_toStartOf="parent"
-                tools:layout_editor_absoluteY="269dp" />
-        </LinearLayout>
-
-    </LinearLayout>
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/linearLayoutCompat"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="68dp"
+        android:layout_marginBottom="104dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.491"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView">
 
         <TextView
             android:layout_width="wrap_content"
@@ -113,7 +46,8 @@
             android:layout_width="350dp"
             android:layout_height="wrap_content"
             android:background="#FFFFFF"
-            android:hint="Enter a Username" />
+            android:hint="Enter a Username"
+            android:textColor="#000000" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -128,7 +62,8 @@
             android:layout_width="350dp"
             android:layout_height="wrap_content"
             android:background="#FFFFFF"
-            android:hint="Enter a Password" />
+            android:hint="Enter a Password"
+            android:textColor="#000000" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -144,7 +79,8 @@
             android:layout_width="350dp"
             android:layout_height="wrap_content"
             android:background="#FFFFFF"
-            android:hint="Enter First Name" />
+            android:hint="Enter First Name"
+            android:textColor="#000000" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -159,7 +95,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="#FFFFFF"
-            android:hint="Enter Last Name" />
+            android:hint="Enter Last Name"
+            android:textColor="#000000" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -176,7 +113,8 @@
             android:layout_width="350dp"
             android:layout_height="wrap_content"
             android:background="#FFFFFF"
-            android:hint="(eg. someone@gmail.com)" />
+            android:hint="(eg. someone@gmail.com)"
+            android:textColor="#000000" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -193,9 +131,21 @@
             android:background="#FFFFFF"
             android:hint="(eg. 7805551234)"
             android:inputType="phone"
-            android:maxLength="12" />
+            android:maxLength="12"
+            android:textColor="#000000" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <Button
+        android:id="@+id/createAccountButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#B9613A3A"
+        android:text="Create Account"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayoutCompat" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
