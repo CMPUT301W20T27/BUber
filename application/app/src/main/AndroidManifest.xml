@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.NoActionBar">
         <activity android:name=".Views.Activities.CreateAccountActivity"></activity>
-        <activity android:name=".Views.Activities.Login" />
+        <activity android:name=".Views.Activities.LoginActivity" />
         <activity android:name=".Views.Activities.MainActivity">
 
             <intent-filter>

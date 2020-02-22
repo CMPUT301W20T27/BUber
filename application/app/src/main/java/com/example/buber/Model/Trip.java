@@ -1,5 +1,4 @@
 package com.example.buber.Model;
-
 import androidx.annotation.NonNull;
 
 public class Trip {

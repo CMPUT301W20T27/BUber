@@ -1,11 +1,33 @@
 package com.example.buber.Services;
-
+import com.example.buber.DB.AuthDBManager;
+import com.example.buber.DB.DBManager;
 import com.example.buber.Model.Driver;
 import com.example.buber.Model.Rider;
 import com.example.buber.Model.User;
 
 public class ApplicationService implements  ApplicationServiceHelper{
-    // TODO: Lukes code go here
+//  // TODO: Lukes code go here
+//   -------------------------------EVAN TODO____________________________________________
+    // TODO: In the future lets create a seperate AuthService file, for now this is probably ok
+
+    // TODO: Implement
+    public static User signIn(String username, String password) { return null; }
+
+    // TODO: Implement
+    public static void signOut(User user) {}
+
+    // TODO: Implement, make sure you have all information you need
+    public static User createNewUser(
+            String username,
+            String password,
+            String email,
+            String firstName,
+            String lastName,
+            String phoneNumber
+    ) { return null; }
+
+
+//    --------------------MADEEHA---------------------------------------
     /*TODO:
        //get username and password from UI when user creates an account
        //append @Uber.com to the username
@@ -30,8 +52,8 @@ public class ApplicationService implements  ApplicationServiceHelper{
 
      */
     //--------------------------------------------Testing------------------------------------------
-    private LoginAuth login = new LoginAuth();
-    private DatabaseManager DB = new DatabaseManager();
+    private AuthDBManager login = new AuthDBManager();
+    private DBManager DB = new DBManager();
 
     public void createAccountService(){
         /*TODO: TODO: Get username and password from UI when user creates an account*/
@@ -52,6 +74,8 @@ public class ApplicationService implements  ApplicationServiceHelper{
         return (User) riderObj; //or (User) driverObj;
 
     }
+
+
 
 
 }

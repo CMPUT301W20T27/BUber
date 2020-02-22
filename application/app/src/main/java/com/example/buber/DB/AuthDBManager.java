@@ -1,20 +1,19 @@
-package com.example.buber.Services;
-import android.util.Log;
+package com.example.buber.DB;import android.util.Log;
 import androidx.annotation.NonNull;
+import com.example.buber.Services.ApplicationServiceHelper;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 
-public class LoginAuth{
+public class AuthDBManager {
 
     private static final String TAG = "In Database Manager";
 
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
 
-
-    public LoginAuth(){
+    public AuthDBManager(){
         mAuth = FirebaseAuth.getInstance();          //Initialize FirebaseAuth
         currentUser = mAuth.getCurrentUser();
     }
@@ -88,6 +87,6 @@ public class LoginAuth{
     }
 
     public void profileChange(){
-    //TODO: be able to change username? maybe
+        //TODO: be able to change username? maybe
     }
 }

@@ -1,7 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
+<<<<<<< HEAD
     <list default="true" id="32ffe79a-21ad-416b-88e3-dd4e6cf936d0" name="Default Changelist" comment="" />
+=======
+    <list default="true" id="32ffe79a-21ad-416b-88e3-dd4e6cf936d0" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/application/.idea/codeStyles/Project.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/application/.idea/gradle.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/application/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/application/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/application/.idea/runConfigurations.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/application/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/application/app/src/main/java/com/example/buber/App.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/application/app/src/main/java/com/example/buber/Controllers/ApplicationController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/application/app/src/main/java/com/example/buber/Model/Account.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/application/app/src/main/java/com/example/buber/Model/ApplicationModel.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/application/app/src/main/java/com/example/buber/Model/Contact.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/application/app/src/main/java/com/example/buber/Model/Driver.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/application/app/src/main/java/com/example/buber/Model/Location.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/application/app/src/main/java/com/example/buber/Model/RideRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/application/app/src/main/java/com/example/buber/Model/Rider.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/application/app/src/main/java/com/example/buber/Model/User.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/application/app/src/main/java/com/example/buber/Services/ApplicationService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/application/.idea/vcs.xml" afterDir="false" />
+    </list>
+>>>>>>> 2ef7666997348c1333d377e66bf634fe37529f70
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -12,16 +35,19 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="3517" />
-    <option name="y" value="115" />
-    <option name="width" value="720" />
-    <option name="height" value="415" />
+    <option name="x" value="210" />
+    <option name="y" value="151" />
+    <option name="width" value="1260" />
+    <option name="height" value="771" />
   </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
     <navigator currentView="ProjectPane" proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="PackagesPane" />
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -44,8 +70,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="PackagesPane" />
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -79,10 +103,14 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="3232" y="22" width="1936" height="1066" extended-state="6" />
+    <frame x="0" y="23" width="1680" height="1027" extended-state="6" />
     <layout>
       <window_info id="Captures" order="0" weight="0.25" />
+<<<<<<< HEAD
       <window_info active="true" content_ui="combo" id="Project" order="1" visible="true" weight="0.32982087" />
+=======
+      <window_info active="true" content_ui="combo" id="Project" order="1" visible="true" weight="0.24653405" />
+>>>>>>> 2ef7666997348c1333d377e66bf634fe37529f70
       <window_info id="Structure" order="2" side_tool="true" />
       <window_info id="Image Layers" order="3" />
       <window_info id="Designer" order="4" />
