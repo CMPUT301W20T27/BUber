@@ -1,16 +1,15 @@
 package com.example.buber.Services;
 
-public class ApplicationService {
+import com.example.buber.Model.Driver;
+import com.example.buber.Model.Rider;
+import com.example.buber.Model.User;
+
+public class ApplicationService implements  ApplicationServiceHelper{
     // TODO: Lukes code go here
-
-
-
-
     /*TODO:
        //get username and password from UI when user creates an account
        //append @Uber.com to the username
-       //call my create account function in LoginAuth:              LoginAuth.createAccount(username@uber.com, password)
-            if this returns boolean true(the username is unique and not already in use){
+       //call my create account function in LoginAuth:              LoginAuth.createAccount(username@uber.com, password, (method called on sucess))
                     To finish creating the account we need from UI:
                     - is it a Rider.class or driver.class? or both?
                        Get the document ID:  LoginAuth.getcurrentUserDocID()
@@ -27,12 +26,32 @@ public class ApplicationService {
                 updateDriver(Document ID)
                 ***cast the Driver as a user object;
                 now we have a current user
-            else error
             }
 
-
-
      */
+    //--------------------------------------------Testing------------------------------------------
+    private LoginAuth login = new LoginAuth();
+    private DatabaseManager DB = new DatabaseManager();
+
+    public void createAccountService(){
+        /*TODO: TODO: Get username and password from UI when user creates an account*/
+        login.createAccount("madeeha@BUber.com", "123456" , this);    // If account is created aftersuccessfulCreataAccount() is called
+    }
+
+
+    public User aftersuccessfulCreataAccount(String DocID){
+        //- is it a Rider.class or driver.class? or both?
+        Rider riderObj = new Rider();
+        Driver driverObj = new Driver();
+
+        DB.createDriver(DocID, driverObj); //here we created an empty document in the rider or driver collection
+        DB.createRider(DocID, riderObj);
+//        or we can pass data into the document
+//        updateDriver(Document ID, Location ect...)
+
+        return (User) riderObj; //or (User) driverObj;
+
+    }
 
 
 }

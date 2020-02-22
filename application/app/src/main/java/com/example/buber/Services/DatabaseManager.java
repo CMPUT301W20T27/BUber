@@ -1,5 +1,7 @@
 package com.example.buber.Services;
 
+import com.example.buber.Model.Driver;
+import com.example.buber.Model.Rider;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -36,10 +38,10 @@ public class DatabaseManager {
 //    public void populateAllRiders() {
 //        //ToDo: List of all trips
 //    }
-    public void createRider(String docid) {
+    public void createRider(String docid, Rider rider) {
         //ToDo: Create a rider in db
     }
-    public void createDriver(String docid) {
+    public void createDriver(String docid, Driver driver) {
         //ToDo: Create a Driver in db
     }
     public void createTrip() {

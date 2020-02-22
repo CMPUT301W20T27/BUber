@@ -12,7 +12,7 @@ public class LoginAuth{
 
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
-    private boolean pass; //on success return true else false (dummy variable)
+
 
     public LoginAuth(){
         mAuth = FirebaseAuth.getInstance();          //Initialize FirebaseAuth
@@ -25,29 +25,28 @@ public class LoginAuth{
      * @param password
      * Current User's entered email and password
      */
-    public boolean signIn(String email, String password){
-        setpass(false);
+    public void signIn(String email, String password){
+
         mAuth.signInWithEmailAndPassword(email,  password)
                 .addOnSuccessListener((AuthResult authResult) -> {
                     Log.d(TAG, "Sign In Worked");
                     currentUser = mAuth.getCurrentUser();
-                    setpass(true);
+
                 })
                 .addOnFailureListener((@NonNull Exception e) -> {
                     Log.d(TAG, "Sign In Failed", e);
                 });
-        return getpass();
+
     }
 
     /**
      * This method signs out the user
      */
-    public boolean signOut() {
-        setpass(true);
+    public void signOut() {
+
         mAuth.signOut();
         currentUser = mAuth.getCurrentUser();
         Log.d(TAG, "Signed out");
-        return getpass();
 
     }
 
@@ -57,29 +56,21 @@ public class LoginAuth{
      * @param password
      * New User's entered email and password
      */
-    public boolean createAccount(String email, String password){
-        setpass(false);
+    //Note to self: this "createUserWithEmailAndPassword(email, password)" query takes time so on success will take time
+    public void createAccount(String email, String password, ApplicationServiceHelper x){
+
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnSuccessListener((AuthResult authResult) -> {
                     currentUser = mAuth.getCurrentUser();
                     Log.d(TAG, "User Created ");
-                    setpass(true);
+
+                    x.aftersuccessfulCreataAccount(currentUser.getUid());
+
                 })
                 .addOnFailureListener((@NonNull Exception e) -> {
                     Log.d(TAG, "Create Account Failed", e);
                 });
-        return getpass();
     }
-
-    private void setpass(boolean val){
-        this.pass = val;
-
-    }
-
-    private boolean getpass(){
-        return this.pass;
-    }
-
 
     /**
      * I used this for testing, and you are able to get things like  getcurrentUser().getEmail() ect..
