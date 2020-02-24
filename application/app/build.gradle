@@ -43,5 +43,4 @@ dependencies {
     implementation 'com.google.firebase:firebase-firestore:21.4.0'
 
 
-
 }

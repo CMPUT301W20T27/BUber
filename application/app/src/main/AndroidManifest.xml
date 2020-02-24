@@ -9,7 +9,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.NoActionBar">
-        <activity android:name=".Views.Activities.CreateAccountActivity"></activity>
+        <activity android:name=".Views.Activities.MapActivity"></activity>
+        <activity android:name=".Views.Activities.CreateAccountActivity" />
         <activity android:name=".Views.Activities.LoginActivity" />
         <activity android:name=".Views.Activities.MainActivity">
             <intent-filter>

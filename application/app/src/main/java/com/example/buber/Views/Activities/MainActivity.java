@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity implements Observer {
         //setContentView(R.layout.activity_main);
         startActivity(new Intent(MainActivity.this, LoginActivity.class));
 
-        setContentView(R.layout.activity_main);
+        //setContentView(R.layout.activity_main);
     }
 
     @Override
