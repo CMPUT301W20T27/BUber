@@ -5,6 +5,10 @@ public abstract class User {
     private Location currentLocation;
     private Account account;
     private String username;
+    public static enum TYPE {
+            DRIVER,
+            RIDER
+    }
 
     public Location getCurrentLocation() {
         return currentLocation;

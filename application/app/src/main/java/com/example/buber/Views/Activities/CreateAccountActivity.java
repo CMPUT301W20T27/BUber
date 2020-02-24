@@ -8,11 +8,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.buber.App;
+import com.example.buber.Model.ApplicationModel;
 import com.example.buber.R;
 
-public class CreateAccountActivity extends AppCompatActivity implements View.OnClickListener{
-    // TODO: Implement handler, and call controller
-    // TODO: Add in code to correctly interface w/ Model
+import java.util.Observable;
+import java.util.Observer;
+
+public class CreateAccountActivity extends AppCompatActivity implements View.OnClickListener, Observer {
 
     private Button btnCreate;
 
@@ -41,13 +44,14 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
         }
 
         return true;
-
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.create_account_screen);
+        App.getModel().addObserver(this);
 
         btnCreate = findViewById(R.id.createAccountButton);
         btnCreate.setOnClickListener(this);
@@ -64,26 +68,34 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
     @Override
     public void onClick(View v) {
 
-        if(!isValid()){
-            return;
+        if(isValid()){
+            String username = editusername.getText().toString();
+            String password = editpassword.getText().toString();
+            String firstName = editfirstName.getText().toString();
+            String lastName = editlastName.getText().toString();
+            String email = editemail.getText().toString();
+            String phoneNumber = editphoneNumber.getText().toString();
+
+            App.getController().createNewUser(username, password, firstName, lastName, email, phoneNumber);
+            Toast.makeText(this,"Account Created Successfully!",Toast.LENGTH_LONG).show();
+            this.finish();  //navigate back to log in screen
         }
+    }
 
-        String username = editusername.getText().toString();
-        String password = editpassword.getText().toString();
-        String firstName = editfirstName.getText().toString();
-        String lastName = editlastName.getText().toString();
-        String email = editemail.getText().toString();
-        String phoneNumber = editphoneNumber.getText().toString();
 
-        /*
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        // THIS CODE SHOULD BE IMPLEMENTED IN EVERY VIEW
+        ApplicationModel m = App.getModel();
+        m.deleteObserver(this);
+    }
 
-        do stuff with database/model to save data
-
-         */
-
-        Toast.makeText(this,"Account Created Successfully!",Toast.LENGTH_LONG).show();
-
-        this.finish();  //navigate back to log in screen
-
+    @Override
+    public void update(Observable o, Object arg) {
+        ApplicationModel m = (ApplicationModel) o;
+        if (m.getSessionUser() != null) {
+            // TODO: Start MapActivity, Remove loginActivity from view stack
+        }
     }
 }
