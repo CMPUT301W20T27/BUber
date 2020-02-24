@@ -2,7 +2,7 @@ package com.example.buber.Model;
 
 import androidx.annotation.NonNull;
 
-public class Rider {
+public class Rider extends User {
 
     private  String firstName;
     private  String lastName;
