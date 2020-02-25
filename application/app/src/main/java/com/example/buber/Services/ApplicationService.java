@@ -40,6 +40,6 @@ public class ApplicationService {
         AuthDBManager authDBManager = new AuthDBManager();
         authDBManager.createAccount(user, password, onUserCreatedListener);
 
-    } //if it was unsucsessful
+    } //if it was unsucsessful user = null
 
 }
