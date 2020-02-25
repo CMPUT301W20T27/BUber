@@ -2,7 +2,7 @@ package com.example.buber.Model;
 
 
 public abstract class User {
-    public static enum TYPE {
+    public enum TYPE {
         Drivers,                //Firebase clollection names
         Riders
     }
