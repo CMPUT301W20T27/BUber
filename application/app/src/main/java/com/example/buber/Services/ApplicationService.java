@@ -15,10 +15,9 @@ public class ApplicationService {
 
     // TODO: Implement
     public static User signIn(String username, String password, User.TYPE type) {
-        if (type == User.TYPE.Riders) {
-            return new Rider();
-        }
-        return new Driver();
+
+
+        return type == User.TYPE.Riders ? new Rider() : new Driver();
     }
 
     // TODO: Implement
@@ -39,7 +38,6 @@ public class ApplicationService {
         User user = new Rider(username, new Account(firstName, lastName, email));
         AuthDBManager authDBManager = new AuthDBManager();
         authDBManager.createAccount(user, password, onUserCreatedListener);
-
     } //if it was unsucsessful user = null
 
 }

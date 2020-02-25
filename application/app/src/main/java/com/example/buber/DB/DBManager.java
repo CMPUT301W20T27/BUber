@@ -2,6 +2,8 @@ package com.example.buber.DB;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
+
 public class DBManager {
 
     private AuthDBManager login;
@@ -12,7 +14,7 @@ public class DBManager {
 
     private CollectionReference collectionDriver, collectionRider, collectionTrip;
 
-    public  DBManager() {
+    public DBManager() {
 
         login = new AuthDBManager();
 
@@ -22,30 +24,58 @@ public class DBManager {
         collectionTrip = database.collection("Trips");
     }
 
-            // TODO: Implement Create, Read, ReadAll, Update and Delete for any document in the Driver,
-            // TODO: Remove populate -> replace w/ getAll
-            //ToDo: List of all trips
-            //ToDo: List of all trips
-            //ToDo: List of all trips
-
+    /* CREATE */
     public void createRider() {
-        //ToDo: Create a rider in db
+        // todo
     }
+
     public void createDriver() {
-        //ToDo: Create a Driver in db
+        // todo
     }
-    public void createTrip() {
-        //ToDo: Create a trip  in db where @param: UserID driver, UserID rider
-    }
-    public void updateRider() {
-        //ToDo: Create a rider in db
-    }
-    public void  updateDriver() {
-        //ToDo: Create a Driver in db
-    }
-    public void  updateTrip() {
-        //ToDo: Create a trip  in db where @param: UserID driver, UserID rider
+
+    public void createTrip(String riderID, String driverID) {
+        // todo
     }
 
 
+    /* READ */
+    public ArrayList getAll(String rootCollection) {
+        // todo
+        return new ArrayList();
+    }
+
+    public void getRider() {
+        // todo
+    }
+
+    public void getDriver() {
+        // todo
+    }
+
+    /* UPDATE */
+    public void updateRider(String docID) {
+        // todo
+    }
+
+    public void updateDriver(String docID) {
+        // todo
+    }
+
+    public void updateTrip(String riderID, String driverID) {
+        // todo
+    }
+
+
+    /* DELETE */
+    public void deleteRider(String docId) {
+        // todo
+    }
+
+    public void deleteDriver(String docId) {
+        // todo
+    }
+
+    public void deleteTrip(String riderID, String driverID) {
+        // todo
+    }
 }

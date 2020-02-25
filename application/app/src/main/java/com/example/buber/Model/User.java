@@ -3,8 +3,9 @@ package com.example.buber.Model;
 
 public abstract class User {
     public enum TYPE {
-        Drivers,                //Firebase clollection names
-        Riders
+        //Firebase clollection names
+        Drivers,
+        Riders,
     }
 
     public User(String username, Account account) {
