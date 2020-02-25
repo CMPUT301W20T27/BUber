@@ -11,6 +11,7 @@ import android.widget.Toast;
 import com.example.buber.App;
 import com.example.buber.DB.DBManager;
 import com.example.buber.Model.ApplicationModel;
+import com.example.buber.Model.User;
 import com.example.buber.R;
 import com.example.buber.Services.ApplicationService;
 
@@ -29,7 +30,6 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
     private EditText editphoneNumber;
 
     public boolean isValid(){
-
 
         if(!(editusername.getText().toString().matches("([A-Za-z0-9]*)"))){
             Toast.makeText(this,"Invalid Username. Username can only contain numbe" +
@@ -70,30 +70,23 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
 
     @Override
     public void onClick(View v) {
+        Toast.makeText(this, "Madeeha was here", Toast.LENGTH_LONG).show();
+        if(isValid()){
+            String username = editusername.getText().toString();
+            String password = editpassword.getText().toString();
+            String firstName = editfirstName.getText().toString();
+            String lastName = editlastName.getText().toString();
+            String email = editemail.getText().toString();
+            String phoneNumber = editphoneNumber.getText().toString();
+            // TODO: MAKE NOT CONSTANT  *UI Team*
+            User.TYPE type = User.TYPE.Riders;
 
-        DBManager DB = new DBManager();
-        DB.createAccount();
-        Toast.makeText(this,"Madeeha was here",Toast.LENGTH_LONG).show();
-//        if(isValid()){
-//            String username = editusername.getText().toString();
-//            String password = editpassword.getText().toString();
-//            String firstName = editfirstName.getText().toString();
-//            String lastName = editlastName.getText().toString();
-//            String email = editemail.getText().toString();
-//            String phoneNumber = editphoneNumber.getText().toString();
-//
-//            App.getController().createNewUser(username, password, firstName, lastName, email, phoneNumber);
-//            Toast.makeText(this,"Account Created Successfully!",Toast.LENGTH_LONG).show();
-////            this.finish();  //navigate back to log in screen
-//
-//
-//
+            App.getController().createNewUser(username, password, firstName, lastName, email, phoneNumber, type);
+            Toast.makeText(this, "Account Created Successfully!", Toast.LENGTH_LONG).show();
+//            this.finish();  //navigate back to log in screen
 
-
-
-//        }
+        }
     }
-
 
     @Override
     public void onDestroy() {

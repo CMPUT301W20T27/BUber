@@ -1,13 +1,10 @@
 package com.example.buber.Views.Activities;
-
 import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import com.example.buber.App;
-import com.example.buber.Controllers.ApplicationController;
 import com.example.buber.Model.ApplicationModel;
 import java.util.Observable;
-import com.example.buber.R;
 
 
 import java.util.Observer;

@@ -1,14 +1,25 @@
 package com.example.buber.Model;
 
+
 public abstract class User {
-//    private Contact contact;        //not sure about this so commented for now
+    public static enum TYPE {
+        Drivers,
+        Riders
+    }
+
+    public User(String username, Account account) {
+        this.username = username;
+        this.account = account;
+    }
+
+    public User() {
+    }
+
+    //    private Contact contact;        //not sure about this so commented for now
     private Location currentLocation;
     private Account account;
     private String username;
-    public static enum TYPE {
-            DRIVER,
-            RIDER
-    }
+    private TYPE type;
 
     public Location getCurrentLocation() {
         return currentLocation;
@@ -32,6 +43,14 @@ public abstract class User {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public TYPE getType() {
+        return type;
+    }
+
+    public void setType(TYPE type) {
+        this.type = type;
     }
 
 //    public Contact getContact() {

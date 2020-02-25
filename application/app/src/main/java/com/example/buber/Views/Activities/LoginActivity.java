@@ -42,7 +42,7 @@ public class LoginActivity extends AppCompatActivity implements  Observer {
 
         String username = usernameEditText.getText().toString();
         String password = passwordEditText.getText().toString();
-        User.TYPE loginType = view.getId() == driverLoginButtonId ?  User.TYPE.DRIVER : User.TYPE.RIDER;
+        User.TYPE loginType = view.getId() == driverLoginButtonId ?  User.TYPE.Drivers : User.TYPE.Riders;
 
         c.login(username, password, loginType);
     }
