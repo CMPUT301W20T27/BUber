@@ -20,8 +20,8 @@ public class ApplicationController {
         // the model should then notifyallviews
     }
 
-    public void login(String username, String password) {
-        User sessionUser = ApplicationService.signIn(username, password);
+    public void login(String username, String password, User.TYPE type) {
+        User sessionUser = ApplicationService.signIn(username, password, type);
         model.setSessionUser(sessionUser);
     }
 
@@ -40,5 +40,6 @@ public class ApplicationController {
             String phoneNumber
     ) {
         User sessionUser = ApplicationService.createNewUser(username, password, email, firstName, lastName, phoneNumber);
+        model.setSessionUser(sessionUser);
     }
 }

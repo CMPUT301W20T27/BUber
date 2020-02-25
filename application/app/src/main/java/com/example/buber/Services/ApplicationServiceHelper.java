@@ -1,10 +1,11 @@
 package com.example.buber.Services;
 
 import com.example.buber.Model.User;
+import com.google.firebase.auth.FirebaseUser;
 
 public interface ApplicationServiceHelper {
 
-    User aftersuccessfulLoginofrider(String DOCID);
-    User aftersuccessfulCreataAccount(String DOCID);
-    User aftersuccessfulLoginofdriver(String DOCID);
+    User aftersuccessfulLoginofrider(FirebaseUser user);
+    User aftersuccessfulCreataAccount(FirebaseUser user);
+    User aftersuccessfulLoginofdriver(FirebaseUser user);
 }

@@ -14,6 +14,7 @@ public class ApplicationModel extends Observable {
 
     public void setSessionUser(User sessionUser) {
         this.sessionUser = sessionUser;
+        setChanged();
         notifyObservers();
     }
 

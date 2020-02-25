@@ -46,9 +46,9 @@ public class AuthDBManager {
                                 DocumentSnapshot document = task.getResult();
                                 if (document.exists()) {
                                     Log.d(TAG, "DocumentSnapshot data: " + document.getData());
-                                    x.aftersuccessfulLoginofrider(getcurrentUserDocID());
+                                    x.aftersuccessfulLoginofrider(currentUser);
                                 } else {
-                                    x.aftersuccessfulLoginofdriver(getcurrentUserDocID());
+                                    x.aftersuccessfulLoginofdriver(currentUser);
                                     Log.d(TAG, "No such document");
                                 }
                             } else {
@@ -90,7 +90,8 @@ public class AuthDBManager {
                     currentUser = mAuth.getCurrentUser();
                     Log.d(TAG, "User Created ");
 
-                    x.aftersuccessfulCreataAccount(currentUser.getUid());
+                    x.aftersuccessfulCreataAccount(currentUser);
+
 
                 })
                 .addOnFailureListener((@NonNull Exception e) -> {
