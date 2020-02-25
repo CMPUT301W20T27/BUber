@@ -11,7 +11,7 @@ import java.util.Date;
 public class Driver extends User {
 
 
-    private int rating = 5; //default ?? maybe
+    private int rating = 5;           //Maybe ?
 
 
     @DocumentId

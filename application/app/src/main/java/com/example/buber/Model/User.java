@@ -3,7 +3,7 @@ package com.example.buber.Model;
 
 public abstract class User {
     public static enum TYPE {
-        Drivers,
+        Drivers,                //Firebase clollection names
         Riders
     }
 
@@ -15,7 +15,7 @@ public abstract class User {
     public User() {
     }
 
-    //    private Contact contact;        //not sure about this so commented for now
+    //    private Contact contact;        //Future implimentation
     private Location currentLocation;
     private Account account;
     private String username;
@@ -52,13 +52,5 @@ public abstract class User {
     public void setType(TYPE type) {
         this.type = type;
     }
-
-//    public Contact getContact() {
-//        return contact;
-//    }
-//
-//    public void setContact(Contact contact) {
-//        this.contact = contact;
-//    }
 
 }
