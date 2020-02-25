@@ -5,7 +5,7 @@ import com.example.buber.Model.Driver;
 import com.example.buber.Model.Rider;
 import com.example.buber.Model.User;
 
-public class ApplicationService implements  ApplicationServiceHelper{
+public class ApplicationService implements ApplicationServiceHelper{
 //  // TODO: Lukes code go here
 //   -------------------------------EVAN TODO____________________________________________
     // TODO: In the future lets create a seperate AuthService file, for now this is probably ok
@@ -75,7 +75,25 @@ public class ApplicationService implements  ApplicationServiceHelper{
 
     }
 
+    public void login(){
+
+        login.signIn("madeeha@uber.com", "123456", this);
+    }
 
 
+    public User aftersuccessfulLoginofrider(String DOCID){
 
+        //get rider using doc id from DBManager
+        Rider riderObj = new Rider();
+
+        return (User) riderObj;
+
+    }
+
+    public User aftersuccessfulLoginofdriver(String DOCID){
+
+        Driver driverObj = new Driver();
+
+        return (User) driverObj ;
+    }
 }

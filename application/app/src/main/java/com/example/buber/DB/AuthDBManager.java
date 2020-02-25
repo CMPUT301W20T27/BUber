@@ -1,9 +1,14 @@
 package com.example.buber.DB;import android.util.Log;
 import androidx.annotation.NonNull;
 import com.example.buber.Services.ApplicationServiceHelper;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 
 public class AuthDBManager {
@@ -24,12 +29,34 @@ public class AuthDBManager {
      * @param password
      * Current User's entered email and password
      */
-    public void signIn(String email, String password){
+    public void signIn(String email, String password,ApplicationServiceHelper x){
 
         mAuth.signInWithEmailAndPassword(email,  password)
                 .addOnSuccessListener((AuthResult authResult) -> {
                     Log.d(TAG, "Sign In Worked");
                     currentUser = mAuth.getCurrentUser();
+
+
+                    FirebaseFirestore db = FirebaseFirestore.getInstance();
+                    DocumentReference docRef = db.collection("Rider").document(getcurrentUserDocID());
+                    docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if (task.isSuccessful()) {
+                                DocumentSnapshot document = task.getResult();
+                                if (document.exists()) {
+                                    Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+                                    x.aftersuccessfulLoginofrider(getcurrentUserDocID());
+                                } else {
+                                    x.aftersuccessfulLoginofdriver(getcurrentUserDocID());
+                                    Log.d(TAG, "No such document");
+                                }
+                            } else {
+                                Log.d(TAG, "get failed with ", task.getException());
+                            }
+                        }
+                    });
+
 
                 })
                 .addOnFailureListener((@NonNull Exception e) -> {

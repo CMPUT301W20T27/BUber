@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-<<<<<<< HEAD
     <list default="true" id="32ffe79a-21ad-416b-88e3-dd4e6cf936d0" name="Default Changelist" comment="" />
-=======
     <list default="true" id="32ffe79a-21ad-416b-88e3-dd4e6cf936d0" name="Default Changelist" comment="">
       <change afterPath="$PROJECT_DIR$/application/.idea/codeStyles/Project.xml" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/application/.idea/gradle.xml" afterDir="false" />
