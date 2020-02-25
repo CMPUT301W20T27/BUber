@@ -6,11 +6,11 @@ public class Trip {
     private String driverID;
     private String riderID;
 
-    public Trip(){}         // VERY IMPORTANT TO HAVE
+    public Trip(){}                                 // VERY IMPORTANT TO HAVE
 
 
     public Trip(String driverID, String riderOD) {
-        this.driverID = driverID;
+        this.driverID = driverID;                   //or doc id-not planned yet
         this.riderID = riderOD;
     }
 

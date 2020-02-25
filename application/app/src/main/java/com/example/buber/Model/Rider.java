@@ -1,49 +1,43 @@
 package com.example.buber.Model;
 
-import androidx.annotation.NonNull;
+
+import com.google.firebase.firestore.DocumentId;
+import com.google.firebase.firestore.ServerTimestamp;
+
+import java.util.Date;
 
 public class Rider extends User {
 
-    private  String firstName;
-    private  String lastName;
-    private  String userID;
+    @DocumentId
+    private String docID;
 
-    public Rider(){}        // VERY IMPORTANT TO HAVE
+    @ServerTimestamp
+    public Date timestamp;
 
-
-    public Rider(String firstName, String lastName, String userID) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.userID = userID;
+    public Rider() {
+        setType(TYPE.Riders);
     }
 
-    public String getFirstName() {
-        return firstName; }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
+    public Rider(String username, Account account) {
+        super(username, account);
+        setType(TYPE.Riders);
     }
 
-    public String getLastName() {
-        return lastName;
+    public String getDocID() {
+        return docID;
     }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public void setDocID(String docID) {
+        this.docID = docID;
     }
 
-    public String getUserID() {
-        return userID;
+
+    public Date getTimestamp() {
+        return timestamp;
     }
 
-    public void setUserID(String userID) {
-        this.userID = userID;
-    }
-
-    @NonNull
-    @Override
-    public String toString() {
-        return "First Name: " + firstName + " Last Name: " + lastName + " User ID: " +  userID;
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
     }
 
 

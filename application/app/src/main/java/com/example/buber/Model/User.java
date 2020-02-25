@@ -1,14 +1,25 @@
 package com.example.buber.Model;
 
+
 public abstract class User {
-    private Contact contact;
+    public static enum TYPE {
+        Drivers,                //Firebase clollection names
+        Riders
+    }
+
+    public User(String username, Account account) {
+        this.username = username;
+        this.account = account;
+    }
+
+    public User() {
+    }
+
+    //    private Contact contact;        //Future implimentation
     private Location currentLocation;
     private Account account;
     private String username;
-    public static enum TYPE {
-            DRIVER,
-            RIDER
-    }
+    private TYPE type;
 
     public Location getCurrentLocation() {
         return currentLocation;
@@ -34,12 +45,12 @@ public abstract class User {
         this.username = username;
     }
 
-    public Contact getContact() {
-        return contact;
+    public TYPE getType() {
+        return type;
     }
 
-    public void setContact(Contact contact) {
-        this.contact = contact;
+    public void setType(TYPE type) {
+        this.type = type;
     }
 
 }

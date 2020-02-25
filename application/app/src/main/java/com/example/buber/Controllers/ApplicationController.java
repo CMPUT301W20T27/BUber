@@ -1,6 +1,5 @@
 package com.example.buber.Controllers;
-
-import com.example.buber.App;
+import com.example.buber.DB.OnUserCreatedListener;
 import com.example.buber.Model.ApplicationModel;
 import com.example.buber.Model.User;
 import com.example.buber.Services.*;
@@ -37,9 +36,17 @@ public class ApplicationController {
             String email,
             String firstName,
             String lastName,
-            String phoneNumber
+            String phoneNumber,
+            User.TYPE type
     ) {
-        User sessionUser = ApplicationService.createNewUser(username, password, email, firstName, lastName, phoneNumber);
-        model.setSessionUser(sessionUser);
+        // Cannot return a user cuz asynchronous reasons
+        // User sessionUser = ApplicationService.createNewUser(username, password, email, firstName, lastName, phoneNumber);
+        ApplicationService.createNewUser(username, password, email, firstName, lastName, phoneNumber, type, new OnUserCreatedListener() {
+            @Override
+            public void onUserCreated(User sessionUser) {
+                model.setSessionUser(sessionUser);
+            }
+        });
+
     }
 }

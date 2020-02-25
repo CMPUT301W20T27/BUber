@@ -1,52 +1,47 @@
 package com.example.buber.Model;
 
-import androidx.annotation.NonNull;
+import com.google.firebase.firestore.DocumentId;
+import com.google.firebase.firestore.ServerTimestamp;
+
+import java.util.Date;
 
 /**
  * A simple Driver class that holds the Driver properties and is the link to Fb "Diver" collection
  */
 public class Driver extends User {
 
-    private  String firstName;
-    private  String lastName;
-    private  String userID;
 
-    public Driver(){}       // VERY IMPORTANT TO HAVE
+    private int rating = 5;           //Maybe ?
 
 
-    public Driver(String firstName, String lastName, String userID) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.userID = userID;
+    @DocumentId
+    private String docID;
+
+    @ServerTimestamp
+    public Date timestamp;
+
+
+
+    public String getDocID() {
+
+        return docID;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public void setDocID(String docID) {
+
+        this.docID = docID;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
+
+    public Date getTimestamp() {
+
+        return timestamp;
     }
 
-    public String getLastName() {
-        return lastName;
+    public void setTimestamp(Date timestamp) {
+
+        this.timestamp = timestamp;
     }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
 
-    public String getUserID() {
-        return userID;
-    }
-
-    public void setUserID(String userID) {
-        this.userID = userID;
-    }
-
-    @NonNull
-    @Override
-    public String toString() {
-        return "First Name: " + firstName + " Last Name: " + lastName + " User ID: " +  userID;
-    }
 }

@@ -1,50 +1,33 @@
 package com.example.buber.DB;
-
-import com.example.buber.Model.Driver;
-import com.example.buber.Model.Rider;
-import com.example.buber.Model.Trip;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import java.util.ArrayList;
 
 public class DBManager {
+
+    private AuthDBManager login;
 
     private static final String TAG = "In Database Manager";
 
     private FirebaseFirestore database;      // Database connection
 
     private CollectionReference collectionDriver, collectionRider, collectionTrip;
-    private ArrayList<Driver> dataDriver; //Array of class objects of Driver
-    private ArrayList<Rider> dataRider; //Array of class objects of Rider
-    private ArrayList<Trip> dataTrip; //Array of class objects of Trips
 
+    public  DBManager() {
 
-    public DBManager() {
-        //_______________________Initialize Firebase adn collections _______________________________
+        login = new AuthDBManager();
+
         database = FirebaseFirestore.getInstance();
-        collectionDriver = database.collection("Driver");
-        collectionRider = database.collection("Rider");
-        collectionTrip = database.collection("Trip");
-
-        // TODO: Remove, return result of any query instead
-        dataDriver = new ArrayList<>();
-        dataRider = new ArrayList<>();
-        dataTrip = new ArrayList<>();
+        collectionDriver = database.collection("Drivers");
+        collectionRider = database.collection("Riders");
+        collectionTrip = database.collection("Trips");
     }
 
-    // TODO: Implement Create, Read, ReadAll, Update and Delete for any document in the Driver,
-    // Rider and Trip Collection
+            // TODO: Implement Create, Read, ReadAll, Update and Delete for any document in the Driver,
+            // TODO: Remove populate -> replace w/ getAll
+            //ToDo: List of all trips
+            //ToDo: List of all trips
+            //ToDo: List of all trips
 
-    // TODO: Remove populate -> replace w/ getAll
-    public void populateAllTrips() {
-        //ToDo: List of all trips
-    }
-    public void populateAllDrivers() {
-        //ToDo: List of all trips
-    }
-    public void populateAllRiders() {
-        //ToDo: List of all trips
-    }
     public void createRider() {
         //ToDo: Create a rider in db
     }
@@ -52,6 +35,15 @@ public class DBManager {
         //ToDo: Create a Driver in db
     }
     public void createTrip() {
+        //ToDo: Create a trip  in db where @param: UserID driver, UserID rider
+    }
+    public void updateRider() {
+        //ToDo: Create a rider in db
+    }
+    public void  updateDriver() {
+        //ToDo: Create a Driver in db
+    }
+    public void  updateTrip() {
         //ToDo: Create a trip  in db where @param: UserID driver, UserID rider
     }
 
