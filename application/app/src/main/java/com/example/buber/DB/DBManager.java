@@ -44,11 +44,11 @@ public class DBManager {
         return new ArrayList();
     }
 
-    public void getRider() {
+    public void getRider(String docID) {
         // todo
     }
 
-    public void getDriver() {
+    public void getDriver(String docID) {
         // todo
     }
 
