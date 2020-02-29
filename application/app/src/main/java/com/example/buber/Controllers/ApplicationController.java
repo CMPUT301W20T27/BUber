@@ -33,15 +33,16 @@ public class ApplicationController {
     public void createNewUser(
             String username,
             String password,
-            String email,
             String firstName,
             String lastName,
+            String email,
             String phoneNumber,
             User.TYPE type
     ) {
+
         // Cannot return a user cuz asynchronous reasons
         // User sessionUser = ApplicationService.createNewUser(username, password, email, firstName, lastName, phoneNumber);
-        ApplicationService.createNewUser(username, password, email, firstName, lastName, phoneNumber, type, new OnUserCreatedListener() {
+        ApplicationService.createNewUser(username, password, firstName, lastName, email, phoneNumber, type, new OnUserCreatedListener() {
             @Override
             public void onUserCreated(User sessionUser) {
                 model.setSessionUser(sessionUser);

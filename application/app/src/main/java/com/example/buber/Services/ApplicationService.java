@@ -31,9 +31,9 @@ public class ApplicationService {
     public static void createNewUser(
             String username,
             String password,
-            String email,
             String firstName,
             String lastName,
+            String email,
             String phoneNumber,
             User.TYPE type,
             OnUserCreatedListener onUserCreatedListener

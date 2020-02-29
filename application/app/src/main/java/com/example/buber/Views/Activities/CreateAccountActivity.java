@@ -14,40 +14,25 @@ import com.example.buber.Model.ApplicationModel;
 import com.example.buber.Model.User;
 import com.example.buber.R;
 import com.example.buber.Services.ApplicationService;
+import com.example.buber.Views.Activities.FormUtilities.CreateAccountFormUtils;
 
+import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class CreateAccountActivity extends AppCompatActivity implements View.OnClickListener, Observer {
 
     private Button btnCreate;
 
-    private EditText editusername;
+    private EditText editUserName;
     private EditText editpassword;
     private EditText editfirstName;
     private EditText editlastName;
-    private EditText editemail;
+    private EditText editEmail;
     private EditText editphoneNumber;
 
-    public boolean isValid(){
-
-        if(!(editusername.getText().toString().matches("([A-Za-z0-9]*)"))){
-            Toast.makeText(this,"Invalid Username. Username can only contain numbe" +
-                    "rs and letters",Toast.LENGTH_LONG).show();
-            return false;
-        }
-
-        if(!(editemail.getText().toString().matches(".*@.*[.].*"))) {
-            Toast.makeText(this,"Invalid email.",Toast.LENGTH_LONG).show();
-            return false;
-        }
-        if(!(editphoneNumber.getText().toString().matches("[0-9-]*"))) {
-            Toast.makeText(this,"Invalid Phone Number",Toast.LENGTH_LONG).show();
-            return false;
-        }
-
-        return true;
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,29 +44,35 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
         btnCreate = findViewById(R.id.createAccountButton);
         btnCreate.setOnClickListener(this);
 
-        editusername = findViewById(R.id.createAccountUsername);
+        editUserName = findViewById(R.id.createAccountUsername);
         editpassword = findViewById(R.id.createAccountPassword);
         editfirstName = findViewById(R.id.createAccountFirstName);
         editlastName = findViewById(R.id.createAccountLastName);
-        editemail = findViewById(R.id.createAccountEmail);
+        editEmail = findViewById(R.id.createAccountEmail);
         editphoneNumber = findViewById(R.id.createAccountPhoneNumber);
 
     }
 
     @Override
     public void onClick(View v) {
-        Toast.makeText(this, "Madeeha was here", Toast.LENGTH_LONG).show();
-        if(isValid()){
-            String username = editusername.getText().toString();
-            String password = editpassword.getText().toString();
-            String firstName = editfirstName.getText().toString();
-            String lastName = editlastName.getText().toString();
-            String email = editemail.getText().toString();
-            String phoneNumber = editphoneNumber.getText().toString();
+        if(CreateAccountFormUtils.validateForm(
+                editUserName,
+                editpassword,
+                editfirstName,
+                editlastName,
+                editEmail,
+                editphoneNumber)){
+
+            String userName = editUserName.getText().toString().trim();
+            String password = editpassword.getText().toString().trim();
+            String firstName = editfirstName.getText().toString().trim();
+            String lastName = editlastName.getText().toString().trim();
+            String email = editEmail.getText().toString().trim();
+            String phoneNumber = editphoneNumber.getText().toString().trim();
             // TODO: MAKE NOT CONSTANT  *UI Team*
             User.TYPE type = User.TYPE.Riders;
 
-            App.getController().createNewUser(username, password, firstName, lastName, email, phoneNumber, type);
+            App.getController().createNewUser(userName, password, firstName, lastName, email, phoneNumber, type);
             Toast.makeText(this, "Account Created Successfully!", Toast.LENGTH_LONG).show();
 //            this.finish();  //navigate back to log in screen
 
