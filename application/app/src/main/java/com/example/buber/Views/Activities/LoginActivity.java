@@ -15,14 +15,15 @@ import com.example.buber.Controllers.ApplicationController;
 import com.example.buber.Model.ApplicationModel;
 import com.example.buber.Model.User;
 import com.example.buber.R;
+import com.example.buber.Views.Activities.FormUtilities.LoginFormUtils;
 
 import java.util.Observable;
 import java.util.Observer;
 
 public class LoginActivity extends AppCompatActivity implements  Observer {
-    private EditText usernameEditText;
-    private EditText passwordEditText;
-    private int driverLoginButtonId;
+    private EditText editEmail;
+    private EditText editPassword;
+    private int driverLoginBtnID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,19 +33,20 @@ public class LoginActivity extends AppCompatActivity implements  Observer {
 
         App.getModel().addObserver(this);
 
-        usernameEditText = findViewById(R.id.loginUsernameEditText);
-        passwordEditText = findViewById(R.id.loginPasswordEditText);
-        driverLoginButtonId = R.id.loginDriverButton;
+        editEmail = findViewById(R.id.loginEmailEditText);
+        editPassword = findViewById(R.id.loginPasswordEditText);
+        driverLoginBtnID = R.id.loginDriverButton;
     }
 
     public void handleLoginClick(View view) {
-        ApplicationController c = App.getController();
+        ApplicationController controller = App.getController();
 
-        String username = usernameEditText.getText().toString();
-        String password = passwordEditText.getText().toString();
-        User.TYPE loginType = view.getId() == driverLoginButtonId ?  User.TYPE.Drivers : User.TYPE.Riders;
-
-        c.login(username, password, loginType);
+        if (LoginFormUtils.validateForm(editEmail, editPassword)) {
+            String email = editEmail.getText().toString();
+            String password = editPassword.getText().toString();
+            User.TYPE loginType = view.getId() == driverLoginBtnID ?  User.TYPE.Drivers : User.TYPE.Riders;
+            controller.login(email, password, loginType);
+        }
     }
 
     public void handleAccountCreationClick(View view) {

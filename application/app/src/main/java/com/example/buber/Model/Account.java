@@ -5,8 +5,6 @@ public class Account {
     private String lastName;
     private String email;
 
-    public Account() {
-    }
 
     public Account(String firstName, String lastName, String email) {
         this.firstName = firstName;

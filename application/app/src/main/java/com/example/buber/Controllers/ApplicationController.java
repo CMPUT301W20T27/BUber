@@ -19,8 +19,8 @@ public class ApplicationController {
         // the model should then notifyallviews
     }
 
-    public void login(String username, String password, User.TYPE type) {
-        User sessionUser = ApplicationService.signIn(username, password, type);
+    public void login(String email, String password, User.TYPE type) {
+        User sessionUser = ApplicationService.signIn(email, password, type);
         model.setSessionUser(sessionUser);
     }
 
@@ -30,24 +30,24 @@ public class ApplicationController {
         model.setSessionUser(null);
     }
 
-    public void createNewUser(
-            String username,
-            String password,
-            String firstName,
-            String lastName,
-            String email,
-            String phoneNumber,
-            User.TYPE type
-    ) {
+    public void createNewUser(String username, String password, String firstName, String lastName, String email, String phoneNumber, User.TYPE type) {
 
         // Cannot return a user cuz asynchronous reasons
         // User sessionUser = ApplicationService.createNewUser(username, password, email, firstName, lastName, phoneNumber);
-        ApplicationService.createNewUser(username, password, firstName, lastName, email, phoneNumber, type, new OnUserCreatedListener() {
-            @Override
-            public void onUserCreated(User sessionUser) {
-                model.setSessionUser(sessionUser);
-            }
-        });
-
+        ApplicationService.createNewUser(
+                username,
+                password,
+                firstName,
+                lastName,
+                email,
+                phoneNumber,
+                type,
+                new OnUserCreatedListener() {
+                    @Override
+                    public void onUserCreated(User sessionUser) {
+                        model.setSessionUser(sessionUser);
+                    }
+                }
+        );
     }
 }

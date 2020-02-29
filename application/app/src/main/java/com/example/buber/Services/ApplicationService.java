@@ -17,8 +17,7 @@ public class ApplicationService {
     // TODO: Implement
     public static User signIn(String username, String password, User.TYPE type) {
         AuthDBManager authDBManager = new AuthDBManager();
-        String userDocID = authDBManager.signIn(username, password);
-        DBManager dbManager = new DBManager();
+        authDBManager.signIn(username, password);
 //        User user = type == User.TYPE.Riders ? dbManager.getRider(userDocID) : dbManager.getDriver(userDocID);
         return type == User.TYPE.Riders ? new Rider() : new Driver();
     }

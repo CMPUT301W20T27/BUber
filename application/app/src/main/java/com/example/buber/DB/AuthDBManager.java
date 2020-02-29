@@ -35,8 +35,7 @@ public class AuthDBManager {
      * @param email
      * @param password Current User's entered email and password
      */
-    public String signIn(String email, String password) {
-        String userDocID = "todo";
+    public void signIn(String email, String password) {
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnSuccessListener((AuthResult authResult) -> {
                     Log.d(TAG, "Sign In Worked");
@@ -63,7 +62,6 @@ public class AuthDBManager {
                 .addOnFailureListener((@NonNull Exception e) -> {
                     Log.d(TAG, "Sign In Failed", e);
                 });
-        return userDocID;  // todo: we have to wait for mAuth's async request for user data
     }
 
     /**

@@ -72,10 +72,16 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
             // TODO: MAKE NOT CONSTANT  *UI Team*
             User.TYPE type = User.TYPE.Riders;
 
-            App.getController().createNewUser(userName, password, firstName, lastName, email, phoneNumber, type);
+            App.getController().createNewUser(
+                    userName,
+                    password,
+                    firstName,
+                    lastName,
+                    email,
+                    phoneNumber,
+                    type);
             Toast.makeText(this, "Account Created Successfully!", Toast.LENGTH_LONG).show();
 //            this.finish();  //navigate back to log in screen
-
         }
     }
 

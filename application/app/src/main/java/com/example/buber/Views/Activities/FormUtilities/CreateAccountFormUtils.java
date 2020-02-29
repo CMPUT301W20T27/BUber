@@ -23,6 +23,7 @@ public class CreateAccountFormUtils {
         String userNameRegex = "([A-Za-z0-9]*)";
         String phoneNumberRegex = "[0-9-]*";
         // Referece: https://howtodoinjava.com/regex/java-regex-validate-email-address/
+        // Firebase enforces strict email formatting
         String emailRegex = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^-]+(?:\\.[a-zA-Z0-9_!#$%&'*+/=?`{|}~^-]+)*@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*$";
 
         Pattern userNamePattern = Pattern.compile(userNameRegex);
@@ -47,6 +48,7 @@ public class CreateAccountFormUtils {
         // TODO: check if username is already taken
 
         // PASSWORD
+        // Firebase enforces this password length
         if(password.isEmpty() || password.length() < 6) {
             editPassword.setError("Password must be at least 6 digits");
             return false;
