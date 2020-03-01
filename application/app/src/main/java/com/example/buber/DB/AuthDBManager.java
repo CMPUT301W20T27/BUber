@@ -36,7 +36,6 @@ public class AuthDBManager {
      * @param password Current User's entered email and password
      */
     public void signIn(String email, String password) {
-
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnSuccessListener((AuthResult authResult) -> {
                     Log.d(TAG, "Sign In Worked");
@@ -69,7 +68,6 @@ public class AuthDBManager {
      * This method signs out the user
      */
     public void signOut() {
-
         mAuth.signOut();
         currentUser = mAuth.getCurrentUser();
         Log.d(TAG, "Signed out");
