@@ -68,7 +68,6 @@ public class AuthDBManager {
      * This method signs out the user
      */
     public void signOut() {
-
         mAuth.signOut();
         currentUser = mAuth.getCurrentUser();
         Log.d(TAG, "Signed out");

@@ -2,10 +2,17 @@ package com.example.buber.Views.Activities.FormUtilities;
 
 import android.widget.EditText;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthEmailException;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class LoginFormUtils {
+
+
+    public static final String FirebaseAuthEmailExceptionMSG = "There is no user record corresponding to this identifier. The user may have been deleted.";
+    public static final String FirebaseAuthPassWordExceptionCode = "ERROR_WRONG_PASSWORD";
 
     public static boolean validateForm(EditText editEmail, EditText editPassword) {
 
@@ -19,7 +26,7 @@ public class LoginFormUtils {
         Pattern emailPattern = Pattern.compile(emailRegex);
 
         // EMAIL
-        if(email.isEmpty()) {
+        if (email.isEmpty()) {
             editEmail.setError("Please provide your email");
             return false;
         } else {
@@ -35,7 +42,7 @@ public class LoginFormUtils {
 
         // PASSWORD
         // Firebase enforces this password length
-        if(password.isEmpty() || password.length() < 6) {
+        if (password.isEmpty() || password.length() < 6) {
             editPassword.setError("Password must be at least 6 digits");
             return false;
         } else {

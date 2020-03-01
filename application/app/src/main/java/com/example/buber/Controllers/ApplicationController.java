@@ -19,17 +19,6 @@ public class ApplicationController {
         // the model should then notifyallviews
     }
 
-    public void login(String email, String password, User.TYPE type) {
-        User sessionUser = ApplicationService.signIn(email, password, type);
-        model.setSessionUser(sessionUser);
-    }
-
-    public void logout() {
-        User sessionUser = model.getSessionUser();
-        ApplicationService.signOut(sessionUser);
-        model.setSessionUser(null);
-    }
-
     public void createNewUser(String username, String password, String firstName, String lastName, String email, String phoneNumber, User.TYPE type) {
 
         // Cannot return a user cuz asynchronous reasons
