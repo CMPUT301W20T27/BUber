@@ -7,11 +7,6 @@ import com.google.firebase.firestore.ServerTimestamp;
 import java.util.Date;
 
 public class Rider extends User {
-
-    public void setDocID(String docID) {
-        this.docID = docID;
-    }
-
     @DocumentId
     private String docID;
 
@@ -29,5 +24,17 @@ public class Rider extends User {
 
     public String getDocID() {
         return docID;
+    }
+
+    public void setDocID(String docID) {
+        this.docID = docID;
+    }
+
+    public Date getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
     }
 }

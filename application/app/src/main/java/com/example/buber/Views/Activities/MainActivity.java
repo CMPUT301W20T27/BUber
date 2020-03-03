@@ -7,6 +7,7 @@ import android.widget.Toast;
 
 import com.example.buber.App;
 import com.example.buber.Model.ApplicationModel;
+import com.example.buber.Views.UIErrorHandler;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -15,7 +16,7 @@ import java.util.Observable;
 
 import java.util.Observer;
 
-public class MainActivity extends AppCompatActivity implements Observer {
+public class MainActivity extends AppCompatActivity implements Observer, UIErrorHandler {
 
     private FirebaseAuth.AuthStateListener mAuthStateListener;
     private FirebaseAuth mFirebaseAuth;
@@ -49,4 +50,8 @@ public class MainActivity extends AppCompatActivity implements Observer {
         }
     }
 
+    @Override
+    public void onError(Error e) {
+
+    }
 }

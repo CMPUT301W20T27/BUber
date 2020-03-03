@@ -6,6 +6,8 @@ public class Account {
     private String email;
     private String phoneNumber;
 
+    public Account() {}
+
 
     public Account(String firstName, String lastName, String email, String phoneNumber) {
         this.firstName = firstName;

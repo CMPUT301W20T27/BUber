@@ -23,11 +23,11 @@ public class ApplicationService {
         Account newUserAccount = new Account(firstName, lastName, email, phoneNumber);
         App.getAuthDBManager().createFirebaseUser(email, password, (resultData, err) -> {
             String docID = (String) resultData.get("doc-id");
-            if (type == User.TYPE.DRIVER) {
-                App.getDbManager().createDriver(docID, new Driver(username, newUserAccount), controllerListener);
-            } else {
-                App.getDbManager().createRider(docID, new Rider(username, newUserAccount), controllerListener);
-            }
+            // Right now, we just return a rider object, this should change if we provide the
+            // option to login as both
+            App.getDbManager().createRider(docID, new Rider(username, newUserAccount), controllerListener);
+            App.getDbManager().createDriver(docID, new Driver(username, newUserAccount), ((resultData1, err1) -> {}));
+
         });
 
     }

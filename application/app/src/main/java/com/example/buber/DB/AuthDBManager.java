@@ -77,7 +77,6 @@ public class AuthDBManager {
     }
 
     public boolean isLoggedIn() {
-        signOut();
         return mAuth.getCurrentUser() != null;
     }
 

@@ -18,7 +18,7 @@ public class Driver extends User {
     @ServerTimestamp
     public Date timestamp;
 
-    public Driver() {}
+    public Driver() { setType(TYPE.DRIVER); }
 
     public Driver(String username, Account account) {
         super(username, account);

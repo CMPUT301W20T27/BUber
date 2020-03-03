@@ -1,6 +1,8 @@
 package com.example.buber.Controllers;
 
+import com.example.buber.App;
 import com.example.buber.Model.ApplicationModel;
+import com.example.buber.Model.Rider;
 import com.example.buber.Model.User;
 import com.example.buber.Services.*;
 import com.example.buber.Views.UIErrorHandler;

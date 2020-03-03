@@ -31,13 +31,13 @@ public class DBManager {
 
     /* CREATE */
     public void createRider(String docID, Rider r, EventCompletionListener listener) {
-        r.setDocID(docID);
         collectionRider.document(docID).set(r)
-                .addOnSuccessListener(documentReference -> {
+                .addOnSuccessListener(aVoid -> {
                     HashMap<String, Rider> toReturn = new HashMap<>();
                     toReturn.put("user", r);
                     listener.onCompletion(toReturn, null);
-                }).addOnFailureListener((@NonNull Exception e) -> {
+                })
+                .addOnFailureListener((@NonNull Exception e) -> {
                     Log.d(TAG, e.getMessage());
                     listener.onCompletion(null, new Error("Login failed. Please try again," +
                             "if the issue persists, close and restart the app."));
@@ -45,7 +45,6 @@ public class DBManager {
     }
 
     public void createDriver(String docID, Driver d, EventCompletionListener listener) {
-        d.setDocID(docID);
         collectionDriver.document(docID).set(d)
                 .addOnSuccessListener(documentReference -> {
                     HashMap<String, Driver> toReturn = new HashMap<>();
@@ -70,16 +69,21 @@ public class DBManager {
     }
 
     public void getRider(String docID, EventCompletionListener listener) {
-        collectionRider.document(docID)
-                .get().addOnSuccessListener(documentSnapshot -> {
-            HashMap<String, Rider> toReturn = new HashMap<>();
-            toReturn.put("user", documentSnapshot.toObject(Rider.class));
-            listener.onCompletion(toReturn,null);
-        }).addOnFailureListener((@NonNull Exception e) -> {
+        try {
+            collectionRider.document(docID)
+                    .get().addOnSuccessListener(documentSnapshot -> {
+                HashMap<String, Rider> toReturn = new HashMap<>();
+                toReturn.put("user", documentSnapshot.toObject(Rider.class));
+                listener.onCompletion(toReturn,null);
+            }).addOnFailureListener((@NonNull Exception e) -> {
+                Log.d(TAG, e.getMessage());
+                listener.onCompletion(null, new Error("Login failed. Please try again," +
+                        "if the issue persists, close and restart the app."));
+            });
+        } catch (Exception e) {
             Log.d(TAG, e.getMessage());
-            listener.onCompletion(null, new Error("Login failed. Please try again," +
-                    "if the issue persists, close and restart the app."));
-        });
+        }
+
     }
 
     public void getDriver(String docID, EventCompletionListener listener) {

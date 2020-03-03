@@ -68,8 +68,7 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
             // TODO: MAKE NOT CONSTANT  *UI Team*
             User.TYPE type = User.TYPE.RIDER;
 
-            try {
-                App.getController().createNewUser(
+        App.getController().createNewUser(
                         userName,
                         password,
                         firstName,
@@ -78,13 +77,6 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
                         phoneNumber,
                         type,
                         this);
-            } catch (Exception e) {
-                Toast.makeText(this,
-                        "Failed to create user. Try again and if" +
-                        "the problem persists close and restart the app.", Toast.LENGTH_LONG)
-                        .show();
-            }
-
         }
     }
 
