@@ -9,20 +9,16 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.buber.App;
-import com.example.buber.DB.DBManager;
 import com.example.buber.Model.ApplicationModel;
 import com.example.buber.Model.User;
 import com.example.buber.R;
-import com.example.buber.Services.ApplicationService;
 import com.example.buber.Views.Activities.FormUtilities.CreateAccountFormUtils;
+import com.example.buber.Views.UIErrorHandler;
 
-import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-public class CreateAccountActivity extends AppCompatActivity implements View.OnClickListener, Observer {
+public class CreateAccountActivity extends AppCompatActivity implements View.OnClickListener, Observer, UIErrorHandler {
 
     private Button btnCreate;
 
@@ -70,25 +66,31 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
             String email = editEmail.getText().toString().trim();
             String phoneNumber = editphoneNumber.getText().toString().trim();
             // TODO: MAKE NOT CONSTANT  *UI Team*
-            User.TYPE type = User.TYPE.Riders;
+            User.TYPE type = User.TYPE.RIDER;
 
-            App.getController().createNewUser(
-                    userName,
-                    password,
-                    firstName,
-                    lastName,
-                    email,
-                    phoneNumber,
-                    type);
-            Toast.makeText(this, "Account Created Successfully!", Toast.LENGTH_LONG).show();
-//            this.finish();  //navigate back to log in screen
+            try {
+                App.getController().createNewUser(
+                        userName,
+                        password,
+                        firstName,
+                        lastName,
+                        email,
+                        phoneNumber,
+                        type,
+                        this);
+            } catch (Exception e) {
+                Toast.makeText(this,
+                        "Failed to create user. Try again and if" +
+                        "the problem persists close and restart the app.", Toast.LENGTH_LONG)
+                        .show();
+            }
+
         }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        // THIS CODE SHOULD BE IMPLEMENTED IN EVERY VIEW
         ApplicationModel m = App.getModel();
         m.deleteObserver(this);
     }
@@ -98,6 +100,14 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
         ApplicationModel m = (ApplicationModel) o;
         if (m.getSessionUser() != null) {
             // TODO: Start MapActivity, Remove loginActivity from view stack
+            Toast.makeText(this, "Account Created Successfully!", Toast.LENGTH_LONG)
+                    .show();
         }
+    }
+
+    @Override
+    public void onError(Error e) {
+        String msg = e.getMessage();
+        Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
     }
 }
