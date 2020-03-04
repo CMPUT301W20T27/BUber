@@ -1,12 +1,18 @@
 package com.example.buber.DB;
+import android.util.Log;
+
+import androidx.annotation.NonNull;
+
+import com.example.buber.Controllers.EventCompletionListener;
+import com.example.buber.Model.Driver;
+import com.example.buber.Model.Rider;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class DBManager {
-
-    private AuthDBManager login;
 
     private static final String TAG = "In Database Manager";
 
@@ -14,23 +20,41 @@ public class DBManager {
 
     private CollectionReference collectionDriver, collectionRider, collectionTrip;
 
-    public DBManager() {
-
-        login = new AuthDBManager();
-
+    public DBManager(String driverCollectionName,
+                     String riderCollectionName,
+                     String tripCollectionName) {
         database = FirebaseFirestore.getInstance();
-        collectionDriver = database.collection("Drivers");
-        collectionRider = database.collection("Riders");
-        collectionTrip = database.collection("Trips");
+        collectionDriver = database.collection(driverCollectionName);
+        collectionRider = database.collection(riderCollectionName);
+        collectionTrip = database.collection(tripCollectionName);
     }
 
     /* CREATE */
-    public void createRider() {
-        // todo
+    public void createRider(String docID, Rider r, EventCompletionListener listener) {
+        collectionRider.document(docID).set(r)
+                .addOnSuccessListener(aVoid -> {
+                    HashMap<String, Rider> toReturn = new HashMap<>();
+                    toReturn.put("user", r);
+                    listener.onCompletion(toReturn, null);
+                })
+                .addOnFailureListener((@NonNull Exception e) -> {
+                    Log.d(TAG, e.getMessage());
+                    listener.onCompletion(null, new Error("Login failed. Please try again," +
+                            "if the issue persists, close and restart the app."));
+        });
     }
 
-    public void createDriver() {
-        // todo
+    public void createDriver(String docID, Driver d, EventCompletionListener listener) {
+        collectionDriver.document(docID).set(d)
+                .addOnSuccessListener(documentReference -> {
+                    HashMap<String, Driver> toReturn = new HashMap<>();
+                    toReturn.put("user", d);
+                    listener.onCompletion(toReturn, null);
+                }).addOnFailureListener((@NonNull Exception e) -> {
+                    Log.d(TAG, e.getMessage());
+                    listener.onCompletion(null, new Error("Login failed. Please try again," +
+                            "if the issue persists, close and restart the app."));
+                });
     }
 
     public void createTrip(String riderID, String driverID) {
@@ -44,12 +68,35 @@ public class DBManager {
         return new ArrayList();
     }
 
-    public void getRider(String docID) {
-        // todo
+    public void getRider(String docID, EventCompletionListener listener) {
+        try {
+            collectionRider.document(docID)
+                    .get().addOnSuccessListener(documentSnapshot -> {
+                HashMap<String, Rider> toReturn = new HashMap<>();
+                toReturn.put("user", documentSnapshot.toObject(Rider.class));
+                listener.onCompletion(toReturn,null);
+            }).addOnFailureListener((@NonNull Exception e) -> {
+                Log.d(TAG, e.getMessage());
+                listener.onCompletion(null, new Error("Login failed. Please try again," +
+                        "if the issue persists, close and restart the app."));
+            });
+        } catch (Exception e) {
+            Log.d(TAG, e.getMessage());
+        }
+
     }
 
-    public void getDriver(String docID) {
-        // todo
+    public void getDriver(String docID, EventCompletionListener listener) {
+        collectionDriver.document(docID)
+                .get().addOnSuccessListener(documentSnapshot -> {
+            HashMap<String, Rider> toReturn = new HashMap<>();
+            toReturn.put("user", documentSnapshot.toObject(Rider.class));
+            listener.onCompletion(toReturn, null);
+        }).addOnFailureListener((@NonNull Exception e) -> {
+            Log.d(TAG, e.getMessage());
+            listener.onCompletion(null, new Error("Login failed. Please try again," +
+                    "if the issue persists, close and restart the app."));
+        });
     }
 
     /* UPDATE */
@@ -64,7 +111,6 @@ public class DBManager {
     public void updateTrip(String riderID, String driverID) {
         // todo
     }
-
 
     /* DELETE */
     public void deleteRider(String docId) {
