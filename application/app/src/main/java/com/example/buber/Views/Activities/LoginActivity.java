@@ -91,6 +91,7 @@ public class LoginActivity extends AppCompatActivity implements Observer {
                                 }
                             } else {
                                 Toast.makeText(LoginActivity.this, "You are NOW logged in.", Toast.LENGTH_SHORT).show();
+                                startActivity(new Intent(LoginActivity.this, MapActivity.class));
                             }
                         }
                     });
