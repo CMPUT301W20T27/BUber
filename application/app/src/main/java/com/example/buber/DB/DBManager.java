@@ -6,8 +6,11 @@ import androidx.annotation.NonNull;
 import com.example.buber.Controllers.EventCompletionListener;
 import com.example.buber.Model.Driver;
 import com.example.buber.Model.Rider;
+import com.example.buber.Model.Trip;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -57,17 +60,21 @@ public class DBManager {
                 });
     }
 
-    public void createTrip(String riderID, String driverID) {
-        // todo
+    public void createTrip(String docID, Trip t, EventCompletionListener listener) {
+        collectionTrip.document(docID).set(t)
+                .addOnSuccessListener(documentReference -> {
+                    HashMap<String, Driver> toReturn = new HashMap<>();
+                    toReturn.put("user", d);
+                    listener.onCompletion(toReturn, null);
+                }).addOnFailureListener((@NonNull Exception e) -> {
+            Log.d(TAG, e.getMessage());
+            listener.onCompletion(null, new Error("Login failed. Please try again," +
+                    "if the issue persists, close and restart the app."));
+        });
     }
 
 
-    /* READ */
-    public ArrayList getAll(String rootCollection) {
-        // todo
-        return new ArrayList();
-    }
-
+    /* GET */
     public void getRider(String docID, EventCompletionListener listener) {
         try {
             collectionRider.document(docID)
@@ -99,29 +106,96 @@ public class DBManager {
         });
     }
 
+    public void getTrip(String docID, EventCompletionListener listener) {
+        collectionTrip.document(docID)
+                .get().addOnSuccessListener(documentSnapshot -> {
+            HashMap<String, Rider> toReturn = new HashMap<>();
+            toReturn.put("trip", documentSnapshot.toObject(Rider.class));
+            listener.onCompletion(toReturn, null);
+        }).addOnFailureListener((@NonNull Exception e) -> {
+            Log.d(TAG, e.getMessage());
+            listener.onCompletion(null, new Error("Login failed. Please try again," +
+                    "if the issue persists, close and restart the app."));
+        });
+    }
+
     /* UPDATE */
-    public void updateRider(String docID) {
-        // todo
+    public void updateRider(String docID, Rider updatedRider, EventCompletionListener listener) {
+        collectionRider.document(docID)
+                .set(updatedRider, SetOptions.merge())
+                .addOnSuccessListener(documentSnapshot -> {
+                    listener.onCompletion(null, null);
+                })
+                .addOnFailureListener((@NonNull Exception e) -> {
+                    Log.d(TAG, e.getMessage());
+                    Error err = new Error("Failed to update rider");
+                    listener.onCompletion(null, err);
+                });
     }
 
-    public void updateDriver(String docID) {
-        // todo
+    public void updateDriver(String docID, Driver updatedDriver, EventCompletionListener listener) {
+        collectionDriver.document(docID)
+                .set(updatedDriver, SetOptions.merge())
+                .addOnSuccessListener(documentSnapshot -> {
+                    listener.onCompletion(null, null);
+                })
+                .addOnFailureListener((@NonNull Exception e) -> {
+                    Log.d(TAG, e.getMessage());
+                    Error err = new Error("Failed to update driver");
+                    listener.onCompletion(null, err);
+                });
     }
 
-    public void updateTrip(String riderID, String driverID) {
-        // todo
+    public void updateTrip(String docID, Trip updatedTrip, EventCompletionListener listener) {
+        collectionTrip.document(docID)
+                .set(updatedTrip, SetOptions.merge())
+                .addOnSuccessListener(documentSnapshot -> {
+                    listener.onCompletion(null, null);
+                })
+                .addOnFailureListener((@NonNull Exception e) -> {
+                    Log.d(TAG, e.getMessage());
+                    Error err = new Error("Failed to update trip");
+                    listener.onCompletion(null, err);
+                });
     }
 
     /* DELETE */
-    public void deleteRider(String docId) {
-        // todo
+    public void deleteRider(String docID, EventCompletionListener listener) {
+        collectionRider.document(docID)
+                .delete()
+                .addOnSuccessListener(aVoid -> {
+                    listener.onCompletion(null, null);
+                })
+                .addOnFailureListener((@NonNull Exception e) -> {
+                    Log.d(TAG, e.getMessage());
+                    Error err = new Error("Failed to update trip");
+                    listener.onCompletion(null, err);
+                });
     }
 
-    public void deleteDriver(String docId) {
-        // todo
+    public void deleteDriver(String docID, EventCompletionListener listener) {
+        collectionDriver.document(docID)
+                .delete()
+                .addOnSuccessListener(aVoid -> {
+                    listener.onCompletion(null, null);
+                })
+                .addOnFailureListener((@NonNull Exception e) -> {
+                    Log.d(TAG, e.getMessage());
+                    Error err = new Error("Failed to update trip");
+                    listener.onCompletion(null, err);
+                });
     }
 
-    public void deleteTrip(String riderID, String driverID) {
-        // todo
+    public void deleteTrip(String docID, EventCompletionListener listener) {
+        collectionTrip.document(docID)
+                .delete()
+                .addOnSuccessListener(aVoid -> {
+                    listener.onCompletion(null, null);
+                })
+                .addOnFailureListener((@NonNull Exception e) -> {
+                    Log.d(TAG, e.getMessage());
+                    Error err = new Error("Failed to update trip");
+                    listener.onCompletion(null, err);
+                });
     }
 }
