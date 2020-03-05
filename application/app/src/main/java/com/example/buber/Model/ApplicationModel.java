@@ -1,12 +1,14 @@
 package com.example.buber.Model;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 import java.util.ArrayList;
 import java.util.Observable;
 
 public class ApplicationModel extends Observable {
     private User sessionUser;
     private ArrayList<Trip> currentRequests;
-
+    private FirebaseAuth.AuthStateListener mAuthStateListener;
 
     public User getSessionUser() {
         return sessionUser;

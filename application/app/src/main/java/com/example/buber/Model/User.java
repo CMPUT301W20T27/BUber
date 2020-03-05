@@ -3,9 +3,8 @@ package com.example.buber.Model;
 
 public abstract class User {
     public enum TYPE {
-        //Firebase clollection names
-        Drivers,
-        Riders,
+        DRIVER,
+        RIDER,
     }
 
     public User(String username, Account account) {
@@ -13,10 +12,8 @@ public abstract class User {
         this.account = account;
     }
 
-    public User() {
-    }
+    public User() { }
 
-    //    private Contact contact;        //Future implimentation
     private Location currentLocation;
     private Account account;
     private String username;

@@ -10,9 +10,7 @@ import java.util.Date;
  */
 public class Driver extends User {
 
-
-    private int rating = 5;           //Maybe ?
-
+    private int rating = 5;
 
     @DocumentId
     private String docID;
@@ -20,28 +18,34 @@ public class Driver extends User {
     @ServerTimestamp
     public Date timestamp;
 
+    public Driver() { setType(TYPE.DRIVER); }
 
+    public Driver(String username, Account account) {
+        super(username, account);
+        setType(TYPE.DRIVER);
+    }
+
+    public int getRating() {
+        return rating;
+    }
+
+    public void setRating(int rating) {
+        this.rating = rating;
+    }
 
     public String getDocID() {
-
         return docID;
     }
 
     public void setDocID(String docID) {
-
         this.docID = docID;
     }
 
-
     public Date getTimestamp() {
-
         return timestamp;
     }
 
     public void setTimestamp(Date timestamp) {
-
         this.timestamp = timestamp;
     }
-
-
 }
