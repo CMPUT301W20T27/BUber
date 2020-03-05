@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.example.buber.App;
 import com.example.buber.Model.ApplicationModel;
 import com.example.buber.R;
+import com.example.buber.Views.UIErrorHandler;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -24,14 +25,12 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.gms.common.api.GoogleApi;
 import java.util.Observable;
 import java.util.Observer;
 
-public class MapActivity extends AppCompatActivity implements Observer, OnMapReadyCallback {
+public class MapActivity extends AppCompatActivity implements Observer, OnMapReadyCallback, UIErrorHandler {
 
     private static final int ERROR_DIALOG_REQUEST = 9001;
     private GoogleMap mMap;
@@ -143,7 +142,6 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
                 }
             }
         }
-        //updateLocationUI();
     }
 
     boolean googleConnectionSuccessful(){
@@ -163,26 +161,6 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         }
         return false;
     }
-    /*
-    private void updateLocationUI() {
-        if (mMap == null) {
-            return;
-        }
-        try {
-            if (mLocationPermissionGranted) {
-                mMap.setMyLocationEnabled(true);
-                mMap.getUiSettings().setMyLocationButtonEnabled(true);
-            } else {
-                mMap.setMyLocationEnabled(false);
-                mMap.getUiSettings().setMyLocationButtonEnabled(false);
-                mLastKnownLocation = null;
-                getLocationPermission();
-            }
-        } catch (SecurityException e)  {
-            Log.e("Exception: %s", e.getMessage());
-        }
-    }
-     */
 
     @Override
     public void onDestroy() {
@@ -199,9 +177,10 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
             Log.d("GETTINGLOCATION","Tring to get current location");
             getDeviceLocation();
         }
-        // Turn on the My Location layer and the related control on the map.
-        //updateLocationUI();
+    }
 
-        // Get the current location of the device and set the position of the map.
+    @Override
+    public void onError(Error e) {
+        // TODO: Handle UI Errors
     }
 }
