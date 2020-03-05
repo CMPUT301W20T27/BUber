@@ -63,8 +63,8 @@ public class DBManager {
     public void createTrip(String docID, Trip t, EventCompletionListener listener) {
         collectionTrip.document(docID).set(t)
                 .addOnSuccessListener(documentReference -> {
-                    HashMap<String, Driver> toReturn = new HashMap<>();
-                    toReturn.put("user", d);
+                    HashMap<String, Trip> toReturn = new HashMap<>();
+                    toReturn.put("trip", t);
                     listener.onCompletion(toReturn, null);
                 }).addOnFailureListener((@NonNull Exception e) -> {
             Log.d(TAG, e.getMessage());
