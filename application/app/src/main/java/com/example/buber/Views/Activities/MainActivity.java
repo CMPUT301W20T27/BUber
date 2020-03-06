@@ -17,10 +17,6 @@ import java.util.Observable;
 import java.util.Observer;
 
 public class MainActivity extends AppCompatActivity implements Observer, UIErrorHandler {
-
-    private FirebaseAuth.AuthStateListener mAuthStateListener;
-    private FirebaseAuth mFirebaseAuth;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //TODO:database connections, model, etc..
@@ -48,6 +44,7 @@ public class MainActivity extends AppCompatActivity implements Observer, UIError
         } else {
             startActivity(new Intent(MainActivity.this, LoginActivity.class));
         }
+        this.finish();
     }
 
     @Override
