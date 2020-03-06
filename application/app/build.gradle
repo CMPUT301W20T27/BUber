@@ -34,7 +34,10 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     testImplementation 'junit:junit:4.13'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    androidTestImplementation 'androidx.test:runner:1.2.0'
+    androidTestImplementation 'androidx.test:rules:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    androidTestImplementation 'com.jayway.android.robotium:robotium-solo:5.3.1'
 
     // Add the Firebase SDK for Google Analytics
     implementation 'com.google.firebase:firebase-analytics:17.2.2'
@@ -48,7 +51,6 @@ dependencies {
     implementation 'com.google.android.gms:play-services-maps:16.1.0'
     implementation 'com.google.android.gms:play-services-location:15.0.1'
 
-    //Add the library
     implementation 'com.android.support:multidex:1.0.3'
 
 }
