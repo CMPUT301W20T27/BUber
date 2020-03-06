@@ -48,7 +48,11 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
     private Button accountButton;
     private Button logoutButton;
     private View sideBarView;
+    private Button riderRequestButton;
+
+    // State
     private boolean showSideBar;
+
 
 
     @Override
@@ -69,12 +73,15 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         accountButton = findViewById(R.id.account_button);
         logoutButton = findViewById(R.id.logout_button);
         sideBarView = findViewById(R.id.sidebar);
+        riderRequestButton = findViewById(R.id.rider_request_button);
 
         sideBarView.setVisibility(View.INVISIBLE);
         settingsButton.setVisibility(View.VISIBLE);
+        riderRequestButton.setVisibility(View.VISIBLE);
         showSideBar = false;
 
         App.getModel().addObserver(this);
+
     }
 
     public void initializeMap(){
@@ -188,6 +195,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
     public void handleSettingsButtonClick(View v) {
         sideBarView.setVisibility(View.VISIBLE);
         settingsButton.setVisibility(View.INVISIBLE);
+        riderRequestButton.setVisibility(View.INVISIBLE);
         showSideBar = true;
     }
 
@@ -206,6 +214,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
             showSideBar = false;
             sideBarView.setVisibility(View.INVISIBLE);
             settingsButton.setVisibility(View.VISIBLE);
+            riderRequestButton.setVisibility(View.VISIBLE);
         } else {
             // TODO: Handle Everything else
         }
@@ -226,6 +235,14 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
             Log.d("GETTINGLOCATION","Tring to get current location");
             getDeviceLocation();
         }
+
+        mMap.setOnMapClickListener(latLng -> {
+            if (showSideBar) {
+                sideBarView.setVisibility(View.INVISIBLE);
+                riderRequestButton.setVisibility(View.VISIBLE);
+                settingsButton.setVisibility(View.VISIBLE);
+            }
+        });
     }
 
     @Override
