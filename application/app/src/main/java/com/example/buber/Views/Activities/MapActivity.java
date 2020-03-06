@@ -209,6 +209,10 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         this.finish();
     }
 
+    public void handleRideRequestClick(View v){
+        
+    }
+
     public void handleScreenClick(View v) {
         if (showSideBar) {
             showSideBar = false;

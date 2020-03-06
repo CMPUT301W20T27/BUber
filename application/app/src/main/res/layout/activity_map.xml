@@ -40,6 +40,7 @@
         android:id="@+id/rider_request_button"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:onClick="handleRideRequestClick"
         android:text="Request a Ride"
         android:textIsSelectable="false"
         android:visibility="invisible"
