@@ -6,6 +6,7 @@ import android.widget.EditText;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.ActivityTestRule;
 
+import com.example.buber.Views.Activities.CreateAccountActivity;
 import com.example.buber.Views.Activities.MainActivity;
 import com.example.buber.Views.Activities.MapActivity;
 import com.robotium.solo.Solo;
@@ -64,42 +65,40 @@ public class AuthenticationUITest {
         solo.enterText((EditText) solo.getView(R.id.loginEmailEditText), email);
         solo.enterText((EditText) solo.getView(R.id.loginPasswordEditText), password);
         solo.clickOnButton("Login as Rider");
-        assertTrue(solo.waitForText("Incorrect Password. Please Try Again.", 1, 2000));
+        assertTrue(solo.waitForText("The password is invalid or the user does not have a password.", 1, 200));
         assertFalse(solo.waitForActivity(MapActivity.class));
     }
 
-    @Test
-    public void testOfflineLogin() {
-        String email = "testaccount@buber.ca";
-        String password = "testpassword";
-        solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
-        solo.enterText((EditText) solo.getView(R.id.loginEmailEditText), email);
-        solo.enterText((EditText) solo.getView(R.id.loginPasswordEditText), password);
-        solo.clickOnButton("Login as Rider");
-        assertTrue(solo.waitForText("You are offline. Please try again" +
-                "when connected to the internet", 1, 2000));
-        assertFalse(solo.waitForActivity(MapActivity.class));
-    }
-
-    @Test
-    public void testSuccessCreateAccount() {
-
-    }
 
     @Test
     public void testFailureCreateAccount() {
+        String username = "tester";
+        String password = "123456";
+        String firstName = "tester";
+        String lastName = "tester";
+        String email = "tester@buber.ca";
+        String phoneNumber = "1234567890";
 
+        solo.clickOnButton("Create an Account");
+        solo.assertCurrentActivity("Wrong Activity", CreateAccountActivity.class);
+        solo.enterText((EditText) solo.getView(R.id.createAccountUsername), username);
+        solo.enterText((EditText) solo.getView(R.id.createAccountPassword), password);
+        solo.enterText((EditText) solo.getView(R.id.createAccountFirstName), firstName);
+        solo.enterText((EditText) solo.getView(R.id.createAccountLastName), lastName);
+        solo.enterText((EditText) solo.getView(R.id.createAccountEmail), email);
+        solo.enterText((EditText) solo.getView(R.id.createAccountPhoneNumber), phoneNumber);
+        solo.clickOnButton("Create Account");
     }
-
-    @Test
-    public void testLoginPersistence() {
-
-    }
-
-    @Test
-    public void testLogout() {
-
-    }
+//
+//    @Test
+//    public void testLoginPersistence() {
+//
+//    }
+//
+//    @Test
+//    public void testLogout() {
+//
+//    }
 
     /**
      * Closes the activity after each test
