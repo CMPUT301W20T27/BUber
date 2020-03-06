@@ -6,10 +6,13 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.buber.App;
@@ -39,6 +42,15 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private Location mLastKnownLocation;
     private static final float DEFAULT_ZOOM = 15;
+
+    // Views
+    private Button settingsButton;
+    private Button accountButton;
+    private Button logoutButton;
+    private View sideBarView;
+    private boolean showSideBar;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d("map","in map");
@@ -52,6 +64,15 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
             Toast.makeText(this,
                     "map connection failed",Toast.LENGTH_SHORT).show();
         }
+
+        settingsButton = findViewById(R.id.settings_button);
+        accountButton = findViewById(R.id.account_button);
+        logoutButton = findViewById(R.id.logout_button);
+        sideBarView = findViewById(R.id.sidebar);
+
+        sideBarView.setVisibility(View.INVISIBLE);
+        settingsButton.setVisibility(View.VISIBLE);
+        showSideBar = false;
 
         App.getModel().addObserver(this);
     }
@@ -160,6 +181,34 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
             Log.d("MAPCONNECTIONFAILURE","Map failed to connect");
         }
         return false;
+    }
+
+
+    /* CLICK HANLDERS */
+    public void handleSettingsButtonClick(View v) {
+        sideBarView.setVisibility(View.VISIBLE);
+        settingsButton.setVisibility(View.INVISIBLE);
+        showSideBar = true;
+    }
+
+    public void handleAccountButtonClick(View v) {
+
+    }
+
+    public void handleLogoutButtonClick(View v) {
+        App.getController().logout(this);
+        startActivity(new Intent(MapActivity.this, LoginActivity.class));
+        this.finish();
+    }
+
+    public void handleScreenClick(View v) {
+        if (showSideBar) {
+            showSideBar = false;
+            sideBarView.setVisibility(View.INVISIBLE);
+            settingsButton.setVisibility(View.VISIBLE);
+        } else {
+            // TODO: Handle Everything else
+        }
     }
 
     @Override
