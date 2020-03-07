@@ -1,6 +1,8 @@
 package com.example.buber;
 
 import android.app.Activity;
+import android.util.Log;
+import android.widget.Button;
 import android.widget.EditText;
 
 import androidx.test.platform.app.InstrumentationRegistry;
@@ -47,8 +49,8 @@ public class AuthenticationUITest {
 
     @Test
     public void testCorrectLogin() {
-        String email = "testaccount@buber.ca";
-        String password = "testpassword";
+        String email = "tester@tester.tester";
+        String password = "123456";
         solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
         solo.enterText((EditText) solo.getView(R.id.loginEmailEditText), email);
         solo.enterText((EditText) solo.getView(R.id.loginPasswordEditText), password);
@@ -57,48 +59,83 @@ public class AuthenticationUITest {
         assertTrue(solo.waitForActivity(MapActivity.class));
     }
 
+
     @Test
-    public void testIncorrectLogin() {
-        String email = "testaccount@buber.ca";
-        String password = "incorrectpassword";
+    public void testLoginFailures() {
         solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
-        solo.enterText((EditText) solo.getView(R.id.loginEmailEditText), email);
-        solo.enterText((EditText) solo.getView(R.id.loginPasswordEditText), password);
+
+        solo.enterText((EditText) solo.getView(R.id.loginEmailEditText), "");
+        solo.clickOnButton("Login as Rider");
+        assertTrue(solo.waitForText("Please provide your email", 1, 200));
+
+        solo.enterText((EditText) solo.getView(R.id.loginEmailEditText), "tester@tester.tester");
+        solo.clickOnButton("Login as Rider");
+        assertTrue(solo.waitForText("Password must be at least 6 digits", 1, 200));
+
+
+        solo.enterText((EditText) solo.getView(R.id.loginPasswordEditText), "1234567");
         solo.clickOnButton("Login as Rider");
         assertTrue(solo.waitForText("The password is invalid or the user does not have a password.", 1, 200));
-        assertFalse(solo.waitForActivity(MapActivity.class));
+
+
+        solo.clearEditText((EditText) solo.getView(R.id.loginEmailEditText));
+        solo.enterText((EditText) solo.getView(R.id.loginEmailEditText), "\uD83C\uDF51@\uD83C\uDF51.\uD83C\uDF51");
+        solo.clickOnButton("Login as Rider");
+
+
+        solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
     }
 
 
     @Test
-    public void testFailureCreateAccount() {
-        String username = "tester";
-        String password = "123456";
-        String firstName = "tester";
-        String lastName = "tester";
-        String email = "tester@buber.ca";
-        String phoneNumber = "1234567890";
-
+    public void testCreateAccountFailures() {
         solo.clickOnButton("Create an Account");
         solo.assertCurrentActivity("Wrong Activity", CreateAccountActivity.class);
-        solo.enterText((EditText) solo.getView(R.id.createAccountUsername), username);
-        solo.enterText((EditText) solo.getView(R.id.createAccountPassword), password);
-        solo.enterText((EditText) solo.getView(R.id.createAccountFirstName), firstName);
-        solo.enterText((EditText) solo.getView(R.id.createAccountLastName), lastName);
-        solo.enterText((EditText) solo.getView(R.id.createAccountEmail), email);
-        solo.enterText((EditText) solo.getView(R.id.createAccountPhoneNumber), phoneNumber);
+
+
         solo.clickOnButton("Create Account");
+        assertTrue(solo.waitForText("Please provide a username", 1, 200));
+        solo.enterText((EditText) solo.getView(R.id.createAccountUsername), "tester");
+
+        solo.clickOnButton("Create Account");
+        assertTrue(solo.waitForText("Password must be at least 6 digits", 1, 200));
+
+        solo.enterText((EditText) solo.getView(R.id.createAccountPassword), "12345");
+        solo.clickOnButton("Create Account");
+        assertTrue(solo.waitForText("Password must be at least 6 digits", 1, 200));
+
+
+        solo.enterText((EditText) solo.getView(R.id.createAccountPassword), "123456");
+        solo.enterText((EditText) solo.getView(R.id.createAccountFirstName), "tester");
+        solo.enterText((EditText) solo.getView(R.id.createAccountLastName), "tester");
+
+        solo.clearEditText((EditText) solo.getView(R.id.createAccountEmail));
+        solo.enterText((EditText) solo.getView(R.id.createAccountEmail), "tester");
+        solo.clickOnButton("Create Account");
+        assertTrue(solo.waitForText("Please provide a valid email", 1, 200));
+
+        solo.clearEditText((EditText) solo.getView(R.id.createAccountEmail));
+        solo.enterText((EditText) solo.getView(R.id.createAccountEmail), "tester@");
+        solo.clickOnButton("Create Account");
+        assertTrue(solo.waitForText("Please provide a valid email", 1, 200));
+
+        solo.clearEditText((EditText) solo.getView(R.id.createAccountEmail));
+        solo.enterText((EditText) solo.getView(R.id.createAccountEmail), "tester@tester.");
+        solo.clickOnButton("Create Account");
+        assertTrue(solo.waitForText("Please provide a valid email", 1, 200));
+
+        solo.clearEditText((EditText) solo.getView(R.id.createAccountEmail));
+        solo.enterText((EditText) solo.getView(R.id.createAccountEmail), "tester@tester.asdf.");
+        solo.clickOnButton("Create Account");
+        assertTrue(solo.waitForText("Please provide a valid email", 1, 200));
+
+        solo.clearEditText((EditText) solo.getView(R.id.createAccountEmail));
+        solo.enterText((EditText) solo.getView(R.id.createAccountEmail), "tester@tester");
+        solo.enterText((EditText) solo.getView(R.id.createAccountPhoneNumber), "1231231234");
+        solo.clickOnButton("Create Account");
+        assertTrue(solo.waitForText("The email address is badly formatted", 1, 200));
     }
-//
-//    @Test
-//    public void testLoginPersistence() {
-//
-//    }
-//
-//    @Test
-//    public void testLogout() {
-//
-//    }
+    
 
     /**
      * Closes the activity after each test
