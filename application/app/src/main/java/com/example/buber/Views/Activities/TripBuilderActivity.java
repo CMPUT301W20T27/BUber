@@ -14,6 +14,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.buber.App;
 import com.example.buber.Model.ApplicationModel;
 import com.example.buber.Model.Location;
+import com.example.buber.Model.Trip;
+import com.example.buber.Model.User;
 import com.example.buber.R;
 import com.example.buber.Views.UIErrorHandler;
 import com.google.android.gms.common.api.Status;
@@ -28,6 +30,7 @@ import java.util.Observable;
 import java.util.Observer;
 
 public class TripBuilderActivity extends AppCompatActivity implements UIErrorHandler, Observer {
+    Trip tripRequest;
     Location startLoc, endLoc;
     LinearLayout fareOfferingLayout;
     EditText fareOfferingEditText;
@@ -82,25 +85,20 @@ public class TripBuilderActivity extends AppCompatActivity implements UIErrorHan
         fromAutocompleteSupportFragment
                 .getView()
                 .findViewById(R.id.places_autocomplete_clear_button)
-                .setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        startLoc = null;
-                        disEngageSubmissionUI();
-                        fromAutocompleteSupportFragment.setText("");
-                    }
+                .setOnClickListener((View v) -> {
+                    startLoc = null;
+                    disEngageSubmissionUI();
+                    fromAutocompleteSupportFragment.setText("");
+
                 });
 
         toAutocompleteSupportFragment
                 .getView()
                 .findViewById(R.id.places_autocomplete_clear_button)
-                .setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        endLoc = null;
-                        disEngageSubmissionUI();
-                        toAutocompleteSupportFragment.setText("");
-                    }
+                .setOnClickListener((View v) -> {
+                    endLoc = null;
+                    disEngageSubmissionUI();
+                    toAutocompleteSupportFragment.setText("");
                 });
 
         // Set up a PlaceSelectionListener to handle the response.
@@ -150,6 +148,10 @@ public class TripBuilderActivity extends AppCompatActivity implements UIErrorHan
             public void onError(Status status) {
             }
         });
+
+        submitTripBtn.setOnClickListener((View v) -> {
+//            User currUser = App.getModel().getSessionUser();
+        });
     }
 
 
@@ -166,9 +168,6 @@ public class TripBuilderActivity extends AppCompatActivity implements UIErrorHan
         submitTripBtn.setVisibility(View.GONE);
     }
 
-    private void submitTripRequest() {
-
-    }
 
     @Override
     public void update(Observable o, Object arg) {
