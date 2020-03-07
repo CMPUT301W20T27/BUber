@@ -1,19 +1,29 @@
 package com.example.buber.Views.Activities;
 
 import android.os.Bundle;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.buber.App;
 import com.example.buber.Model.ApplicationModel;
+import com.example.buber.Model.Trip;
 import com.example.buber.Model.UserLocation;
 import com.example.buber.R;
+import com.example.buber.Views.Activities.FormUtilities.CustomTripList;
+import com.example.buber.Views.Activities.FormUtilities.TripSearchRecord;
 import com.example.buber.Views.UIErrorHandler;
 
+import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 
 public class TripSearchActivity extends AppCompatActivity implements UIErrorHandler, Observer {
+
+    ListView tripSearchList;
+    ArrayAdapter<TripSearchRecord> tripSearchRecordArrayAdapter;
+    ArrayList<TripSearchRecord> tripDataList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,10 +32,14 @@ public class TripSearchActivity extends AppCompatActivity implements UIErrorHand
         setContentView(R.layout.trip_search_activity);
 
         // TODO MIKE: Get UI elements and initialize here
+        // getting list view for tripSearchList
+        tripSearchList = findViewById(R.id.trip_search_list);
 
         App.getModel().addObserver(this);
 
         populateTripList();
+
+        tripSearchRecordArrayAdapter = new CustomTripList(this, tripDataList)
     }
 
     public void populateTripList() {
