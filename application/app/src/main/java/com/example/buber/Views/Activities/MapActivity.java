@@ -80,7 +80,6 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         showSideBar = false;
 
         App.getModel().addObserver(this);
-
     }
 
     public void initializeMap(){
