@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.example.buber.App;
 import com.example.buber.Model.ApplicationModel;
+import com.example.buber.Model.UserLocation;
 import com.example.buber.R;
 import com.example.buber.Views.UIErrorHandler;
 import com.google.android.gms.common.ConnectionResult;
@@ -28,7 +29,6 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import java.util.Observable;
 import java.util.Observer;
@@ -40,7 +40,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
     private boolean mLocationPermissionGranted = false;
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1234;
     private FusedLocationProviderClient mFusedLocationProviderClient;
-    private Location mLastKnownLocation;
+    private Location mLastKnownUserLocation;
     private static final float DEFAULT_ZOOM = 15;
 
     // Views
@@ -59,6 +59,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         Log.d("map","in map");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
+
 
         if(googleConnectionSuccessful()){
             getLocationPermission();
@@ -123,23 +124,28 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         try {
             if (mLocationPermissionGranted) {
                 Task locationResult = mFusedLocationProviderClient.getLastLocation();
-                locationResult.addOnCompleteListener(this, new OnCompleteListener() {
-                    @Override
-                    public void onComplete(@NonNull Task task) {
-                        if (task.isSuccessful()) {
-                            // Set the map's camera position to the current location of the device.
-                            mLastKnownLocation =  (Location) task.getResult();
-                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                                    new LatLng(mLastKnownLocation.getLatitude(),
-                                            mLastKnownLocation.getLongitude()), DEFAULT_ZOOM));
-                        } else {
-                            Log.d("NULLLOCATION", "Current location is null. Using defaults.");
-                            Log.e("LOCATIONEXCEPTION", "Exception: %s", task.getException());
-                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                                    new LatLng(mLastKnownLocation.getLatitude(),
-                                            mLastKnownLocation.getLongitude()), DEFAULT_ZOOM));
-                            mMap.getUiSettings().setMyLocationButtonEnabled(false);
-                        }
+                locationResult.addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+                        // Set the map's camera position to the current location of the device.
+                        mLastKnownUserLocation =  (Location) task.getResult();
+                        App.getController()
+                                .updateUserLocation(
+                                    new UserLocation(
+                                            mLastKnownUserLocation.getLatitude(),
+                                            mLastKnownUserLocation.getLongitude()
+                                    )
+                        );
+                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                                new LatLng(mLastKnownUserLocation.getLatitude(),
+                                        mLastKnownUserLocation.getLongitude()), DEFAULT_ZOOM));
+
+                    } else {
+                        Log.d("NULLLOCATION", "Current location is null. Using defaults.");
+                        Log.e("LOCATIONEXCEPTION", "Exception: %s", task.getException());
+                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                                new LatLng(mLastKnownUserLocation.getLatitude(),
+                                        mLastKnownUserLocation.getLongitude()), DEFAULT_ZOOM));
+                        mMap.getUiSettings().setMyLocationButtonEnabled(false);
                     }
                 });
             }
@@ -161,10 +167,10 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     mLocationPermissionGranted = true;
                     initializeMap();
-                    Log.d("LOCATIONPERMISSION","Location permission granted");
+                    Log.d("LOCATIONPERMISSION","UserLocation permission granted");
                 }
                 else{
-                    Log.d("LOCATIONPERMISSION","Location permission denied");
+                    Log.d("LOCATIONPERMISSION","UserLocation permission denied");
                 }
             }
         }
@@ -198,7 +204,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
     }
 
     public void handleAccountButtonClick(View v) {
-
+        startActivity(new Intent(MapActivity.this, EditAccountActivity.class));
     }
 
     public void handleLogoutButtonClick(View v) {
@@ -208,6 +214,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
     }
 
     public void handleRideRequestClick(View v){
+        UserLocation defaultStartUserLocation = App.getModel().getSessionUser().getCurrentUserLocation();
 
     }
 
@@ -234,7 +241,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         if(mLocationPermissionGranted){
-            Log.d("GETTINGLOCATION","Tring to get current location");
+            Log.d("GETTING LOCATION","Trying to get current location");
             getDeviceLocation();
         }
 

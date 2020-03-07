@@ -14,17 +14,17 @@ public abstract class User {
 
     public User() { }
 
-    private Location currentLocation;
+    private UserLocation currentUserLocation;
     private Account account;
     private String username;
     private TYPE type;
 
-    public Location getCurrentLocation() {
-        return currentLocation;
+    public UserLocation getCurrentUserLocation() {
+        return currentUserLocation;
     }
 
-    public void setCurrentLocation(Location currentLocation) {
-        this.currentLocation = currentLocation;
+    public void setCurrentUserLocation(UserLocation currentUserLocation) {
+        this.currentUserLocation = currentUserLocation;
     }
 
     public Account getAccount() {
