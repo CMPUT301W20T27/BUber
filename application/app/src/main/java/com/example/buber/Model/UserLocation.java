@@ -24,4 +24,9 @@ public class UserLocation {
     public void setLongitude(double longitude) {
         this.longitude = longitude;
     }
+
+    public double distanceTo(UserLocation end) {
+        double raw = Math.pow((latitude - end.getLatitude()), 2) + Math.pow((longitude - end.getLongitude()), 2);
+        return Math.abs(raw);
+    }
 }
