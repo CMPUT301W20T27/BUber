@@ -10,7 +10,7 @@ import java.util.Date;
  */
 public class Driver extends User {
 
-    private int rating = 5;
+    private double rating;
 
     @DocumentId
     private String docID;
@@ -23,13 +23,14 @@ public class Driver extends User {
     public Driver(String username, Account account) {
         super(username, account);
         setType(TYPE.DRIVER);
+        rating = 3.0;
     }
 
-    public int getRating() {
+    public double getRating() {
         return rating;
     }
 
-    public void setRating(int rating) {
+    public void setRating(double rating) {
         this.rating = rating;
     }
 
