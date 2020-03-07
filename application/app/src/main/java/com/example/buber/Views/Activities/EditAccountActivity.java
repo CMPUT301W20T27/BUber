@@ -5,32 +5,22 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
 import com.example.buber.App;
-import com.example.buber.Controllers.EventCompletionListener;
-import com.example.buber.DB.DBManager;
 import com.example.buber.Model.Account;
 import com.example.buber.Model.ApplicationModel;
-import com.example.buber.Model.Driver;
-import com.example.buber.Model.Rider;
 import com.example.buber.Model.User;
 import com.example.buber.R;
 import com.example.buber.Views.Activities.FormUtilities.CreateAccountFormUtils;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firestore.v1.WriteResult;
-//import com.gc.materialdesign.views.Button;
-//import com.google.api.core;
+import com.example.buber.Views.UIErrorHandler;
 
 import java.util.Observable;
 import java.util.Observer;
 
-public class EditAccountActivity extends AppCompatActivity implements Observer {
+public class EditAccountActivity extends AppCompatActivity implements Observer, UIErrorHandler {
 
     private EditText editUserName;
     private EditText editpassword;
@@ -39,7 +29,7 @@ public class EditAccountActivity extends AppCompatActivity implements Observer {
     private EditText editEmail;
     private EditText editphoneNumber;
 
-    private String olduserName;
+    private String oldUserName;
     private String oldfirstName;
     private String oldlastName;
     private String oldemail;
@@ -81,13 +71,13 @@ public class EditAccountActivity extends AppCompatActivity implements Observer {
 
         User curUser = App.getModel().getSessionUser();
 
-        olduserName = curUser.getUsername();
+        oldUserName = curUser.getUsername();
         oldfirstName = curUser.getAccount().getFirstName();
         oldlastName = curUser.getAccount().getLastName();
         oldemail = curUser.getAccount().getEmail();
         oldphoneNumber = curUser.getAccount().getPhoneNumber();
 
-        editUserName.setText(olduserName);
+        editUserName.setText(oldUserName);
         editEmail.setText(oldemail);
         editfirstName.setText(oldfirstName);
         editlastName.setText(oldlastName);
@@ -119,36 +109,27 @@ public class EditAccountActivity extends AppCompatActivity implements Observer {
             String newPhoneNumber = editphoneNumber.getText().toString().trim();
 
             //TODO: update user in the DB
-            updateUser(newUserName,newPassword,newFirstName,newLastName,newEmail,newPhoneNumber);
-            this.finish();
-
+            updateNonCriticalUserFields(newUserName,newFirstName,newLastName,newPhoneNumber);
 
         }
         else{
             btnSave.setEnabled(false);
         }
     }
-    public void updateUser(String newUserName, String newPassword,String newFirstName,
-                           String newLastName,String newEmail,String newPhoneNumber){
+    public void updateNonCriticalUserFields(String newUserName, String newFirstName,
+                           String newLastName,String newPhoneNumber){
+        User sessionUser = App.getModel().getSessionUser();
+        if (sessionUser != null) {
+            sessionUser.setUsername(newUserName);
+            Account sessionUserAccount = sessionUser.getAccount();
+            sessionUserAccount.setFirstName(newFirstName);
+            sessionUserAccount.setLastName(newLastName);
+            sessionUserAccount.setPhoneNumber(newPhoneNumber);
 
-        DBManager dbManager = App.getDbManager();
-        FirebaseAuth auth = FirebaseAuth.getInstance();
-        User curUser =App.getModel().getSessionUser();
-        Account account = curUser.getAccount();
-        String docID = auth.getUid();
-        Log.d("DATATEST",docID);
-        account.setFirstName(newFirstName);
-        account.setLastName(newLastName);
-        account.setPhoneNumber(newPhoneNumber);
-        curUser.setUsername(newUserName);
-        //TODO: maybe its not a good idea to allow changing email
-        Rider newRider = new Rider(newUserName,account);
-
-        //dbManager.updateRider(docID,newRider,listener);
-
-
-
+            App.getController().updateNonCriticalUserFields(sessionUser, this);
+        }
     }
+
     @Override
     public void update(Observable o, Object arg) {
         //TODO:: fill this in
@@ -160,5 +141,10 @@ public class EditAccountActivity extends AppCompatActivity implements Observer {
         // THIS CODE SHOULD BE IMPLEMENTED IN EVERY VIEW
         ApplicationModel m = App.getModel();
         m.deleteObserver(this);
+    }
+
+    @Override
+    public void onError(Error e) {
+
     }
 }

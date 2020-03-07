@@ -1,10 +1,13 @@
 package com.example.buber.Services;
 import com.example.buber.App;
 import com.example.buber.Controllers.EventCompletionListener;
+import com.example.buber.DB.DBManager;
 import com.example.buber.Model.Account;
 import com.example.buber.Model.Driver;
 import com.example.buber.Model.Rider;
 import com.example.buber.Model.User;
+
+import java.util.HashMap;
 
 public class ApplicationService {
     private static final String TAG = "ApplicationService";
@@ -56,6 +59,26 @@ public class ApplicationService {
 
     public static void logoutUser() {
         App.getAuthDBManager().signOut();
+    }
+
+    public static void updateUser(User updateSessionUser, EventCompletionListener listener) {
+        // TODO: Get the Uid of the user using lukes function he wrote in AuthDBManger and complete
+        //  These functions
+        App.getDbManager().updateRider(updateSessionUser, new EventCompletionListener() {
+            @Override
+            public void onCompletion(HashMap<String, ?> resultData, Error err) {
+                if (err == null) {
+                    App.getDbManager().updateDriver(updateSessionUser, new EventCompletionListener() {
+                        @Override
+                        public void onCompletion(HashMap<String, ?> resultData, Error err) {
+                            if (err == null) {
+                                listener.onCompletion(null, null);
+                            }
+                        }
+                    });
+                }
+            }
+        });
     }
 
 }

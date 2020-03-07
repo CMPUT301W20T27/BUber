@@ -1,12 +1,13 @@
 package com.example.buber.Controllers;
 
+import android.app.Application;
+
 import com.example.buber.App;
 import com.example.buber.Model.ApplicationModel;
 import com.example.buber.Model.UserLocation;
 import com.example.buber.Model.User;
 import com.example.buber.Services.*;
 import com.example.buber.Views.UIErrorHandler;
-import com.google.android.gms.maps.UiSettings;
 
 public class ApplicationController {
     private ApplicationModel model;
@@ -66,7 +67,15 @@ public class ApplicationController {
 
     public void getDriverTrips(UserLocation loc, UIErrorHandler view) {
         // TODO EVAN: Call Madeehas Code
+    }
 
-
+    public void updateNonCriticalUserFields(User updatedSessionUser, UIErrorHandler view) {
+        ApplicationService.updateUser(updatedSessionUser,((resultData, err) -> {
+            if (err == null) {
+                App.getModel().setSessionUser(updatedSessionUser);
+            } else {
+                // TODO: Handle Errors
+            }
+        }));
     }
 }
