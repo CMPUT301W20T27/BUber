@@ -222,7 +222,11 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
     }
 
     public void handleRideRequestClick(View v) {
-        startActivity(new Intent(MapActivity.this, TripBuilder.class));
+        Intent tripBuilderIntent = new Intent(MapActivity.this, TripBuilderActivity.class);
+        tripBuilderIntent.putExtra(
+                "currentLatLong",
+                new double[] {mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude()});
+        startActivity(tripBuilderIntent);
     }
 
     @Override
