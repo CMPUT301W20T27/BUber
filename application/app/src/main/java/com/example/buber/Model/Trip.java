@@ -12,17 +12,17 @@ public class Trip {
             CANCELED
     }
     private STATUS status;
-    private Location startLocation;
-    private Location endLocation;
+    private UserLocation startUserLocation;
+    private UserLocation endUserLocation;
 
     public Trip(){}
 
-    public Trip(String riderID, STATUS status, Location startLocation, Location endLocation) {
+    public Trip(String riderID, STATUS status, UserLocation startUserLocation, UserLocation endUserLocation) {
         this.driverID = null;
         this.riderID = riderID;
         this.status = STATUS.PENDING;
-        this.startLocation = startLocation;
-        this.endLocation = endLocation;
+        this.startUserLocation = startUserLocation;
+        this.endUserLocation = endUserLocation;
     }
 
     public String getDriverID() {

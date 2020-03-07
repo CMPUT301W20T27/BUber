@@ -80,4 +80,5 @@ public class AuthDBManager {
         return mAuth.getCurrentUser() != null;
     }
 
+
 }

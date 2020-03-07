@@ -1,10 +1,10 @@
 package com.example.buber.Model;
 
-public class Location {
+public class UserLocation {
     private double latitude;
     private double longitude;
 
-    public Location(double latitude, double longitude) {
+    public UserLocation(double latitude, double longitude) {
         this.latitude = latitude;
         this.longitude = longitude;
     }
