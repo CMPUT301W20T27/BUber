@@ -210,7 +210,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
     }
 
     public void handleRideRequestClick(View v){
-        
+
     }
 
     public void handleScreenClick(View v) {
