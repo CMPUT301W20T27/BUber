@@ -38,7 +38,6 @@ public class TripSearchActivity extends AppCompatActivity implements UIErrorHand
         // TODO MIKE: Handle Incoming UI Errors
     }
 
-
     @Override
     public void update(Observable o, Object arg) {
         // TODO MIKE: Check for updated query result from model
