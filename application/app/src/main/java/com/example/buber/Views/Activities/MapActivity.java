@@ -209,9 +209,6 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         this.finish();
     }
 
-    public void handleRideRequestClick(View v){
-
-    }
 
     public void handleScreenClick(View v) {
         if (showSideBar) {
@@ -222,6 +219,10 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         } else {
             // TODO: Handle Everything else
         }
+    }
+
+    public void handleRideRequestClick(View v) {
+        startActivity(new Intent(MapActivity.this, TripBuilder.class));
     }
 
     @Override

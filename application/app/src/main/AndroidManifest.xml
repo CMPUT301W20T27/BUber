@@ -3,6 +3,7 @@
     package="com.example.buber">
     <!-- Needed for google maps -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
         android:allowBackup="true"
@@ -28,6 +29,7 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyDFEIMmFpPoMijm_0YraJn4S33UvtlnqF8" />
 
+        <activity android:name=".Views.Activities.TripBuilder"/>
         <activity android:name=".Views.Activities.MapActivity" />
         <activity android:name=".Views.Activities.CreateAccountActivity" />
         <activity android:name=".Views.Activities.LoginActivity" />
