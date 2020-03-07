@@ -1,14 +1,10 @@
 package com.example.buber.Model;
 
-import com.google.firebase.auth.FirebaseAuth;
-
-import java.util.ArrayList;
 import java.util.Observable;
 
 public class ApplicationModel extends Observable {
     private User sessionUser;
-    private ArrayList<Trip> currentRequests;
-    private FirebaseAuth.AuthStateListener mAuthStateListener;
+    private Trip sessionTrip;
 
     public User getSessionUser() {
         return sessionUser;
@@ -20,13 +16,12 @@ public class ApplicationModel extends Observable {
         notifyObservers();
     }
 
-    public ArrayList<Trip> getCurrentRequests() {
-        return currentRequests;
+    public Trip getSessionTrip() {
+        return sessionTrip;
     }
 
-    public void setCurrentRequests(ArrayList<Trip> currentRequests) {
-        this.currentRequests = currentRequests;
+    public void setSessionTrip(Trip sessionTrip) {
+        this.sessionTrip = sessionTrip;
         notifyObservers();
     }
-
 }

@@ -5,15 +5,25 @@ public class Trip {
 
     private String driverID;
     private String riderID;
-
-    public Trip(){}                                 // VERY IMPORTANT TO HAVE
-
-
-    public Trip(String driverID, String riderOD) {
-        this.driverID = driverID;                   //or doc id-not planned yet
-        this.riderID = riderOD;
+    private enum STATUS {
+            PENDING,
+            DRIVERACCEPT,
+            INPROGRESS,
+            CANCELED
     }
+    private STATUS status;
+    private Location startLocation;
+    private Location endLocation;
 
+    public Trip(){}
+
+    public Trip(String riderID, STATUS status, Location startLocation, Location endLocation) {
+        this.driverID = null;
+        this.riderID = riderID;
+        this.status = STATUS.PENDING;
+        this.startLocation = startLocation;
+        this.endLocation = endLocation;
+    }
 
     public String getDriverID() {
         return driverID;
@@ -36,5 +46,4 @@ public class Trip {
     public String toString() {
         return "Driver ID: " + driverID + "Rider ID: " + riderID;
     }
-
 }
