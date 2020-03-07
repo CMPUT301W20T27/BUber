@@ -50,7 +50,7 @@ public class ApplicationController {
         });
     }
 
-    public void logout(UIErrorHandler view) {
+    public void logout() {
         ApplicationService.logoutUser();
         model.setSessionUser(null);
     }

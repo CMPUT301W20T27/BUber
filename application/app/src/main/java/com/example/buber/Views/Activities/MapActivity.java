@@ -46,7 +46,6 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
     // Views
     private Button settingsButton;
     private Button accountButton;
-    private Button logoutButton;
     private View sideBarView;
     private Button riderRequestButton;
 
@@ -71,7 +70,6 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
 
         settingsButton = findViewById(R.id.settings_button);
         accountButton = findViewById(R.id.account_button);
-        logoutButton = findViewById(R.id.logout_button);
         sideBarView = findViewById(R.id.sidebar);
         riderRequestButton = findViewById(R.id.rider_request_button);
 
@@ -204,7 +202,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
     }
 
     public void handleLogoutButtonClick(View v) {
-        App.getController().logout(this);
+        App.getController().logout();
         startActivity(new Intent(MapActivity.this, LoginActivity.class));
         this.finish();
     }

@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -22,6 +23,7 @@ public class LoginActivity extends AppCompatActivity implements Observer, UIErro
     private String TAG = "LoginActivity";
     private EditText editEmail;
     private EditText editPassword;
+    private Button logoutButton;
     private int driverLoginBtnID;
 
     @Override
