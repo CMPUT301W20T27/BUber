@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.buber">
-    <!-- Needed for google maps-->
+    <!-- Needed for google maps -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -10,6 +11,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.NoActionBar">
+        <activity android:name=".Views.Activities.EditAccountActivity"></activity>
+
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
@@ -20,15 +23,15 @@
      You need a different API key for each encryption key, including the release key that is used to
      sign the APK for publishing.
      You can define the keys for the debug and release targets in src/debug/ and src/release/.
--->
+        -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyDFEIMmFpPoMijm_0YraJn4S33UvtlnqF8" />
-        <activity android:name=".Views.Activities.MapActivity"></activity>
+
+        <activity android:name=".Views.Activities.MapActivity" />
         <activity android:name=".Views.Activities.CreateAccountActivity" />
         <activity android:name=".Views.Activities.LoginActivity" />
         <activity android:name=".Views.Activities.MainActivity">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
