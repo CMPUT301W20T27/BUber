@@ -17,7 +17,7 @@ public class Trip {
 
     public Trip(){}
 
-    public Trip(String riderID, STATUS status, UserLocation startUserLocation, UserLocation endUserLocation) {
+    public Trip(String riderID, UserLocation startUserLocation, UserLocation endUserLocation) {
         this.driverID = null;
         this.riderID = riderID;
         this.status = STATUS.PENDING;
@@ -39,6 +39,34 @@ public class Trip {
 
     public void setRiderOD(String riderID) {
         this.riderID = riderID;
+    }
+
+    public STATUS getStatus() {
+        return status;
+    }
+
+    public void setStatus(STATUS status) {
+        this.status = status;
+    }
+
+    public void setRiderID(String riderID) {
+        this.riderID = riderID;
+    }
+
+    public UserLocation getStartUserLocation() {
+        return startUserLocation;
+    }
+
+    public void setStartUserLocation(UserLocation startUserLocation) {
+        this.startUserLocation = startUserLocation;
+    }
+
+    public UserLocation getEndUserLocation() {
+        return endUserLocation;
+    }
+
+    public void setEndUserLocation(UserLocation endUserLocation) {
+        this.endUserLocation = endUserLocation;
     }
 
     @NonNull

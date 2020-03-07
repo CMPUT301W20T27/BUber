@@ -228,7 +228,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         Intent tripBuilderIntent = new Intent(MapActivity.this, TripBuilderActivity.class);
         tripBuilderIntent.putExtra(
                 "currentLatLong",
-                new double[] {mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude()});
+                new double[] {mLastKnownUserLocation.getLatitude(), mLastKnownUserLocation.getLongitude()});
         startActivity(tripBuilderIntent);
     }
 

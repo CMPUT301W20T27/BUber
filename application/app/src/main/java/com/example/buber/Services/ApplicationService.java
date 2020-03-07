@@ -10,10 +10,10 @@ import com.example.buber.Model.User;
 public class ApplicationService {
     private static final String TAG = "ApplicationService";
 
-    public static void createNewTrip(Trip trip, EventCompletionListener controllerListener) {
+    public static void createNewTrip(Trip tripRequest, EventCompletionListener controllerListener) {
         App
                 .getDbManager()
-                .createTrip(trip,
+                .createTrip(tripRequest,
                         (resultData, err) -> {
                             if (err != null) {
                                 controllerListener.onCompletion(null, new Error(err.getMessage()));

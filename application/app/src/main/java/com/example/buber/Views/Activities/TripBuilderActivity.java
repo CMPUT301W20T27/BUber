@@ -13,9 +13,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.buber.App;
 import com.example.buber.Model.ApplicationModel;
-import com.example.buber.Model.Location;
 import com.example.buber.Model.Trip;
 import com.example.buber.Model.User;
+import com.example.buber.Model.UserLocation;
 import com.example.buber.R;
 import com.example.buber.Views.UIErrorHandler;
 import com.google.android.gms.common.api.Status;
@@ -31,7 +31,8 @@ import java.util.Observer;
 
 public class TripBuilderActivity extends AppCompatActivity implements UIErrorHandler, Observer {
     Trip tripRequest;
-    Location startLoc, endLoc;
+    Place startPt, endPt;
+    UserLocation startLoc, endLoc;
     LinearLayout fareOfferingLayout;
     EditText fareOfferingEditText;
     Button submitTripBtn;
@@ -47,7 +48,7 @@ public class TripBuilderActivity extends AppCompatActivity implements UIErrorHan
 
         // Set start location parameters from previous map activity
         double[] currentLatLong = getIntent().getDoubleArrayExtra("currentLatLong");
-        startLoc = new Location(currentLatLong[0], currentLatLong[1]);
+        startLoc = new UserLocation(currentLatLong[0], currentLatLong[1]);
 
         // Initially hide visibility of price offering
         fareOfferingLayout =  findViewById(R.id.fareOfferingEditTextEstimationlinearLayout);
@@ -91,7 +92,6 @@ public class TripBuilderActivity extends AppCompatActivity implements UIErrorHan
                     fromAutocompleteSupportFragment.setText("");
 
                 });
-
         toAutocompleteSupportFragment
                 .getView()
                 .findViewById(R.id.places_autocomplete_clear_button)
@@ -103,19 +103,20 @@ public class TripBuilderActivity extends AppCompatActivity implements UIErrorHan
 
         // Set up a PlaceSelectionListener to handle the response.
         fromAutocompleteSupportFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-
-
             @Override
             public void onPlaceSelected(Place place) {
                 final LatLng latLng = place.getLatLng();
                 if (startLoc == null) {
-                    startLoc = new Location(latLng.latitude, latLng.longitude);
+                    startLoc = new UserLocation(latLng.latitude, latLng.longitude);
                 } else {
                     startLoc.setLatitude(latLng.latitude);
                     startLoc.setLongitude(latLng.longitude);
                 }
 
+                startPt = place;
+
                 if (startLoc != null && endLoc != null) {
+                    startPt = place;
                     engageSubmissionUI();
                 } else {
                     disEngageSubmissionUI();
@@ -131,13 +132,14 @@ public class TripBuilderActivity extends AppCompatActivity implements UIErrorHan
             public void onPlaceSelected(Place place) {
                 final LatLng latLng = place.getLatLng();
                 if (endLoc == null) {
-                    endLoc = new Location(latLng.latitude, latLng.longitude);
+                    endLoc = new UserLocation(latLng.latitude, latLng.longitude);
                 } else {
                     endLoc.setLatitude(latLng.latitude);
                     endLoc.setLongitude(latLng.longitude);
                 }
 
                 if (startLoc != null && endLoc != null) {
+                    endPt = place;
                     engageSubmissionUI();
                 } else {
                     disEngageSubmissionUI();
@@ -149,8 +151,11 @@ public class TripBuilderActivity extends AppCompatActivity implements UIErrorHan
             }
         });
 
+
         submitTripBtn.setOnClickListener((View v) -> {
-//            User currUser = App.getModel().getSessionUser();
+            String riderID = App.getAuthDBManager().getCurrentUserID();
+            Trip tripRequest = new Trip(riderID, startLoc, endLoc);
+            App.getController().createNewTrip(tripRequest, this);
         });
     }
 

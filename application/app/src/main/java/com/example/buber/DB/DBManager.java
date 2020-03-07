@@ -14,6 +14,7 @@ import com.google.firebase.firestore.SetOptions;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 public class DBManager {
 
@@ -60,16 +61,26 @@ public class DBManager {
                 });
     }
 
-    public void createTrip(String docID, Trip t, EventCompletionListener listener) {
-        collectionTrip.document(docID).set(t)
+    public void createTrip(Trip tripRequest, EventCompletionListener listener) {
+//        Map<String, Object> data = new HashMap<>();
+//        data.put("driverID", tripRequest.getDriverID());
+//        data.put("riderID", tripRequest.getRiderID());
+//        data.put("status", tripRequest.getStatus());
+//
+//        data.put("endUserLocation", tripRequest.getEndUserLocation().ge);
+//        data.put("startUserLocation", tripRequest.getEndUserLocation());
+
+        collectionTrip
+                .document(tripRequest.getRiderID())
+                .set(tripRequest)
                 .addOnSuccessListener(documentReference -> {
                     HashMap<String, Trip> toReturn = new HashMap<>();
-                    toReturn.put("trip", t);
+                    toReturn.put("trip", tripRequest);
                     listener.onCompletion(toReturn, null);
-                }).addOnFailureListener((@NonNull Exception e) -> {
-            Log.d(TAG, e.getMessage());
-            listener.onCompletion(null, new Error("Login failed. Please try again," +
-                    "if the issue persists, close and restart the app."));
+                })
+                .addOnFailureListener((@NonNull Exception e) -> {
+                    Log.d(TAG, e.getMessage());
+                    listener.onCompletion(null, new Error("Could not submit trip request."));
         });
     }
 
