@@ -2,6 +2,7 @@ package com.example.buber.DB;
 import android.util.Log;
 import androidx.annotation.NonNull;
 
+import com.example.buber.App;
 import com.example.buber.Controllers.EventCompletionListener;
 import com.example.buber.Model.Driver;
 import com.example.buber.Model.Rider;
@@ -78,6 +79,19 @@ public class AuthDBManager {
 
     public boolean isLoggedIn() {
         return mAuth.getCurrentUser() != null;
+    }
+
+    public void getCurrentSessionUser(EventCompletionListener listener) {
+        if (isLoggedIn()) {
+            String uid = mAuth.getUid();
+            App.getDbManager().getRider(uid, ((resultData, err) -> {
+                if (resultData != null) {
+                    listener.onCompletion(resultData, null);
+                } else if (err != null){
+                    listener.onCompletion(null, new Error("Failed to get current session user"));
+                }
+            }));
+        }
     }
 
 }
