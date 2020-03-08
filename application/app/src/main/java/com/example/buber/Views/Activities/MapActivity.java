@@ -127,6 +127,8 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
                     if (task.isSuccessful()) {
                         // Set the map's camera position to the current location of the device.
                         mLastKnownUserLocation =  (Location) task.getResult();
+                        //TODO::fix controller lat and long
+
                         App.getController()
                                 .updateUserLocation(
                                     new UserLocation(
@@ -134,6 +136,8 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
                                             mLastKnownUserLocation.getLongitude()
                                     )
                         );
+
+
                         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                                 new LatLng(mLastKnownUserLocation.getLatitude(),
                                         mLastKnownUserLocation.getLongitude()), DEFAULT_ZOOM));

@@ -78,6 +78,7 @@
             android:layout_width="0dp"
             android:layout_height="50dp"
             android:background="@drawable/background_transparent"
+            android:onClick="handleAccountButtonClick"
             android:text="Account"
             app:layout_constraintBottom_toTopOf="@+id/logout_button"
             app:layout_constraintEnd_toEndOf="parent"

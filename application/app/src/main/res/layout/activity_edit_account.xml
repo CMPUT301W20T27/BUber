@@ -84,24 +84,6 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginTop="16dp"
-            android:padding="4dp"
-            android:text="Email: "
-            android:textColor="#FFFFFF"
-            android:textSize="16sp" />
-
-        <EditText
-            android:id="@+id/createAccountEmail"
-            android:layout_width="350dp"
-            android:layout_height="wrap_content"
-            android:background="#FFFFFF"
-            android:hint="(eg. someone@gmail.com)"
-            android:inputType="textEmailAddress"
-            android:textColor="#000000" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
             android:padding="4dp"
             android:text="Phone Number: "
             android:textColor="#FFFFFF"
@@ -114,20 +96,6 @@
             android:background="#FFFFFF"
             android:hint="(eg. 7805551234)"
             android:inputType="phone"
-            android:maxLength="12"
-            android:textColor="#000000" />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:padding="4dp"
-            android:text="New Password"
-            android:textColor="#FFFFFF"
-            android:textSize="16sp"/>
-        <EditText
-            android:id="@+id/editAccountPassword"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="#FFFFFF"
             android:maxLength="12"
             android:textColor="#000000" />
 

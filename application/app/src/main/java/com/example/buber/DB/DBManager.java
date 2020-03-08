@@ -32,6 +32,7 @@ public class DBManager {
         collectionTrip = database.collection(tripCollectionName);
     }
 
+
     /* CREATE */
     public void createRider(String docID, Rider r, EventCompletionListener listener) {
         collectionRider.document(docID).set(r)

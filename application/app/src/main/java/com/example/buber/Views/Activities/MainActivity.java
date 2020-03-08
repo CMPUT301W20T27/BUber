@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.Application;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.example.buber.App;
@@ -45,6 +46,7 @@ public class MainActivity extends AppCompatActivity implements Observer, UIError
 
     private void handleLoginStatus() {
         if(App.getAuthDBManager().isLoggedIn()) {
+            Log.d("LOGIN","Already logged in");
             App.getAuthDBManager().getCurrentSessionUser((resultData, err) -> {
                 if (resultData != null) {
                     App.getModel().setSessionUser((User) resultData.get("user"));
