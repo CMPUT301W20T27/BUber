@@ -74,7 +74,7 @@ public class TripSearchActivity extends AppCompatActivity implements UIErrorHand
         UserLocation datastart = new UserLocation(53.511078, -113.555388);
         Trip newtrip = new Trip("LUKE", datastart , datastart);
 
-       database.collection("W")
+       database.collection("WHATEVERNAMEHERE")
                 .add(newtrip)
                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                     @Override
