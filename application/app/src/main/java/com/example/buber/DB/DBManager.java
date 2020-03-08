@@ -45,7 +45,7 @@ public class DBManager {
                     Log.d(TAG, e.getMessage());
                     listener.onCompletion(null, new Error("Login failed. Please try again," +
                             "if the issue persists, close and restart the app."));
-        });
+                });
     }
 
     public void createDriver(String docID, Driver d, EventCompletionListener listener) {
@@ -55,23 +55,25 @@ public class DBManager {
                     toReturn.put("user", d);
                     listener.onCompletion(toReturn, null);
                 }).addOnFailureListener((@NonNull Exception e) -> {
-                    Log.d(TAG, e.getMessage());
-                    listener.onCompletion(null, new Error("Login failed. Please try again," +
-                            "if the issue persists, close and restart the app."));
-                });
-    }
-
-    public void createTrip(String docID, Trip t, EventCompletionListener listener) {
-        collectionTrip.document(docID).set(t)
-                .addOnSuccessListener(documentReference -> {
-                    HashMap<String, Trip> toReturn = new HashMap<>();
-                    toReturn.put("trip", t);
-                    listener.onCompletion(toReturn, null);
-                }).addOnFailureListener((@NonNull Exception e) -> {
             Log.d(TAG, e.getMessage());
             listener.onCompletion(null, new Error("Login failed. Please try again," +
                     "if the issue persists, close and restart the app."));
         });
+    }
+
+    public void createTrip(Trip tripRequest, EventCompletionListener listener) {
+        collectionTrip
+                .document(tripRequest.getRiderID())
+                .set(tripRequest)
+                .addOnSuccessListener(documentReference -> {
+                    HashMap<String, Trip> toReturn = new HashMap<>();
+                    toReturn.put("trip", tripRequest);
+                    listener.onCompletion(toReturn, null);
+                })
+                .addOnFailureListener((@NonNull Exception e) -> {
+                    Log.d(TAG, e.getMessage());
+                    listener.onCompletion(null, new Error("Could not submit trip request."));
+                });
     }
 
 
