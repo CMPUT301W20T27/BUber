@@ -30,6 +30,12 @@ public class UserLocation {
         this.longitude = longitude;
     }
 
+    public double distancePriceEstimate(UserLocation end) {
+        // Based on UberX's Price Constant From Edmonton, AB To Calgary, AB @ March 7, 2020
+        // Rounding to two decimal places using the math round
+        return Math.round(1.1823 * distanceTo(end) * 100.0) / 100.0;
+    }
+    
     public double distanceTo(UserLocation other) {
         double lat1 = this.getLatitude();
         double lon1 = this.getLongitude();

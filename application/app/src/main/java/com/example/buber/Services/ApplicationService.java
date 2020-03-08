@@ -4,10 +4,23 @@ import com.example.buber.Controllers.EventCompletionListener;
 import com.example.buber.Model.Account;
 import com.example.buber.Model.Driver;
 import com.example.buber.Model.Rider;
+import com.example.buber.Model.Trip;
 import com.example.buber.Model.User;
 
 public class ApplicationService {
     private static final String TAG = "ApplicationService";
+
+    public static void createNewTrip(Trip tripRequest, EventCompletionListener controllerListener) {
+        App
+                .getDbManager()
+                .createTrip(tripRequest,
+                        (resultData, err) -> {
+                            if (err != null) {
+                                controllerListener.onCompletion(null, new Error(err.getMessage()));
+                                return;
+                            }
+                        });
+    }
 
     public static void createNewUser(
             String username,
