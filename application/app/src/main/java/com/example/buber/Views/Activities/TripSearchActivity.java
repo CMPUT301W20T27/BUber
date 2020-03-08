@@ -43,6 +43,7 @@ public class TripSearchActivity extends AppCompatActivity implements UIErrorHand
 
         App.getModel().addObserver(this);
 
+        //note: uncomment below to use populateTripList function
         //populateTripList();
 
         //Below are dummy variables for the list (for testing)
@@ -89,6 +90,11 @@ public class TripSearchActivity extends AppCompatActivity implements UIErrorHand
     public void update(Observable o, Object arg) {
         // TODO MIKE: Check for updated query result from model
         //  If exists, populate the list, its called driverQueryResult
+        //update trips list
+        tripSearchRecordArrayAdapter.notifyDataSetChanged();
+        //note uncomment below to use populate trip list function
+        //populateTripList();
+
     }
 
     // TODO MIKE: Lets add some handlers for:
@@ -97,7 +103,11 @@ public class TripSearchActivity extends AppCompatActivity implements UIErrorHand
     //  2. Have a empty method that is called when a user confirms they want to select a trip
 
     public void onAcceptPressed(TripSearchRecord tripSearchRecord, int position){
-        //TODO determine what happens when user confirms they want to select a trip
+        //remove accepted trip from list of trip requests
+        tripSearchRecordArrayAdapter.remove(tripSearchRecord);
+        //update trips list
+        tripSearchRecordArrayAdapter.notifyDataSetChanged();
+        //TODO determine what happens when user confirms they want to select a trip (backend stuff?)
     }
 
     @Override
