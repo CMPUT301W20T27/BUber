@@ -1,10 +1,5 @@
 package com.example.buber.Views.Activities;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -15,8 +10,14 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
 import com.example.buber.App;
 import com.example.buber.Model.ApplicationModel;
+import com.example.buber.Model.User;
 import com.example.buber.Model.UserLocation;
 import com.example.buber.R;
 import com.example.buber.Views.UIErrorHandler;
@@ -30,6 +31,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.Task;
+
 import java.util.Observable;
 import java.util.Observer;
 
@@ -42,12 +44,14 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private Location mLastKnownUserLocation;
     private static final float DEFAULT_ZOOM = 15;
+    private final String MAIN_ACTION_BUTTON_RIDER_TEXT = "Request a Ride";
+    private final String MAIN_ACTION_BUTTON_DRIVER_TEXT = "Search for Active Rides";
 
     // Views
     private Button settingsButton;
     private Button accountButton;
     private View sideBarView;
-    private Button riderRequestButton;
+    private Button mainActionButton;
 
     // State
     private boolean showSideBar;
@@ -72,14 +76,19 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         settingsButton = findViewById(R.id.settings_button);
         accountButton = findViewById(R.id.account_button);
         sideBarView = findViewById(R.id.sidebar);
-        riderRequestButton = findViewById(R.id.rider_request_button);
+        mainActionButton = findViewById(R.id.rider_request_button);
 
         sideBarView.setVisibility(View.INVISIBLE);
         settingsButton.setVisibility(View.VISIBLE);
-        riderRequestButton.setVisibility(View.VISIBLE);
+        mainActionButton.setVisibility(View.VISIBLE);
         showSideBar = false;
 
         App.getModel().addObserver(this);
+
+        User sessionUser = App.getModel().getSessionUser();
+
+        mainActionButton.setText(sessionUser.getType() == User.TYPE.RIDER ? MAIN_ACTION_BUTTON_RIDER_TEXT : MAIN_ACTION_BUTTON_DRIVER_TEXT);
+
     }
 
     public void initializeMap(){
@@ -197,12 +206,10 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         return false;
     }
 
-
-    /* CLICK HANLDERS */
     public void handleSettingsButtonClick(View v) {
         sideBarView.setVisibility(View.VISIBLE);
         settingsButton.setVisibility(View.INVISIBLE);
-        riderRequestButton.setVisibility(View.INVISIBLE);
+        mainActionButton.setVisibility(View.INVISIBLE);
         showSideBar = true;
     }
 
@@ -222,18 +229,24 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
             showSideBar = false;
             sideBarView.setVisibility(View.INVISIBLE);
             settingsButton.setVisibility(View.VISIBLE);
-            riderRequestButton.setVisibility(View.VISIBLE);
+            mainActionButton.setVisibility(View.VISIBLE);
         } else {
             // TODO: Handle Everything else
         }
     }
 
-    public void handleRideRequestClick(View v) {
-        Intent tripBuilderIntent = new Intent(MapActivity.this, TripBuilderActivity.class);
-        tripBuilderIntent.putExtra(
-                "currentLatLong",
-                new double[] {mLastKnownUserLocation.getLatitude(), mLastKnownUserLocation.getLongitude()});
-        startActivity(tripBuilderIntent);
+    public void handleMainActionClick(View v) {
+        User sessionUser = App.getModel().getSessionUser();
+        // Decide dynamically to run rider or driver actions depending on current user
+        Class resultActivity = sessionUser.getType() == User.TYPE.RIDER ? TripBuilderActivity.class : TripSearchActivity.class;
+        Intent intent = new Intent(getBaseContext(), resultActivity);
+        startActivity(intent);
+        if (sessionUser.getType() == User.TYPE.RIDER) {
+            intent.putExtra(
+                    "currentLatLong",
+                    new double[] {mLastKnownUserLocation.getLatitude(), mLastKnownUserLocation.getLongitude()});
+        }
+        startActivity(intent);
     }
 
     @Override
@@ -255,7 +268,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         mMap.setOnMapClickListener(latLng -> {
             if (showSideBar) {
                 sideBarView.setVisibility(View.INVISIBLE);
-                riderRequestButton.setVisibility(View.VISIBLE);
+                mainActionButton.setVisibility(View.VISIBLE);
                 settingsButton.setVisibility(View.VISIBLE);
             }
         });

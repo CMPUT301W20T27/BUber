@@ -1,4 +1,5 @@
 package com.example.buber.DB;
+
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -7,13 +8,14 @@ import com.example.buber.Controllers.EventCompletionListener;
 import com.example.buber.Model.Driver;
 import com.example.buber.Model.Rider;
 import com.example.buber.Model.Trip;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 
 public class DBManager {
 
@@ -99,8 +101,8 @@ public class DBManager {
     public void getDriver(String docID, EventCompletionListener listener) {
         collectionDriver.document(docID)
                 .get().addOnSuccessListener(documentSnapshot -> {
-            HashMap<String, Rider> toReturn = new HashMap<>();
-            toReturn.put("user", documentSnapshot.toObject(Rider.class));
+            HashMap<String, Driver> toReturn = new HashMap<>();
+            toReturn.put("user", documentSnapshot.toObject(Driver.class));
             listener.onCompletion(toReturn, null);
         }).addOnFailureListener((@NonNull Exception e) -> {
             Log.d(TAG, e.getMessage());
@@ -119,6 +121,21 @@ public class DBManager {
             Log.d(TAG, e.getMessage());
             listener.onCompletion(null, new Error("Login failed. Please try again," +
                     "if the issue persists, close and restart the app."));
+        });
+    }
+
+    public void getTrips(EventCompletionListener listener) {
+        collectionTrip.get().addOnSuccessListener(queryDocumentSnapshots -> {
+            List<DocumentSnapshot> data = queryDocumentSnapshots.getDocuments();
+            HashMap<String, List<Trip>> toReturn = new HashMap<>();
+            List<Trip> tripData = new LinkedList<>();
+            for (DocumentSnapshot snapshot : data) {
+                tripData.add(snapshot.toObject(Trip.class));
+            }
+            toReturn.put("all-trips", tripData);
+            listener.onCompletion(toReturn, null);
+        }).addOnFailureListener(e -> {
+            listener.onCompletion(null, new Error(e.getMessage()));
         });
     }
 

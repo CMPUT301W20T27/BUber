@@ -1,18 +1,18 @@
 package com.example.buber.Views.Activities;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.buber.App;
 import com.example.buber.Model.ApplicationModel;
 import com.example.buber.Model.User;
 import com.example.buber.R;
-import com.example.buber.Views.Activities.FormUtilities.CreateAccountFormUtils;
+import com.example.buber.Views.FormUtilities.CreateAccountFormUtils;
 import com.example.buber.Views.UIErrorHandler;
 
 import java.util.Observable;

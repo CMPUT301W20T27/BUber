@@ -1,14 +1,16 @@
 package com.example.buber.Controllers;
 
-import android.app.Application;
-
 import com.example.buber.App;
 import com.example.buber.Model.ApplicationModel;
 import com.example.buber.Model.Trip;
-import com.example.buber.Model.UserLocation;
 import com.example.buber.Model.User;
-import com.example.buber.Services.*;
+import com.example.buber.Model.UserLocation;
+import com.example.buber.Services.ApplicationService;
+import com.example.buber.Views.Activities.MapActivity;
 import com.example.buber.Views.UIErrorHandler;
+
+import java.util.List;
+import java.util.Observer;
 
 public class ApplicationController {
     private ApplicationModel model;
@@ -79,11 +81,37 @@ public class ApplicationController {
         }
     }
 
-    public void getDriverTrips(UserLocation loc, UIErrorHandler view) {
-        // TODO EVAN: Call Madeehas Code
+    public static void getTripsForUser(UIErrorHandler view) {
+        ApplicationModel m = App.getModel();
+        UserLocation sessionUserLocation = m.getSessionUser().getCurrentUserLocation();
+        ApplicationService.getFilteredTrips(sessionUserLocation, (resultData, err) -> {
+            if (err != null) view.onError(err);
+            else {
+                List<Trip> sessionTripList = (List<Trip>) resultData.get("filtered-trips");
+                m.setSessionTripList(sessionTripList);
+            }
+        });
     }
 
-    public void updateNonCriticalUserFields(User updatedSessionUser, UIErrorHandler view) {
+    public static void handleDriverTripSelect(Trip selectedTrip) {
+        ApplicationModel m = App.getModel();
+        selectedTrip.setStatus(Trip.STATUS.DRIVERACCEPT);
+        String userId = App.getAuthDBManager().getCurrentUserID();
+        selectedTrip.setDriverID(userId);
+        ApplicationService.updateTripStatus(userId, selectedTrip, ((resultData, err) -> {
+            if (err != null) {
+                List<Observer> mapObservers = m.getObserversMatchingClass(MapActivity.class);
+                for (Observer map : mapObservers) {
+                    ((UIErrorHandler) map).onError(err);
+                }
+            } else {
+                m.setSessionTrip(selectedTrip);
+                m.setSessionTripList(null);
+            }
+        }));
+    }
+
+    public static void updateNonCriticalUserFields(User updatedSessionUser, UIErrorHandler view) {
         ApplicationService.updateUser(updatedSessionUser,((resultData, err) -> {
             if (err == null) {
                 App.getModel().setSessionUser(updatedSessionUser);

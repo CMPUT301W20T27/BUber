@@ -1,7 +1,5 @@
 package com.example.buber.Views.Activities;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -9,12 +7,14 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.buber.App;
 import com.example.buber.Model.Account;
 import com.example.buber.Model.ApplicationModel;
 import com.example.buber.Model.User;
 import com.example.buber.R;
-import com.example.buber.Views.Activities.FormUtilities.CreateAccountFormUtils;
+import com.example.buber.Views.FormUtilities.CreateAccountFormUtils;
 import com.example.buber.Views.UIErrorHandler;
 
 import java.util.Observable;
@@ -95,7 +95,6 @@ public class EditAccountActivity extends AppCompatActivity implements Observer, 
             String newLastName = editLastName.getText().toString().trim();
             String newPhoneNumber = editPhoneNumber.getText().toString().trim();
 
-            //TODO: update user in the DB
             updateNonCriticalUserFields(newUserName,newFirstName,newLastName,newPhoneNumber);
             this.finish();
         }
@@ -118,9 +117,7 @@ public class EditAccountActivity extends AppCompatActivity implements Observer, 
     }
 
     @Override
-    public void update(Observable o, Object arg) {
-        //TODO:: fill this in
-    }
+    public void update(Observable o, Object arg) { }
 
     @Override
     public void onDestroy() {

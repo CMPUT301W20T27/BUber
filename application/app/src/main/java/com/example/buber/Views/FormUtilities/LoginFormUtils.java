@@ -1,9 +1,6 @@
-package com.example.buber.Views.Activities.FormUtilities;
+package com.example.buber.Views.FormUtilities;
 
 import android.widget.EditText;
-
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthEmailException;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

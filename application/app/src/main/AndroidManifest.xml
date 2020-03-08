@@ -33,8 +33,8 @@
         <activity android:name=".Views.Activities.MapActivity" />
         <activity android:name=".Views.Activities.CreateAccountActivity" />
         <activity android:name=".Views.Activities.LoginActivity" />
+        <activity android:name=".Views.Activities.TripSearchActivity"/>
         <activity android:name=".Views.Activities.MainActivity">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

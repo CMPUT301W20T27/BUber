@@ -1,4 +1,4 @@
-package com.example.buber.Views.Activities.FormUtilities;
+package com.example.buber.Views.FormUtilities;
 
 import android.widget.EditText;
 import java.util.regex.Matcher;
