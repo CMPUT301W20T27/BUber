@@ -38,6 +38,7 @@ public class TripBuilderActivity extends AppCompatActivity implements UIErrorHan
     UserLocation startLoc, endLoc;
     LinearLayout fareOfferingLayout;
     double minimumFareOffering;
+    double riderFareOffering;
 
     // UI
     EditText fareOfferingEditText;
@@ -91,6 +92,7 @@ public class TripBuilderActivity extends AppCompatActivity implements UIErrorHan
         toAutocompleteSupportFragment.getView().setBackgroundColor(Color.WHITE);
 
 
+        /* When User Clears AutoComplete Map Fields */
         fromAutocompleteSupportFragment
                 .getView()
                 .findViewById(R.id.places_autocomplete_clear_button)
@@ -98,6 +100,8 @@ public class TripBuilderActivity extends AppCompatActivity implements UIErrorHan
                     startLoc = new UserLocation(currentLatLong[0], currentLatLong[1]);
                     if (endLoc == null) {
                         disEngageSubmissionUI();
+                    } else {
+                        recalculateFareOffering();
                     }
                     fromAutocompleteSupportFragment.setText("");
 
@@ -111,7 +115,7 @@ public class TripBuilderActivity extends AppCompatActivity implements UIErrorHan
                     toAutocompleteSupportFragment.setText("");
                 });
 
-        // Set up a PlaceSelectionListener to handle the response.
+        /* When User Enters on AutoComplete Map Fields */
         fromAutocompleteSupportFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(Place place) {
@@ -124,6 +128,7 @@ public class TripBuilderActivity extends AppCompatActivity implements UIErrorHan
                 }
 
                 if (startLoc != null && endLoc != null) {
+                    recalculateFareOffering();
                     engageSubmissionUI();
                 } else {
                     disEngageSubmissionUI();
@@ -146,6 +151,7 @@ public class TripBuilderActivity extends AppCompatActivity implements UIErrorHan
                 }
 
                 if (startLoc != null && endLoc != null) {
+                    recalculateFareOffering();
                     engageSubmissionUI();
                 } else {
                     disEngageSubmissionUI();
@@ -160,6 +166,8 @@ public class TripBuilderActivity extends AppCompatActivity implements UIErrorHan
         submitTripBtn.setOnClickListener((View v) -> {
             double offeredFare = Double.valueOf(fareOfferingEditText.getText().toString().trim());
             if (offeredFare >= minimumFareOffering) {
+                riderFareOffering = offeredFare;
+
                 String riderID = App.getAuthDBManager().getCurrentUserID();
                 tripRequest = new Trip(
                         riderID,
@@ -169,20 +177,23 @@ public class TripBuilderActivity extends AppCompatActivity implements UIErrorHan
                 App.getController().createNewTrip(tripRequest, this);
                 startActivity(new Intent(getBaseContext(), MapActivity.class));
             } else {
-                // Reset back cost
+                // Remind user of minimum cost
+                recalculateFareOffering();
                 fareOfferingEditText.setError(
                         "Please enter an amount higher than" + minimumFareOffering);
-                fareOfferingEditText.setText(Double.toString(minimumFareOffering));
             }
         });
     }
 
 
-    private void engageSubmissionUI() {
+    private void recalculateFareOffering() {
         minimumFareOffering = startLoc.distancePriceEstimate(endLoc);
-        String priceEst = Double.toString(startLoc.distancePriceEstimate(endLoc));
+        riderFareOffering = minimumFareOffering;
+        fareOfferingEditText.setText(Double.toString(riderFareOffering));
+    }
+
+    private void engageSubmissionUI() {
         fareOfferingLayout.setVisibility(View.VISIBLE);
-        fareOfferingEditText.setText(priceEst);
         submitTripBtn.setVisibility(View.VISIBLE);
     }
 
