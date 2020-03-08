@@ -4,17 +4,23 @@ import androidx.annotation.NonNull;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.firebase.firestore.GeoPoint;
 
+import com.google.firebase.firestore.DocumentId;
 
 public class Trip {
 
+    @DocumentId
+    private String docID;
+
     private String driverID;
     private String riderID;
+
     private enum STATUS {
             PENDING,
             DRIVERACCEPT,
             INPROGRESS,
             CANCELED
     }
+
     private STATUS status;
     private UserLocation startUserLocation;
     private UserLocation endUserLocation;
@@ -71,9 +77,6 @@ public class Trip {
         return riderID;
     }
 
-    public void setRiderOD(String riderID) {
-        this.riderID = riderID;
-    }
 
     public STATUS getStatus() {
         return status;
@@ -88,6 +91,6 @@ public class Trip {
     @NonNull
     @Override
     public String toString() {
-        return "Driver ID: " + driverID + "Rider ID: " + riderID;
+        return "Driver ID: " + driverID + " Rider ID: " + riderID + " From: " + startUserLocation.toString() + " To: " + endUserLocation.toString();
     }
 }

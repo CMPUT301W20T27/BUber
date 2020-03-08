@@ -44,7 +44,7 @@ public class DBManager {
                     Log.d(TAG, e.getMessage());
                     listener.onCompletion(null, new Error("Login failed. Please try again," +
                             "if the issue persists, close and restart the app."));
-        });
+                });
     }
 
     public void createDriver(String docID, Driver d, EventCompletionListener listener) {
@@ -54,10 +54,10 @@ public class DBManager {
                     toReturn.put("user", d);
                     listener.onCompletion(toReturn, null);
                 }).addOnFailureListener((@NonNull Exception e) -> {
-                    Log.d(TAG, e.getMessage());
-                    listener.onCompletion(null, new Error("Login failed. Please try again," +
-                            "if the issue persists, close and restart the app."));
-                });
+            Log.d(TAG, e.getMessage());
+            listener.onCompletion(null, new Error("Login failed. Please try again," +
+                    "if the issue persists, close and restart the app."));
+        });
     }
 
     public void createTrip(Trip tripRequest, EventCompletionListener listener) {
