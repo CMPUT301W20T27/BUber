@@ -16,7 +16,7 @@ public class ApplicationService {
                 .createTrip(tripRequest,
                         (resultData, err) -> {
                             if (err != null) {
-                                controllerListener.onCompletion(null, new Error(err.getMessage()));
+                                controllerListener.onCompletion(null, null , new Error(err.getMessage()));
                                 return;
                             }
                         });

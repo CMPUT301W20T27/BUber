@@ -11,6 +11,14 @@ public class Trip {
     @DocumentId
     private String docID;
 
+    public String getDocID() {
+        return docID;
+    }
+
+    public void setDocID(String docID) {
+        this.docID = docID;
+    }
+
     private String driverID;
     private String riderID;
 
