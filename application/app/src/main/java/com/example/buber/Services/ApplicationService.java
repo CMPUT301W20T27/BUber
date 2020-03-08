@@ -2,7 +2,6 @@ package com.example.buber.Services;
 
 import com.example.buber.App;
 import com.example.buber.Controllers.EventCompletionListener;
-import com.example.buber.DB.DBManager;
 import com.example.buber.Model.Account;
 import com.example.buber.Model.Driver;
 import com.example.buber.Model.Rider;
@@ -13,8 +12,6 @@ import com.example.buber.Model.UserLocation;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-
-import java.util.HashMap;
 
 public class ApplicationService {
     private static final String TAG = "ApplicationService";
@@ -106,23 +103,16 @@ public class ApplicationService {
         App.getDbManager().updateTrip(uid, selectedTrip, controllerListener);
     }
     public static void updateUser(User updateSessionUser, EventCompletionListener listener) {
-        // TODO: Get the Uid of the user using lukes function he wrote in AuthDBManger and complete
         String uID = App.getAuthDBManager().getCurrentUserID();
         Driver tmpDriver = new Driver(updateSessionUser.getUsername(),updateSessionUser.getAccount());
         Rider tmpRider = new Rider(updateSessionUser.getUsername(),updateSessionUser.getAccount());
-        App.getDbManager().updateRider(uID, tmpRider, new EventCompletionListener() {
-            @Override
-            public void onCompletion(HashMap<String, ?> resultData, Error err) {
-                if (err == null) {
-                    App.getDbManager().updateDriver(uID,tmpDriver, new EventCompletionListener() {
-                        @Override
-                        public void onCompletion(HashMap<String, ?> resultData, Error err) {
-                            if (err == null) {
-                                listener.onCompletion(null, null);
-                            }
-                        }
-                    });
-                }
+        App.getDbManager().updateRider(uID, tmpRider, (resultData, err) -> {
+            if (err == null) {
+                App.getDbManager().updateDriver(uID,tmpDriver, (resultData1, err1) -> {
+                    if (err1 == null) {
+                        listener.onCompletion(null, null);
+                    }
+                });
             }
         });
     }

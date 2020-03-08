@@ -1,10 +1,10 @@
 package com.example.buber.Controllers;
-import android.app.Application;
 
 import com.example.buber.App;
 import com.example.buber.Model.ApplicationModel;
 import com.example.buber.Model.Trip;
 import com.example.buber.Model.User;
+import com.example.buber.Model.UserLocation;
 import com.example.buber.Services.ApplicationService;
 import com.example.buber.Views.Activities.MapActivity;
 import com.example.buber.Views.UIErrorHandler;
@@ -101,7 +101,7 @@ public class ApplicationController {
         ApplicationService.updateTripStatus(userId, selectedTrip, ((resultData, err) -> {
             if (err != null) {
                 List<Observer> mapObservers = m.getObserversMatchingClass(MapActivity.class);
-                for (Observer map: mapObservers) {
+                for (Observer map : mapObservers) {
                     ((UIErrorHandler) map).onError(err);
                 }
             } else {
@@ -109,8 +109,9 @@ public class ApplicationController {
                 m.setSessionTripList(null);
             }
         }));
+    }
 
-    public void updateNonCriticalUserFields(User updatedSessionUser, UIErrorHandler view) {
+    public static void updateNonCriticalUserFields(User updatedSessionUser, UIErrorHandler view) {
         ApplicationService.updateUser(updatedSessionUser,((resultData, err) -> {
             if (err == null) {
                 App.getModel().setSessionUser(updatedSessionUser);
