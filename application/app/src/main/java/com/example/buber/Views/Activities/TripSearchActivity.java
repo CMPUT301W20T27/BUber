@@ -38,8 +38,9 @@ public class TripSearchActivity extends AppCompatActivity implements UIErrorHand
 
         App.getModel().addObserver(this);
 
-        //populateTripList();
+        populateTripList();
 
+        //Below are dummy variables for the list (for testing)
         String[] rider = {"RiderX", "RiderY", "RiderZ"};
         String[] startLat = {"03", "302", "230"};
         String[] startLong = {"21", "143", "212"};
@@ -54,6 +55,7 @@ public class TripSearchActivity extends AppCompatActivity implements UIErrorHand
                     endLong[i], estCost[i], distDriver[i])));
         }
 
+        //Activate the custom array adapter (CustomTripList)
         tripSearchRecordArrayAdapter = new CustomTripList(this, tripDataList);
         tripSearchList.setAdapter(tripSearchRecordArrayAdapter);
     }
@@ -66,6 +68,7 @@ public class TripSearchActivity extends AppCompatActivity implements UIErrorHand
     @Override
     public void onError(Error e) {
         // TODO MIKE: Handle Incoming UI Errors
+
     }
 
     @Override
@@ -78,6 +81,7 @@ public class TripSearchActivity extends AppCompatActivity implements UIErrorHand
     //  1. Viewing details for a ride when a user clicks on them (add a itemclicklistener to each item
     //  in the list)
     //  2. Have a empty method that is called when a user confirms they want to select a trip
+
 
     @Override
     public void onDestroy() {
