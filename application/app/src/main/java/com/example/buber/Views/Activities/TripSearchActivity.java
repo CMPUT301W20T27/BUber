@@ -1,9 +1,12 @@
 package com.example.buber.Views.Activities;
 
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.buber.App;
@@ -11,6 +14,7 @@ import com.example.buber.Model.ApplicationModel;
 import com.example.buber.Model.Trip;
 import com.example.buber.Model.UserLocation;
 import com.example.buber.R;
+import com.example.buber.Views.Activities.FormUtilities.AcceptTripRequestFragment;
 import com.example.buber.Views.Activities.FormUtilities.CustomTripList;
 import com.example.buber.Views.Activities.FormUtilities.TripSearchRecord;
 import com.example.buber.Views.UIErrorHandler;
@@ -19,7 +23,8 @@ import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 
-public class TripSearchActivity extends AppCompatActivity implements UIErrorHandler, Observer {
+public class TripSearchActivity extends AppCompatActivity implements UIErrorHandler, Observer,
+        AcceptTripRequestFragment.OnFragmentInteractionListener {
 
     //Variable declarations
     ListView tripSearchList;
@@ -38,7 +43,7 @@ public class TripSearchActivity extends AppCompatActivity implements UIErrorHand
 
         App.getModel().addObserver(this);
 
-        populateTripList();
+        //populateTripList();
 
         //Below are dummy variables for the list (for testing)
         String[] rider = {"RiderX", "RiderY", "RiderZ"};
@@ -58,6 +63,15 @@ public class TripSearchActivity extends AppCompatActivity implements UIErrorHand
         //Activate the custom array adapter (CustomTripList)
         tripSearchRecordArrayAdapter = new CustomTripList(this, tripDataList);
         tripSearchList.setAdapter(tripSearchRecordArrayAdapter);
+
+        tripSearchList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                new AcceptTripRequestFragment(tripDataList.get(position), position).show(getSupportFragmentManager(), "VIEW_RECORD");
+
+            }
+        });
+
     }
 
     public void populateTripList() {
@@ -82,6 +96,9 @@ public class TripSearchActivity extends AppCompatActivity implements UIErrorHand
     //  in the list)
     //  2. Have a empty method that is called when a user confirms they want to select a trip
 
+    public void onAcceptPressed(TripSearchRecord tripSearchRecord, int position){
+        //TODO determine what happens when user confirms they want to select a trip
+    }
 
     @Override
     public void onDestroy() {
