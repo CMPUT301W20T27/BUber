@@ -94,4 +94,8 @@ public class AuthDBManager {
         }
     }
 
+    public String getCurrentUserID() {
+        return mAuth.getUid();
+    }
+
 }
