@@ -23,17 +23,14 @@ import java.util.Observer;
 public class EditAccountActivity extends AppCompatActivity implements Observer, UIErrorHandler {
 
     private EditText editUserName;
-    private EditText editpassword;
-    private EditText editfirstName;
-    private EditText editlastName;
-    private EditText editEmail;
-    private EditText editphoneNumber;
+    private EditText editFirstName;
+    private EditText editLastName;
+    private EditText editPhoneNumber;
 
     private String oldUserName;
-    private String oldfirstName;
-    private String oldlastName;
-    private String oldemail;
-    private String oldphoneNumber;
+    private String oldFirstName;
+    private String oldLastName;
+    private String oldPhoneNumber;
 
     private Button btnSave;
 
@@ -45,11 +42,9 @@ public class EditAccountActivity extends AppCompatActivity implements Observer, 
         setContentView(R.layout.activity_edit_account);
         App.getModel().addObserver(this);
         editUserName = findViewById(R.id.createAccountUsername);
-        editpassword = findViewById(R.id.editAccountPassword);
-        editfirstName = findViewById(R.id.createAccountFirstName);
-        editlastName = findViewById(R.id.createAccountLastName);
-        editEmail = findViewById(R.id.createAccountEmail);
-        editphoneNumber = findViewById(R.id.createAccountPhoneNumber);
+        editFirstName = findViewById(R.id.createAccountFirstName);
+        editLastName = findViewById(R.id.createAccountLastName);
+        editPhoneNumber = findViewById(R.id.createAccountPhoneNumber);
         btnSave = findViewById(R.id.buttonEditAccountSave);
         btnSave.setEnabled(false);  //until changes are made
 
@@ -72,45 +67,37 @@ public class EditAccountActivity extends AppCompatActivity implements Observer, 
         User curUser = App.getModel().getSessionUser();
 
         oldUserName = curUser.getUsername();
-        oldfirstName = curUser.getAccount().getFirstName();
-        oldlastName = curUser.getAccount().getLastName();
-        oldemail = curUser.getAccount().getEmail();
-        oldphoneNumber = curUser.getAccount().getPhoneNumber();
+        oldFirstName = curUser.getAccount().getFirstName();
+        oldLastName = curUser.getAccount().getLastName();
+        oldPhoneNumber = curUser.getAccount().getPhoneNumber();
 
         editUserName.setText(oldUserName);
-        editEmail.setText(oldemail);
-        editfirstName.setText(oldfirstName);
-        editlastName.setText(oldlastName);
-        editphoneNumber.setText(oldphoneNumber);
+        editFirstName.setText(oldFirstName);
+        editLastName.setText(oldLastName);
+        editPhoneNumber.setText(oldPhoneNumber);
 
         editUserName.addTextChangedListener(txtWatcher);
-        editphoneNumber.addTextChangedListener(txtWatcher);
-        editlastName.addTextChangedListener(txtWatcher);
-        editfirstName.addTextChangedListener(txtWatcher);
-        editEmail.addTextChangedListener(txtWatcher);
-        editpassword.addTextChangedListener(txtWatcher);
+        editPhoneNumber.addTextChangedListener(txtWatcher);
+        editLastName.addTextChangedListener(txtWatcher);
+        editFirstName.addTextChangedListener(txtWatcher);
 
     }
 
     public void handleEditAccountSaveClick(View v) {
-        if (CreateAccountFormUtils.validateForm(
+        if (CreateAccountFormUtils.validateEditForm(
                 editUserName,
-                editpassword,
-                editfirstName,
-                editlastName,
-                editEmail,
-                editphoneNumber)) {
+                editFirstName,
+                editLastName,
+                editPhoneNumber)) {
 
             String newUserName = editUserName.getText().toString().trim();
-            String newPassword = editpassword.getText().toString().trim();
-            String newFirstName = editfirstName.getText().toString().trim();
-            String newLastName = editlastName.getText().toString().trim();
-            String newEmail = editEmail.getText().toString().trim();
-            String newPhoneNumber = editphoneNumber.getText().toString().trim();
+            String newFirstName = editFirstName.getText().toString().trim();
+            String newLastName = editLastName.getText().toString().trim();
+            String newPhoneNumber = editPhoneNumber.getText().toString().trim();
 
             //TODO: update user in the DB
             updateNonCriticalUserFields(newUserName,newFirstName,newLastName,newPhoneNumber);
-
+            this.finish();
         }
         else{
             btnSave.setEnabled(false);

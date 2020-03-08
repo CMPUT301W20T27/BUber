@@ -63,12 +63,14 @@ public class ApplicationService {
 
     public static void updateUser(User updateSessionUser, EventCompletionListener listener) {
         // TODO: Get the Uid of the user using lukes function he wrote in AuthDBManger and complete
-        //  These functions
-        App.getDbManager().updateRider(updateSessionUser, new EventCompletionListener() {
+        String uID = App.getAuthDBManager().getCurrentUserID();
+        Driver tmpDriver = new Driver(updateSessionUser.getUsername(),updateSessionUser.getAccount());
+        Rider tmpRider = new Rider(updateSessionUser.getUsername(),updateSessionUser.getAccount());
+        App.getDbManager().updateRider(uID, tmpRider, new EventCompletionListener() {
             @Override
             public void onCompletion(HashMap<String, ?> resultData, Error err) {
                 if (err == null) {
-                    App.getDbManager().updateDriver(updateSessionUser, new EventCompletionListener() {
+                    App.getDbManager().updateDriver(uID,tmpDriver, new EventCompletionListener() {
                         @Override
                         public void onCompletion(HashMap<String, ?> resultData, Error err) {
                             if (err == null) {
