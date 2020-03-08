@@ -1,6 +1,9 @@
 package com.example.buber.Model;
 import androidx.annotation.NonNull;
 
+import com.google.android.libraries.places.api.model.Place;
+import com.google.firebase.firestore.GeoPoint;
+
 import com.google.firebase.firestore.DocumentId;
 
 public class Trip {
@@ -21,35 +24,18 @@ public class Trip {
     private STATUS status;
     private UserLocation startUserLocation;
     private UserLocation endUserLocation;
-
-    public Trip(){}
-
-    public Trip(String riderID, UserLocation startUserLocation, UserLocation endUserLocation) {
-        this.driverID = null;
-        this.riderID = riderID;
-        this.status = STATUS.PENDING;
-        this.startUserLocation = startUserLocation;
-        this.endUserLocation = endUserLocation;
-    }
-
-    public String getDocID() {
-        return docID;
-    }
-
-    public void setDocID(String docID) {
-        this.docID = docID;
-    }
+    private double fareOffering;
 
     public void setRiderID(String riderID) {
         this.riderID = riderID;
     }
 
-    public STATUS getStatus() {
-        return status;
+    public UserLocation getEndUserLocation() {
+        return endUserLocation;
     }
 
-    public void setStatus(STATUS status) {
-        this.status = status;
+    public void setEndUserLocation(UserLocation endUserLocation) {
+        this.endUserLocation = endUserLocation;
     }
 
     public UserLocation getStartUserLocation() {
@@ -60,12 +46,23 @@ public class Trip {
         this.startUserLocation = startUserLocation;
     }
 
-    public UserLocation getEndUserLocation() {
-        return endUserLocation;
+    public Trip(){}
+
+    public Trip(String riderID, double fareOffering, UserLocation startUserLocation, UserLocation endUserLocation) {
+        this.driverID = null;
+        this.riderID = riderID;
+        this.status = STATUS.PENDING;
+        this.fareOffering = fareOffering;
+        this.startUserLocation = startUserLocation;
+        this.endUserLocation = endUserLocation;
     }
 
-    public void setEndUserLocation(UserLocation endUserLocation) {
-        this.endUserLocation = endUserLocation;
+    public double getFareOffering() {
+        return fareOffering;
+    }
+
+    public void setFareOffering(double fareOffering) {
+        this.fareOffering = fareOffering;
     }
 
     public String getDriverID() {
@@ -79,6 +76,16 @@ public class Trip {
     public String getRiderID() {
         return riderID;
     }
+
+
+    public STATUS getStatus() {
+        return status;
+    }
+
+    public void setStatus(STATUS status) {
+        this.status = status;
+    }
+
 
 
     @NonNull

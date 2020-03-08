@@ -3,6 +3,7 @@ package com.example.buber.Controllers;
 import com.example.buber.App;
 import com.example.buber.Model.ApplicationModel;
 import com.example.buber.Model.Trip;
+import com.example.buber.Model.UserLocation;
 import com.example.buber.Model.User;
 import com.example.buber.Model.UserLocation;
 import com.example.buber.Services.ApplicationService;
@@ -15,6 +16,19 @@ public class ApplicationController {
 
     public ApplicationController(ApplicationModel model) {
         this.model = model;
+    }
+
+    public void createNewTrip(Trip tripRequest,
+                              UIErrorHandler view) {
+        ApplicationService.createNewTrip(tripRequest,
+                (resultData, err) -> {
+                    if (err != null) view.onError(err);
+                    else {
+                        Trip tripData =  (Trip) resultData.get("trip");
+                        model.setSessionTrip(tripData);
+                    }
+                }
+        );
     }
 
     public void createNewUser(String username,

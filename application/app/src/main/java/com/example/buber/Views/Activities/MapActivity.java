@@ -57,6 +57,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
     private boolean showSideBar;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d("map","in map");
@@ -226,10 +227,6 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         this.finish();
     }
 
-    public void handleRideRequestClick(View v){
-        UserLocation defaultStartUserLocation = App.getModel().getSessionUser().getCurrentUserLocation();
-
-    }
 
     public void handleScreenClick(View v) {
         if (showSideBar) {
@@ -240,6 +237,14 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         } else {
             // TODO: Handle Everything else
         }
+    }
+
+    public void handleRideRequestClick(View v) {
+        Intent tripBuilderIntent = new Intent(MapActivity.this, TripBuilderActivity.class);
+        tripBuilderIntent.putExtra(
+                "currentLatLong",
+                new double[] {mLastKnownUserLocation.getLatitude(), mLastKnownUserLocation.getLongitude()});
+        startActivity(tripBuilderIntent);
     }
 
     @Override
