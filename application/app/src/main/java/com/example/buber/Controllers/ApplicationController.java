@@ -2,11 +2,13 @@ package com.example.buber.Controllers;
 
 import com.example.buber.App;
 import com.example.buber.Model.ApplicationModel;
-import com.example.buber.Model.UserLocation;
+import com.example.buber.Model.Trip;
 import com.example.buber.Model.User;
-import com.example.buber.Services.*;
+import com.example.buber.Model.UserLocation;
+import com.example.buber.Services.ApplicationService;
 import com.example.buber.Views.UIErrorHandler;
-import com.google.android.gms.maps.UiSettings;
+
+import java.util.List;
 
 public class ApplicationController {
     private ApplicationModel model;
@@ -64,9 +66,14 @@ public class ApplicationController {
         }
     }
 
-    public void getDriverTrips(UserLocation loc, UIErrorHandler view) {
-        // TODO EVAN: Call Madeehas Code
-
-
+    public static void getTripsForUser(UIErrorHandler view) {
+        ApplicationModel m = App.getModel();
+        ApplicationService.getFilterTrips((resultData, err) -> {
+            if (err != null) view.onError(err);
+            else {
+                List<Trip> sessionTripList = (List) resultData.get("trip-list");
+                m.setSessionTripList(sessionTripList);
+            }
+        });
     }
 }

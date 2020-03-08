@@ -1,53 +1,42 @@
 package com.example.buber.Views.Activities;
 
 import android.os.Bundle;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.buber.App;
+import com.example.buber.Controllers.ApplicationController;
 import com.example.buber.Model.ApplicationModel;
 import com.example.buber.Model.Trip;
-import com.example.buber.Model.UserLocation;
 import com.example.buber.R;
-import com.example.buber.Views.Activities.FormUtilities.AcceptTripRequestFragment;
-import com.example.buber.Views.Activities.FormUtilities.CustomTripList;
-import com.example.buber.Views.Activities.FormUtilities.TripSearchRecord;
+import com.example.buber.Views.Components.CustomTripList;
+import com.example.buber.Views.Components.TripSearchRecord;
+import com.example.buber.Views.Fragments.AcceptTripRequestFragment;
 import com.example.buber.Views.UIErrorHandler;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
 public class TripSearchActivity extends AppCompatActivity implements UIErrorHandler, Observer,
         AcceptTripRequestFragment.OnFragmentInteractionListener {
 
-    //Variable declarations
     ListView tripSearchList;
     ArrayAdapter<TripSearchRecord> tripSearchRecordArrayAdapter;
     ArrayList<TripSearchRecord> tripDataList;
 
     private static final String TAG = "TripSearchActivity";
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.trip_search_activity);
-
-        // TODO MIKE: Get UI elements and initialize here
-        // getting list view for tripSearchList
         tripSearchList = findViewById(R.id.trip_search_list);
-
         App.getModel().addObserver(this);
-
-        //note: uncomment below to use populateTripList function
-        //populateTripList();
 
         //Below are dummy variables for the list (for testing)
         String[] rider = {"RiderX", "RiderY", "RiderZ"};
@@ -68,56 +57,17 @@ public class TripSearchActivity extends AppCompatActivity implements UIErrorHand
         tripSearchRecordArrayAdapter = new CustomTripList(this, tripDataList);
         tripSearchList.setAdapter(tripSearchRecordArrayAdapter);
 
-        tripSearchList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                new AcceptTripRequestFragment(tripDataList.get(position), position).show(getSupportFragmentManager(), "VIEW_RECORD");
+        tripSearchList.setOnItemClickListener((parent, view, position, id) ->
+                new AcceptTripRequestFragment(
+                        tripDataList.get(position),
+                        position).show(getSupportFragmentManager(),
+                        "VIEW_RECORD"));
 
-            }
-        });
-
-        /**
-         * This returns an arraylist of filtered trips in the database
-         * This arraylist is updated whenever the database is updated
-         */
-        filteredTrips = App.getDbManager().getFilteredTrips((hashMap, error) -> { // This listener is called whenever the filtered trips in the database are updated
-            updateFilteredTrips();
-        });
-
+        updateTripList();
     }
 
-    public void populateTripList() {
-        UserLocation driverLoc = App.getModel().getSessionUser().getCurrentUserLocation();
-        App.getController().getDriverTrips(driverLoc, this);
-    }
-
-    /**
-     * This method is called whenever the "trips" arraylist is updated
-     */
-    public void updateTrips() {
-        // TODO MIKE: This is called every time db updates so u probably want to do stuff here or call things here like:
-        Log.d(TAG, "Updated All trips");
-        for (Trip trip : filteredTrips) {
-            Log.d(TAG, "ALL TRIPS item: " + trip.getDocID());
-        }
-
-
-
-    }
-
-    /**
-     * This method is called whenever the "filtered" arraylist is updated
-     */
-    public void updateFilteredTrips() {
-        // TODO MIKE: This is called every time db updates so u probably want to do stuff here or call things here like:
-        Log.d(TAG, "Updated Fileted trips");
-        for (Trip trip : filteredTrips) {
-            Log.d(TAG, "Filtered TRIPS item: " + trip.getDocID());
-        }
-
-
-
-
+    public void updateTripList() {
+        ApplicationController.getTripsForUser(this);
     }
 
     @Override
@@ -127,26 +77,21 @@ public class TripSearchActivity extends AppCompatActivity implements UIErrorHand
 
     @Override
     public void update(Observable o, Object arg) {
-        // TODO MIKE: Check for updated query result from model
-        //  If exists, populate the list, its called driverQueryResult
-        //update trips list
+        ApplicationModel m = (ApplicationModel) o;
+        // Update tripDataList
+        List<Trip> tripList = m.getSessionTripList();
+        tripDataList.clear();
+        for (Trip t: tripList) {
+            tripDataList.add(new TripSearchRecord(t));
+        }
         tripSearchRecordArrayAdapter.notifyDataSetChanged();
-        //note uncomment below to use populate trip list function
-        //populateTripList();
-
     }
 
-    // TODO MIKE: Lets add some handlers for:
-    //  1. Viewing details for a ride when a user clicks on them (add a itemclicklistener to each item
-    //  in the list)
-    //  2. Have a empty method that is called when a user confirms they want to select a trip
-
     public void onAcceptPressed(TripSearchRecord tripSearchRecord, int position){
-        //remove accepted trip from list of trip requests
-        tripSearchRecordArrayAdapter.remove(tripSearchRecord);
-        //update trips list
-        tripSearchRecordArrayAdapter.notifyDataSetChanged();
-        //TODO determine what happens when user confirms they want to select a trip (backend stuff?)
+        // TODO: Backend code for selecting trip
+
+        // Navigate back to main activity
+        this.finish();
     }
 
     @Override

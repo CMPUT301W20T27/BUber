@@ -13,7 +13,7 @@ import com.example.buber.App;
 import com.example.buber.Model.ApplicationModel;
 import com.example.buber.Model.User;
 import com.example.buber.R;
-import com.example.buber.Views.Activities.FormUtilities.LoginFormUtils;
+import com.example.buber.Views.FormUtilities.LoginFormUtils;
 import com.example.buber.Views.UIErrorHandler;
 
 import java.util.Observable;

@@ -1,4 +1,4 @@
-package com.example.buber.Views.Activities.FormUtilities;
+package com.example.buber.Views.Components;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -28,7 +28,6 @@ public class CustomTripList extends ArrayAdapter<TripSearchRecord> {
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        //return super.getView(position, convertView, parent);
         View view = convertView;
 
         if (view == null){
@@ -57,6 +56,5 @@ public class CustomTripList extends ArrayAdapter<TripSearchRecord> {
         driverDist.setText(tripSearchRecord.getDistanceFromDriver());
 
         return view;
-
     }
 }

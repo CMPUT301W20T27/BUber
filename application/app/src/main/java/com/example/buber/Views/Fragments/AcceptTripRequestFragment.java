@@ -1,4 +1,4 @@
-package com.example.buber.Views.Activities.FormUtilities;
+package com.example.buber.Views.Fragments;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -13,10 +13,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
-import com.example.buber.Model.Trip;
 import com.example.buber.R;
-
-import org.w3c.dom.Text;
+import com.example.buber.Views.Components.TripSearchRecord;
 
 public class AcceptTripRequestFragment extends DialogFragment {
     private TextView estimatedCost;

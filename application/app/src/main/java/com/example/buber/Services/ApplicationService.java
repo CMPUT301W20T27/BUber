@@ -58,4 +58,7 @@ public class ApplicationService {
         App.getAuthDBManager().signOut();
     }
 
+    public static void getFilterTrips(EventCompletionListener controllerListener) {
+
+    }
 }

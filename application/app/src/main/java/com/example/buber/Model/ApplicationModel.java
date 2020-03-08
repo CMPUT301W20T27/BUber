@@ -6,7 +6,17 @@ import java.util.Observable;
 public class ApplicationModel extends Observable {
     private User sessionUser;
     private Trip sessionTrip;
-    private List<Trip> driverQueryResult;
+    private List<Trip> sessionTripList;
+
+    public List<Trip> getSessionTripList() {
+        return sessionTripList;
+    }
+
+    public void setSessionTripList(List<Trip> sessionTripList) {
+        this.sessionTripList = sessionTripList;
+        setChanged();
+        notifyObservers();
+    }
 
     public User getSessionUser() {
         return sessionUser;
@@ -24,14 +34,7 @@ public class ApplicationModel extends Observable {
 
     public void setSessionTrip(Trip sessionTrip) {
         this.sessionTrip = sessionTrip;
+        setChanged();
         notifyObservers();
-    }
-
-    public List<Trip> getDriverQueryResult() {
-        return driverQueryResult;
-    }
-
-    public void setDriverQueryResult(List<Trip> driverQueryResult) {
-        this.driverQueryResult = driverQueryResult;
     }
 }
