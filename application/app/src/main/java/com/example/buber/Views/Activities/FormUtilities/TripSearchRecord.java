@@ -3,15 +3,15 @@ package com.example.buber.Views.Activities.FormUtilities;
 import java.io.Serializable;
 
 public class TripSearchRecord implements Serializable {
-    private String riderName;
-    private String startLatitude;
-    private String startLongitude;
-    private String endLatitude;
-    private String endLongitude;
-    private String estimatedCost;
-    private String distanceFromDriver;
+    public String riderName;
+    public String startLatitude;
+    public String startLongitude;
+    public String endLatitude;
+    public String endLongitude;
+    public String estimatedCost;
+    public String distanceFromDriver;
 
-    TripSearchRecord(String riderName, String startLatitude, String startLongitude, String endLatitude,
+    public TripSearchRecord(String riderName, String startLatitude, String startLongitude, String endLatitude,
                      String endLongitude, String estimatedCost, String distanceFromDriver){
         this.riderName = riderName;
         this.startLatitude = startLatitude;

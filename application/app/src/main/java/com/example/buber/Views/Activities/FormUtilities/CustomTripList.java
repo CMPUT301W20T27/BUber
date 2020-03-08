@@ -15,8 +15,8 @@ import com.example.buber.R;
 import java.util.ArrayList;
 
 public class CustomTripList extends ArrayAdapter<TripSearchRecord> {
-    private ArrayList<TripSearchRecord> tripRecords;
-    private Context context;
+    public ArrayList<TripSearchRecord> tripRecords;
+    public Context context;
 
     //constructor
     public CustomTripList(Context context, ArrayList<TripSearchRecord> tripRecords) {

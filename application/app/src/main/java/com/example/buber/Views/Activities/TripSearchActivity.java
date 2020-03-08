@@ -21,6 +21,7 @@ import java.util.Observer;
 
 public class TripSearchActivity extends AppCompatActivity implements UIErrorHandler, Observer {
 
+    //Variable declarations
     ListView tripSearchList;
     ArrayAdapter<TripSearchRecord> tripSearchRecordArrayAdapter;
     ArrayList<TripSearchRecord> tripDataList;
@@ -37,9 +38,24 @@ public class TripSearchActivity extends AppCompatActivity implements UIErrorHand
 
         App.getModel().addObserver(this);
 
-        populateTripList();
+        //populateTripList();
 
-        tripSearchRecordArrayAdapter = new CustomTripList(this, tripDataList)
+        String[] rider = {"RiderX", "RiderY", "RiderZ"};
+        String[] startLat = {"03", "302", "230"};
+        String[] startLong = {"21", "143", "212"};
+        String[] endLat = {"43", "543", "002"};
+        String[] endLong = {"234", "65", "900"};
+        String[] estCost = {"$34.99", "$12.60", "$9.21"};
+        String[] distDriver = {"3 KM", "12 KM", "0.05 KM"};
+
+        tripDataList = new ArrayList<>();
+        for(int i = 0; i< rider.length; i++){
+            tripDataList.add((new TripSearchRecord(rider[i], startLat[i], startLong[i], endLat[i],
+                    endLong[i], estCost[i], distDriver[i])));
+        }
+
+        tripSearchRecordArrayAdapter = new CustomTripList(this, tripDataList);
+        tripSearchList.setAdapter(tripSearchRecordArrayAdapter);
     }
 
     public void populateTripList() {
