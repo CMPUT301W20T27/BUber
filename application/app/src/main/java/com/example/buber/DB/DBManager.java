@@ -58,7 +58,7 @@ public class DBManager {
                     Log.d(TAG, "Trip: " + trip.toString());
                 }
 
-                filterTrips();
+                filterTrips(new UserLocation(53.558933, -113.469829));
             }
         });
     }
@@ -240,14 +240,13 @@ public class DBManager {
         return filteredTrips;
     }
 
-    private void filterTrips() {
+    private void filterTrips(UserLocation center) {
         double RADIUS = 6.0;
-        UserLocation myLocation = new UserLocation(53.558933, -113.469829);
         filteredTrips.clear();
 
         for (Trip obj : allTrips) {
             Log.d(TAG, "Filtering Trip: " + obj.getDocID());
-            double distance = myLocation.distanceTo(obj.getStartUserLocation());
+            double distance = center.distanceTo(obj.getStartUserLocation());
             if (distance <= RADIUS) {
                 Log.d(TAG, "Added");
                 filteredTrips.add(obj);
