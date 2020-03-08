@@ -3,6 +3,7 @@ package com.example.buber.Views.Activities;
 import android.os.Bundle;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.buber.App;
@@ -11,7 +12,10 @@ import com.example.buber.Model.Trip;
 import com.example.buber.Model.UserLocation;
 import com.example.buber.R;
 import com.example.buber.Views.UIErrorHandler;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
