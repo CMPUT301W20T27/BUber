@@ -27,18 +27,23 @@ import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
-import com.google.firebase.firestore.GeoPoint;
 
 import java.util.Arrays;
 import java.util.Observable;
 import java.util.Observer;
 
 public class TripBuilderActivity extends AppCompatActivity implements UIErrorHandler, Observer {
+    // Trip tings
     Trip tripRequest;
     UserLocation startLoc, endLoc;
     LinearLayout fareOfferingLayout;
+    double minimumFareOffering;
+
+    // UI
     EditText fareOfferingEditText;
     Button submitTripBtn;
+
+    // AutoComplete Places API
     PlacesClient placesClient;
     String apiKey = "AIzaSyDFEIMmFpPoMijm_0YraJn4S33UvtlnqF8";
 
@@ -153,23 +158,31 @@ public class TripBuilderActivity extends AppCompatActivity implements UIErrorHan
         });
 
         submitTripBtn.setOnClickListener((View v) -> {
-            String riderID = App.getAuthDBManager().getCurrentUserID();
-            tripRequest = new Trip(
-                    riderID,
-                    Double.valueOf(fareOfferingEditText.getText().toString().trim()),
-                    startLoc,
-                    endLoc);
-            App.getController().createNewTrip(tripRequest, this);
-            startActivity(new Intent(getBaseContext(), MapActivity.class));
+            double offeredFare = Double.valueOf(fareOfferingEditText.getText().toString().trim());
+            if (offeredFare >= minimumFareOffering) {
+                String riderID = App.getAuthDBManager().getCurrentUserID();
+                tripRequest = new Trip(
+                        riderID,
+                        offeredFare,
+                        startLoc,
+                        endLoc);
+                App.getController().createNewTrip(tripRequest, this);
+                startActivity(new Intent(getBaseContext(), MapActivity.class));
+            } else {
+                // Reset back cost
+                fareOfferingEditText.setError(
+                        "Please enter an amount higher than" + minimumFareOffering);
+                fareOfferingEditText.setText(Double.toString(minimumFareOffering));
+            }
         });
     }
 
 
     private void engageSubmissionUI() {
+        minimumFareOffering = startLoc.distancePriceEstimate(endLoc);
         String priceEst = Double.toString(startLoc.distancePriceEstimate(endLoc));
         fareOfferingLayout.setVisibility(View.VISIBLE);
         fareOfferingEditText.setText(priceEst);
-        // TODO: set min and max for the fare edit text field
         submitTripBtn.setVisibility(View.VISIBLE);
     }
 
