@@ -61,7 +61,7 @@ public class TripBuilderActivity extends AppCompatActivity implements UIErrorHan
         submitTripBtn = findViewById(R.id.submitTripBtn);
 
         // Disengage submission UI elements
-//        disEngageSubmissionUI();
+        disEngageSubmissionUI();
 
         // Setup Places Client
         if (!Places.isInitialized()) {
@@ -90,8 +90,10 @@ public class TripBuilderActivity extends AppCompatActivity implements UIErrorHan
                 .getView()
                 .findViewById(R.id.places_autocomplete_clear_button)
                 .setOnClickListener((View v) -> {
-                    startLoc = null;
-                    disEngageSubmissionUI();
+                    startLoc = new UserLocation(currentLatLong[0], currentLatLong[1]);
+                    if (endLoc == null) {
+                        disEngageSubmissionUI();
+                    }
                     fromAutocompleteSupportFragment.setText("");
 
                 });
