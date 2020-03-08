@@ -62,14 +62,6 @@ public class DBManager {
     }
 
     public void createTrip(Trip tripRequest, EventCompletionListener listener) {
-//        Map<String, Object> data = new HashMap<>();
-//        data.put("driverID", tripRequest.getDriverID());
-//        data.put("riderID", tripRequest.getRiderID());
-//        data.put("status", tripRequest.getStatus());
-//
-//        data.put("endUserLocation", tripRequest.getEndUserLocation().ge);
-//        data.put("startUserLocation", tripRequest.getEndUserLocation());
-
         collectionTrip
                 .document(tripRequest.getRiderID())
                 .set(tripRequest)
@@ -81,7 +73,7 @@ public class DBManager {
                 .addOnFailureListener((@NonNull Exception e) -> {
                     Log.d(TAG, e.getMessage());
                     listener.onCompletion(null, new Error("Could not submit trip request."));
-        });
+                });
     }
 
 

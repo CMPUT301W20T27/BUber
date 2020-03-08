@@ -1,5 +1,6 @@
 package com.example.buber.Views.Activities;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 
@@ -19,19 +20,21 @@ import com.example.buber.Model.UserLocation;
 import com.example.buber.R;
 import com.example.buber.Views.UIErrorHandler;
 import com.google.android.gms.common.api.Status;
+
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
+import com.google.firebase.firestore.GeoPoint;
+
 import java.util.Arrays;
 import java.util.Observable;
 import java.util.Observer;
 
 public class TripBuilderActivity extends AppCompatActivity implements UIErrorHandler, Observer {
     Trip tripRequest;
-    Place startPt, endPt;
     UserLocation startLoc, endLoc;
     LinearLayout fareOfferingLayout;
     EditText fareOfferingEditText;
@@ -58,7 +61,7 @@ public class TripBuilderActivity extends AppCompatActivity implements UIErrorHan
         submitTripBtn = findViewById(R.id.submitTripBtn);
 
         // Disengage submission UI elements
-        disEngageSubmissionUI();
+//        disEngageSubmissionUI();
 
         // Setup Places Client
         if (!Places.isInitialized()) {
@@ -113,10 +116,7 @@ public class TripBuilderActivity extends AppCompatActivity implements UIErrorHan
                     startLoc.setLongitude(latLng.longitude);
                 }
 
-                startPt = place;
-
                 if (startLoc != null && endLoc != null) {
-                    startPt = place;
                     engageSubmissionUI();
                 } else {
                     disEngageSubmissionUI();
@@ -139,7 +139,6 @@ public class TripBuilderActivity extends AppCompatActivity implements UIErrorHan
                 }
 
                 if (startLoc != null && endLoc != null) {
-                    endPt = place;
                     engageSubmissionUI();
                 } else {
                     disEngageSubmissionUI();
@@ -151,11 +150,15 @@ public class TripBuilderActivity extends AppCompatActivity implements UIErrorHan
             }
         });
 
-
         submitTripBtn.setOnClickListener((View v) -> {
             String riderID = App.getAuthDBManager().getCurrentUserID();
-            Trip tripRequest = new Trip(riderID, startLoc, endLoc);
+            tripRequest = new Trip(
+                    riderID,
+                    Double.valueOf(fareOfferingEditText.getText().toString().trim()),
+                    startLoc,
+                    endLoc);
             App.getController().createNewTrip(tripRequest, this);
+            startActivity(new Intent(getBaseContext(), MapActivity.class));
         });
     }
 

@@ -22,8 +22,8 @@ public class ApplicationController {
                 (resultData, err) -> {
                     if (err != null) view.onError(err);
                     else {
-                        User u = (User) resultData.get("trip");
-                        model.setSessionUser(u);
+                        Trip tripData =  (Trip) resultData.get("trip");
+                        model.setSessionTrip(tripData);
                     }
                 }
         );

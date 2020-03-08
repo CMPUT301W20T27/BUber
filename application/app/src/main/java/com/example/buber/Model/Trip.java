@@ -1,6 +1,10 @@
 package com.example.buber.Model;
 import androidx.annotation.NonNull;
 
+import com.google.android.libraries.places.api.model.Place;
+import com.google.firebase.firestore.GeoPoint;
+
+
 public class Trip {
 
     private String driverID;
@@ -14,15 +18,45 @@ public class Trip {
     private STATUS status;
     private UserLocation startUserLocation;
     private UserLocation endUserLocation;
+    private double fareOffering;
+
+    public void setRiderID(String riderID) {
+        this.riderID = riderID;
+    }
+
+    public UserLocation getEndUserLocation() {
+        return endUserLocation;
+    }
+
+    public void setEndUserLocation(UserLocation endUserLocation) {
+        this.endUserLocation = endUserLocation;
+    }
+
+    public UserLocation getStartUserLocation() {
+        return startUserLocation;
+    }
+
+    public void setStartUserLocation(UserLocation startUserLocation) {
+        this.startUserLocation = startUserLocation;
+    }
 
     public Trip(){}
 
-    public Trip(String riderID, UserLocation startUserLocation, UserLocation endUserLocation) {
+    public Trip(String riderID, double fareOffering, UserLocation startUserLocation, UserLocation endUserLocation) {
         this.driverID = null;
         this.riderID = riderID;
         this.status = STATUS.PENDING;
+        this.fareOffering = fareOffering;
         this.startUserLocation = startUserLocation;
         this.endUserLocation = endUserLocation;
+    }
+
+    public double getFareOffering() {
+        return fareOffering;
+    }
+
+    public void setFareOffering(double fareOffering) {
+        this.fareOffering = fareOffering;
     }
 
     public String getDriverID() {
@@ -49,25 +83,7 @@ public class Trip {
         this.status = status;
     }
 
-    public void setRiderID(String riderID) {
-        this.riderID = riderID;
-    }
 
-    public UserLocation getStartUserLocation() {
-        return startUserLocation;
-    }
-
-    public void setStartUserLocation(UserLocation startUserLocation) {
-        this.startUserLocation = startUserLocation;
-    }
-
-    public UserLocation getEndUserLocation() {
-        return endUserLocation;
-    }
-
-    public void setEndUserLocation(UserLocation endUserLocation) {
-        this.endUserLocation = endUserLocation;
-    }
 
     @NonNull
     @Override
