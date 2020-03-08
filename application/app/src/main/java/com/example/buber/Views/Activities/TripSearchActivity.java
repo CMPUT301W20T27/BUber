@@ -31,6 +31,9 @@ public class TripSearchActivity extends AppCompatActivity implements UIErrorHand
     ArrayAdapter<TripSearchRecord> tripSearchRecordArrayAdapter;
     ArrayList<TripSearchRecord> tripDataList;
 
+    private static final String TAG = "TripSearchActivity";
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -73,6 +76,14 @@ public class TripSearchActivity extends AppCompatActivity implements UIErrorHand
             }
         });
 
+        /**
+         * This returns an arraylist of filtered trips in the database
+         * This arraylist is updated whenever the database is updated
+         */
+        filteredTrips = App.getDbManager().getFilteredTrips((hashMap, error) -> { // This listener is called whenever the filtered trips in the database are updated
+            updateFilteredTrips();
+        });
+
     }
 
     public void populateTripList() {
@@ -80,10 +91,38 @@ public class TripSearchActivity extends AppCompatActivity implements UIErrorHand
         App.getController().getDriverTrips(driverLoc, this);
     }
 
+    /**
+     * This method is called whenever the "trips" arraylist is updated
+     */
+    public void updateTrips() {
+        // TODO MIKE: This is called every time db updates so u probably want to do stuff here or call things here like:
+        Log.d(TAG, "Updated All trips");
+        for (Trip trip : filteredTrips) {
+            Log.d(TAG, "ALL TRIPS item: " + trip.getDocID());
+        }
+
+
+
+    }
+
+    /**
+     * This method is called whenever the "filtered" arraylist is updated
+     */
+    public void updateFilteredTrips() {
+        // TODO MIKE: This is called every time db updates so u probably want to do stuff here or call things here like:
+        Log.d(TAG, "Updated Fileted trips");
+        for (Trip trip : filteredTrips) {
+            Log.d(TAG, "Filtered TRIPS item: " + trip.getDocID());
+        }
+
+
+
+
+    }
+
     @Override
     public void onError(Error e) {
         // TODO MIKE: Handle Incoming UI Errors
-
     }
 
     @Override

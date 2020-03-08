@@ -23,19 +23,16 @@
      You need a different API key for each encryption key, including the release key that is used to
      sign the APK for publishing.
      You can define the keys for the debug and release targets in src/debug/ and src/release/.
-       NOTE: API Key Removed
         -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="__API-KEY-Removed__" />
+            android:value="AIzaSyDFEIMmFpPoMijm_0YraJn4S33UvtlnqF8" />
 
         <activity android:name=".Views.Activities.MapActivity" />
         <activity android:name=".Views.Activities.CreateAccountActivity" />
         <activity android:name=".Views.Activities.LoginActivity" />
+        <activity android:name=".Views.Activities.TripSearchActivity" />
         <activity android:name=".Views.Activities.MainActivity">
-
-        </activity>
-        <activity android:name=".Views.Activities.TripSearchActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
