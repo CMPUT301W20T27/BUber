@@ -1,9 +1,6 @@
 package com.example.buber.Model;
 import androidx.annotation.NonNull;
 
-import com.google.android.libraries.places.api.model.Place;
-import com.google.firebase.firestore.GeoPoint;
-
 import com.google.firebase.firestore.DocumentId;
 
 public class Trip {
@@ -14,7 +11,7 @@ public class Trip {
     private String driverID;
     private String riderID;
 
-    private enum STATUS {
+    public enum STATUS {
             PENDING,
             DRIVERACCEPT,
             INPROGRESS,

@@ -1,24 +1,16 @@
 package com.example.buber.Views.Activities;
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.app.Application;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.buber.App;
-import com.example.buber.DB.AuthDBManager;
 import com.example.buber.Model.ApplicationModel;
 import com.example.buber.Model.User;
-import com.example.buber.Services.ApplicationService;
 import com.example.buber.Views.UIErrorHandler;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 import java.util.Observable;
-
-
 import java.util.Observer;
 
 public class MainActivity extends AppCompatActivity implements Observer, UIErrorHandler {

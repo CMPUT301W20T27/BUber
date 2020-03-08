@@ -89,14 +89,6 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
 
         mainActionButton.setText(sessionUser.getType() == User.TYPE.RIDER ? MAIN_ACTION_BUTTON_RIDER_TEXT : MAIN_ACTION_BUTTON_DRIVER_TEXT);
 
-        mainActionButton.setOnClickListener(view -> {
-            // Decide dynamically to run rider or driver actions depending on current user
-            Class resultActivity = sessionUser.getType() == User.TYPE.RIDER ? TripBuilderActivity.class : TripSearchActivity.class;
-            Intent intent = new Intent(getBaseContext(), resultActivity);
-            startActivity(intent);
-        });
-
-
     }
 
     public void initializeMap(){
@@ -239,12 +231,18 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         }
     }
 
-    public void handleRideRequestClick(View v) {
-        Intent tripBuilderIntent = new Intent(MapActivity.this, TripBuilderActivity.class);
-        tripBuilderIntent.putExtra(
-                "currentLatLong",
-                new double[] {mLastKnownUserLocation.getLatitude(), mLastKnownUserLocation.getLongitude()});
-        startActivity(tripBuilderIntent);
+    public void handleMainActionClick(View v) {
+        User sessionUser = App.getModel().getSessionUser();
+        // Decide dynamically to run rider or driver actions depending on current user
+        Class resultActivity = sessionUser.getType() == User.TYPE.RIDER ? TripBuilderActivity.class : TripSearchActivity.class;
+        Intent intent = new Intent(getBaseContext(), resultActivity);
+        startActivity(intent);
+        if (sessionUser.getType() == User.TYPE.RIDER) {
+            intent.putExtra(
+                    "currentLatLong",
+                    new double[] {mLastKnownUserLocation.getLatitude(), mLastKnownUserLocation.getLongitude()});
+        }
+        startActivity(intent);
     }
 
     @Override

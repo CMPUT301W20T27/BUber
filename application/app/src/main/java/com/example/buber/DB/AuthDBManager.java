@@ -1,24 +1,15 @@
 package com.example.buber.DB;
 import android.util.Log;
+
 import androidx.annotation.NonNull;
 
 import com.example.buber.App;
 import com.example.buber.Controllers.EventCompletionListener;
-import com.example.buber.Model.Driver;
-import com.example.buber.Model.Rider;
-import com.example.buber.Model.User;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
-import java.util.concurrent.Executor;
 
 
 public class AuthDBManager {
@@ -60,8 +51,9 @@ public class AuthDBManager {
 
     /**
      * This method creates a new user with the entered email, password
-     * @param user
+     * @param String email
      * @param password New User's entered email and password
+     * @param EventCompletionListener listener
      */
     public void createFirebaseUser(String email, String password, EventCompletionListener listener) {
         mAuth.createUserWithEmailAndPassword(email, password)
@@ -84,7 +76,8 @@ public class AuthDBManager {
     public void getCurrentSessionUser(EventCompletionListener listener) {
         if (isLoggedIn()) {
             String uid = mAuth.getUid();
-            App.getDbManager().getRider(uid, ((resultData, err) -> {
+            // TODO: Differentiate between Rider/Driver
+            App.getDbManager().getDriver(uid, ((resultData, err) -> {
                 if (resultData != null) {
                     listener.onCompletion(resultData, null);
                 } else if (err != null){

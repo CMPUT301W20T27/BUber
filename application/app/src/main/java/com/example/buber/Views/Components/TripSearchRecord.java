@@ -1,25 +1,28 @@
 package com.example.buber.Views.Components;
 
+import com.example.buber.Model.Trip;
+import com.example.buber.Model.UserLocation;
+
 import java.io.Serializable;
 
 public class TripSearchRecord implements Serializable {
-    public String riderName;
-    public String startLatitude;
-    public String startLongitude;
-    public String endLatitude;
-    public String endLongitude;
-    public String estimatedCost;
-    public String distanceFromDriver;
+    private String riderName;
+    private String startLatitude;
+    private String startLongitude;
+    private String endLatitude;
+    private String endLongitude;
+    private String estimatedCost;
+    private String distanceFromDriver;
 
-    public TripSearchRecord(String riderName, String startLatitude, String startLongitude, String endLatitude,
-                     String endLongitude, String estimatedCost, String distanceFromDriver){
+    public TripSearchRecord(Trip t, UserLocation driverLocation, String riderName){
         this.riderName = riderName;
-        this.startLatitude = startLatitude;
-        this.startLongitude = startLongitude;
-        this.endLatitude = endLatitude;
-        this.endLongitude = endLongitude;
-        this.estimatedCost = estimatedCost;
-        this.distanceFromDriver = distanceFromDriver;
+        this.startLatitude = ((Double) t.getStartUserLocation().getLatitude()).toString();
+        this.startLongitude = ((Double) t.getStartUserLocation().getLongitude()).toString();
+        this.endLatitude = ((Double) t.getEndUserLocation().getLatitude()).toString();
+        this.endLongitude = ((Double) t.getEndUserLocation().getLongitude()).toString();
+        this.estimatedCost = ((Double) t.getFareOffering()).toString();
+        this.distanceFromDriver = ((Double) t.getStartUserLocation().distanceTo(driverLocation))
+                .toString();
     }
 
     public String getRiderName(){return this.riderName;}

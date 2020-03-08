@@ -10,6 +10,7 @@ import com.example.buber.App;
 import com.example.buber.Controllers.ApplicationController;
 import com.example.buber.Model.ApplicationModel;
 import com.example.buber.Model.Trip;
+import com.example.buber.Model.User;
 import com.example.buber.R;
 import com.example.buber.Views.Components.CustomTripList;
 import com.example.buber.Views.Components.TripSearchRecord;
@@ -38,20 +39,7 @@ public class TripSearchActivity extends AppCompatActivity implements UIErrorHand
         tripSearchList = findViewById(R.id.trip_search_list);
         App.getModel().addObserver(this);
 
-        //Below are dummy variables for the list (for testing)
-        String[] rider = {"RiderX", "RiderY", "RiderZ"};
-        String[] startLat = {"03", "302", "230"};
-        String[] startLong = {"21", "143", "212"};
-        String[] endLat = {"43", "543", "002"};
-        String[] endLong = {"234", "65", "900"};
-        String[] estCost = {"$34.99", "$12.60", "$9.21"};
-        String[] distDriver = {"3 KM", "12 KM", "0.05 KM"};
-
         tripDataList = new ArrayList<>();
-        for(int i = 0; i< rider.length; i++){
-            tripDataList.add((new TripSearchRecord(rider[i], startLat[i], startLong[i], endLat[i],
-                    endLong[i], estCost[i], distDriver[i])));
-        }
 
         //Activate the custom array adapter (CustomTripList)
         tripSearchRecordArrayAdapter = new CustomTripList(this, tripDataList);
@@ -62,7 +50,6 @@ public class TripSearchActivity extends AppCompatActivity implements UIErrorHand
                         tripDataList.get(position),
                         position).show(getSupportFragmentManager(),
                         "VIEW_RECORD"));
-
         updateTripList();
     }
 
@@ -78,18 +65,21 @@ public class TripSearchActivity extends AppCompatActivity implements UIErrorHand
     @Override
     public void update(Observable o, Object arg) {
         ApplicationModel m = (ApplicationModel) o;
-        // Update tripDataList
+        User sessionUser = m.getSessionUser();
         List<Trip> tripList = m.getSessionTripList();
-        tripDataList.clear();
-        for (Trip t: tripList) {
-            tripDataList.add(new TripSearchRecord(t));
+        if (tripList != null) {
+            tripDataList.clear();
+            for (Trip t: tripList) {
+                tripDataList.add(new TripSearchRecord(t, sessionUser.getCurrentUserLocation(), sessionUser.getUsername()));
+            }
+            tripSearchRecordArrayAdapter.notifyDataSetChanged();
         }
-        tripSearchRecordArrayAdapter.notifyDataSetChanged();
     }
 
     public void onAcceptPressed(TripSearchRecord tripSearchRecord, int position){
         // TODO: Backend code for selecting trip
-
+        Trip selectedTrip = App.getModel().getSessionTripList().get(position);
+        ApplicationController.handleDriverTripSelect(selectedTrip);
         // Navigate back to main activity
         this.finish();
     }
