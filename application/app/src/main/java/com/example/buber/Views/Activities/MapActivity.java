@@ -80,16 +80,6 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         showSideBar = false;
 
         App.getModel().addObserver(this);
-
-        riderRequestButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getBaseContext(), TripSearchActivity.class);
-                startActivity(intent);
-            }
-        });
-
-
     }
 
     public void initializeMap(){
