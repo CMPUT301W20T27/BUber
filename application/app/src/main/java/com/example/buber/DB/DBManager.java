@@ -25,6 +25,22 @@ public class DBManager {
 
     private CollectionReference collectionDriver, collectionRider, collectionTrip;
 
+    public FirebaseFirestore getDatabase() {
+        return database;
+    }
+
+    public CollectionReference getCollectionDriver() {
+        return collectionDriver;
+    }
+
+    public CollectionReference getCollectionRider() {
+        return collectionRider;
+    }
+
+    public CollectionReference getCollectionTrip() {
+        return collectionTrip;
+    }
+
     public DBManager(String driverCollectionName,
                      String riderCollectionName,
                      String tripCollectionName) {

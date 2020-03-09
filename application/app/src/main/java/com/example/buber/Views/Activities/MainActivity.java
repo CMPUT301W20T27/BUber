@@ -43,15 +43,15 @@ public class MainActivity extends AppCompatActivity implements Observer, UIError
                 if (resultData != null) {
                     App.getModel().setSessionUser((User) resultData.get("user"));
                     startActivity(new Intent(MainActivity.this, MapActivity.class));
+                    this.finish();
                 } else {
                     Toast.makeText(this, err.getMessage(), Toast.LENGTH_LONG);
                 }
             });
-
         } else {
             startActivity(new Intent(MainActivity.this, LoginActivity.class));
+            this.finish();
         }
-        this.finish();
     }
 
     @Override

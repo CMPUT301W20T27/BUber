@@ -8,8 +8,12 @@ import com.example.buber.Model.Rider;
 import com.example.buber.Model.Trip;
 import com.example.buber.Model.User;
 import com.example.buber.Model.UserLocation;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -83,18 +87,34 @@ public class ApplicationService {
             if (err != null) controllerListener.onCompletion(null, err);
             else {
                 List<Trip> filterTrips = new LinkedList<>();
+                List<String> filterTripUserNames = new LinkedList<>();
                 List<Trip> tripData = (List<Trip>) resultData.get("all-trips");
+                List<String> filterTripIds = new ArrayList<>();
                 if (tripData != null && tripData.size() > 0) {
                     for (Trip t : tripData) {
                         double distance = driverLocation.distanceTo(t.getStartUserLocation());
-                        if (distance <= RADIUS) {
+                        if (distance <= RADIUS && t.getStatus() == Trip.STATUS.PENDING) {
                             filterTrips.add(t);
+                            filterTripIds.add(t.getRiderID());
                         }
                     }
+
+                    Iterator i = filterTripIds.iterator();
+                    while (i.hasNext()) {
+                        String uid = (String) i.next();
+                        Task<DocumentSnapshot> task = App.getDbManager().getCollectionDriver().document(uid).get();
+                        DocumentSnapshot d = task.getResult();
+                        filterTripUserNames.add(d.toObject(Rider.class).getUsername());
+                    }
+
+                    HashMap<String, List> filteredTripsData = new HashMap<>();
+                    filteredTripsData.put("filtered-trips", filterTrips);
+                    filteredTripsData.put("filter-trips-usernames", filterTripUserNames);
+                    controllerListener.onCompletion(filteredTripsData, null);
+
+                } else {
+                    controllerListener.onCompletion(null, new Error("Could not find trips"));
                 }
-                HashMap<String, List<Trip>> filteredTripsData = new HashMap<>();
-                filteredTripsData.put("filtered-trips", filterTrips);
-                controllerListener.onCompletion(filteredTripsData, null);
             }
         });
     }
