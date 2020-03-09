@@ -1,7 +1,11 @@
 package com.example.buber.Controllers;
 
+import android.util.Log;
+
 import com.example.buber.App;
 import com.example.buber.Model.ApplicationModel;
+import com.example.buber.Model.Driver;
+import com.example.buber.Model.Rider;
 import com.example.buber.Model.Trip;
 import com.example.buber.Model.User;
 import com.example.buber.Model.UserLocation;
@@ -11,6 +15,8 @@ import com.example.buber.Views.UIErrorHandler;
 
 import java.util.List;
 import java.util.Observer;
+
+import static com.example.buber.Model.User.TYPE.RIDER;
 
 public class ApplicationController {
     private ApplicationModel model;
@@ -63,6 +69,11 @@ public class ApplicationController {
             if (err != null) view.onError(err);
             else {
                 User u = (User) resultData.get("user");
+
+                //update the login boolean's in DB
+                Log.d("DBMANAGER","CALLING UPDATENONCRITICAL");
+                updateNonCriticalUserFields(u,view);
+
                 model.setSessionUser(u);
             }
         });

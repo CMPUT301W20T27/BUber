@@ -13,13 +13,16 @@ public class Rider extends User {
     @ServerTimestamp
     public Date timestamp;
 
+    private boolean riderLoggedOn;
     public Rider() {
         setType(TYPE.RIDER);
+        riderLoggedOn=false;
     }
 
     public Rider(String username, Account account) {
         super(username, account);
         setType(TYPE.RIDER);
+        riderLoggedOn = false;
     }
 
     public String getDocID() {
@@ -36,5 +39,13 @@ public class Rider extends User {
 
     public void setTimestamp(Date timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public boolean getRiderLoggedOn() {
+        return riderLoggedOn;
+    }
+
+    public void setRiderLoggedOn(boolean isriderLoggedOn) {
+        riderLoggedOn = isriderLoggedOn;
     }
 }
