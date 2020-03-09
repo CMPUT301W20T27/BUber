@@ -9,6 +9,7 @@ public class ApplicationModel extends Observable {
     private User sessionUser;
     private Trip sessionTrip;
     private List<Trip> sessionTripList;
+    private List<String> sesssionTripUserNameList;
     private List<Observer> obs = new ArrayList<>();
     private Double mapBounds[];
 
@@ -51,6 +52,15 @@ public class ApplicationModel extends Observable {
         }
         return res;
     }
+
+    public List<String> getSesssionTripUserNameList() {
+        return sesssionTripUserNameList;
+    }
+
+    public void setSesssionTripUserNameList(List<String> sesssionTripUserNameList) {
+        this.sesssionTripUserNameList = sesssionTripUserNameList;
+    }
+
 
     @Override
     public synchronized void addObserver(Observer o) {

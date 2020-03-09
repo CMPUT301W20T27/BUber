@@ -3,24 +3,20 @@ package com.example.buber.Views.Activities;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.buber.App;
 import com.example.buber.Model.ApplicationModel;
 import com.example.buber.Model.Trip;
-import com.example.buber.Model.User;
 import com.example.buber.Model.UserLocation;
 import com.example.buber.R;
 import com.example.buber.Views.UIErrorHandler;
 import com.google.android.gms.common.api.Status;
-
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
@@ -164,6 +160,7 @@ public class TripBuilderActivity extends AppCompatActivity implements UIErrorHan
         });
 
         submitTripBtn.setOnClickListener((View v) -> {
+            String username = App.getModel().getSessionUser().getUsername();
             double offeredFare = Double.valueOf(fareOfferingEditText.getText().toString().trim());
             if (offeredFare >= minimumFareOffering) {
                 riderFareOffering = offeredFare;
@@ -173,7 +170,9 @@ public class TripBuilderActivity extends AppCompatActivity implements UIErrorHan
                         riderID,
                         offeredFare,
                         startLoc,
-                        endLoc);
+                        endLoc,
+                        username
+                        );
                 App.getController().createNewTrip(tripRequest, this);
                 startActivity(new Intent(getBaseContext(), MapActivity.class));
             } else {

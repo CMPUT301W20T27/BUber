@@ -22,6 +22,7 @@ public class Trip {
     private UserLocation startUserLocation;
     private UserLocation endUserLocation;
     private double fareOffering;
+    private String riderUserName;
 
     public void setRiderID(String riderID) {
         this.riderID = riderID;
@@ -45,13 +46,14 @@ public class Trip {
 
     public Trip(){}
 
-    public Trip(String riderID, double fareOffering, UserLocation startUserLocation, UserLocation endUserLocation) {
+    public Trip(String riderID, double fareOffering, UserLocation startUserLocation, UserLocation endUserLocation, String riderUserName) {
         this.driverID = null;
         this.riderID = riderID;
         this.status = STATUS.PENDING;
         this.fareOffering = fareOffering;
         this.startUserLocation = startUserLocation;
         this.endUserLocation = endUserLocation;
+        this.riderUserName = riderUserName;
     }
 
     public double getFareOffering() {
@@ -83,7 +85,13 @@ public class Trip {
         this.status = status;
     }
 
+    public String getRiderUserName() {
+        return riderUserName;
+    }
 
+    public void setRiderUserName(String riderUserName) {
+        this.riderUserName = riderUserName;
+    }
 
     @NonNull
     @Override

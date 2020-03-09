@@ -8,12 +8,9 @@ import com.example.buber.Model.Rider;
 import com.example.buber.Model.Trip;
 import com.example.buber.Model.User;
 import com.example.buber.Model.UserLocation;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -97,14 +94,6 @@ public class ApplicationService {
                             filterTrips.add(t);
                             filterTripIds.add(t.getRiderID());
                         }
-                    }
-
-                    Iterator i = filterTripIds.iterator();
-                    while (i.hasNext()) {
-                        String uid = (String) i.next();
-                        Task<DocumentSnapshot> task = App.getDbManager().getCollectionDriver().document(uid).get();
-                        DocumentSnapshot d = task.getResult();
-                        filterTripUserNames.add(d.toObject(Rider.class).getUsername());
                     }
 
                     HashMap<String, List> filteredTripsData = new HashMap<>();
