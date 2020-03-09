@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.example.buber.App;
 import com.example.buber.Controllers.EventCompletionListener;
+import com.example.buber.DB.DBManager;
 import com.example.buber.Model.Account;
 import com.example.buber.Model.Driver;
 import com.example.buber.Model.Rider;
@@ -133,17 +134,11 @@ public class ApplicationService {
                     }
                 });
             }
-            else{
-                //TODO:: This is a hard coded bug fix. fix later
-                Log.d("DBMANAGER","Do we get here?");
-                if(updateSessionUser.getType()!=DRIVER && updateSessionUser.getType()!=RIDER){
-                    App.getDbManager().updateDriver(uID,tmpDriver, (resultData1, err1) -> {
-                        Log.d("DBMANAGER","TRYING TO UPDATE DRIVER2");
-                        if (err1 == null) {
-                            listener.onCompletion(null, null);
-                        }
-                    });
-                }
+                Log.d("DBMANAGER","Reached here");
+        });
+        App.getDbManager().updateDriver(uID,tmpDriver, (resultData1, err1) -> {
+            if (err1 == null) {
+                listener.onCompletion(null, null);
             }
         });
 

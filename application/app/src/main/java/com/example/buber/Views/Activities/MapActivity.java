@@ -224,6 +224,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         curUser.setType(null);
         Log.d("APPSERVICE","map logging out");
         App.getController().updateNonCriticalUserFields(curUser,this);
+
         App.getController().logout();
         startActivity(new Intent(MapActivity.this, LoginActivity.class));
         this.finish();
