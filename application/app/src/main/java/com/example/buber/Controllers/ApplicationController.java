@@ -99,7 +99,9 @@ public class ApplicationController {
             if (err != null) view.onError(err);
             else {
                 List<Trip> sessionTripList = (List<Trip>) resultData.get("filtered-trips");
+                List<String> sesssionTripUserNameList = (List<String>) resultData.get("filter-trips-usernames");
                 m.setSessionTripList(sessionTripList);
+                m.setSesssionTripUserNameList(sesssionTripUserNameList);
             }
         });
     }

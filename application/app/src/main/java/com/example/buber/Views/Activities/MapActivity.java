@@ -247,8 +247,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         // Decide dynamically to run rider or driver actions depending on current user
         Class resultActivity = sessionUser.getType() == RIDER ? TripBuilderActivity.class : TripSearchActivity.class;
         Intent intent = new Intent(getBaseContext(), resultActivity);
-        startActivity(intent);
-        if (sessionUser.getType() == RIDER) {
+        if (sessionUser.getType() == User.TYPE.RIDER) {
             intent.putExtra(
                     "currentLatLong",
                     new double[] {mLastKnownUserLocation.getLatitude(), mLastKnownUserLocation.getLongitude()});

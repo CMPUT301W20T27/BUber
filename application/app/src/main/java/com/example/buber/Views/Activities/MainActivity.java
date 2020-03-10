@@ -46,6 +46,7 @@ public class MainActivity extends AppCompatActivity implements Observer, UIError
             Log.d("DBMANAGER","already logged in");
             App.getAuthDBManager().getCurrentSessionUser((resultData, err) -> {
                 if (resultData != null) {
+
                     //this fetched driver is from the db
                     Driver tmpDriver = (Driver) resultData.get("user");
 
@@ -55,6 +56,7 @@ public class MainActivity extends AppCompatActivity implements Observer, UIError
                         App.getModel().setSessionUser(tmpUser);
                         Log.d("LOGIN","Logging in as driver");
                         startActivity(new Intent(MainActivity.this, MapActivity.class));
+                        this.finish();
                     }
                     else{
                         User tmpUser = (User) resultData.get("user");
@@ -62,17 +64,17 @@ public class MainActivity extends AppCompatActivity implements Observer, UIError
                         App.getModel().setSessionUser(tmpUser);
                         Log.d("LOGIN","Logging in as rider");
                         startActivity(new Intent(MainActivity.this, MapActivity.class));
+                        this.finish();
                     }
                 }
                 else {
                     Toast.makeText(this, err.getMessage(), Toast.LENGTH_LONG);
                 }
             });
-
         } else {
             startActivity(new Intent(MainActivity.this, LoginActivity.class));
+            this.finish();
         }
-        this.finish();
     }
 
     @Override
