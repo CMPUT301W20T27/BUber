@@ -1,6 +1,9 @@
 package com.example.buber.Model;
 
-
+/**
+ * Represents a User. Stores account information, type (Rider or Driver), username and other
+ * information.
+ */
 public abstract class User {
     public enum TYPE {
         DRIVER,

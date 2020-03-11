@@ -1,5 +1,8 @@
 package com.example.buber.Model;
 
+/**
+ * Contains user account information / non-application user metadata.
+ */
 public class Account {
     private String firstName;
     private String lastName;

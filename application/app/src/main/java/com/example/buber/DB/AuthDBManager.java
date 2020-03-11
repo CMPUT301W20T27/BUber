@@ -10,7 +10,10 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import java.util.HashMap;
 
-
+/**
+ * Used to handle the Firebase side authentication. Wraps the FirebaseAuth object and exposes
+ * methods to perform Firebase log in / log out and user creation.
+ */
 public class AuthDBManager {
 
     private static final String TAG = "In Database Manager";

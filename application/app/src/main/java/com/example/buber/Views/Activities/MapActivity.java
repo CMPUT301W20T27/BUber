@@ -34,15 +34,22 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.Task;
-
+import static com.example.buber.Model.User.TYPE.RIDER;
 import java.util.Observable;
 import java.util.Observer;
-
 import static com.example.buber.Model.User.TYPE.RIDER;
 
 public class MapActivity extends AppCompatActivity implements Observer, OnMapReadyCallback, UIErrorHandler, TripListener {
 
     private static final String TAG = "MapActivity";
+
+/**
+ * Main Map activity. Activity uses similiar UI for Rider and Driver, but changes functionality based
+ * on the type of user currently logged in (Rider, Driver). Activity links into the Google Maps
+ * APi which is used to handle the current user location. Future iterations will include using
+ * The sessionTrip object to display the route on the map and enable selecting start / end locations
+ * TODO: MVC Updating and Error Handling.
+ */
 
     private static final int ERROR_DIALOG_REQUEST = 9001;
     private GoogleMap mMap;

@@ -2,11 +2,14 @@ package com.example.buber.Views.Activities;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -24,19 +27,29 @@ import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 
+import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
 import java.util.Observable;
 import java.util.Observer;
 
+/**
+ * Main Rider activity for building and creating a trip. Activity generates a form that uses the
+ * Google search api to gather user locations. When form is submitted, new Trip instance is created
+ * and added to Firebase.
+ * TODO: MVC Updating and Error Handling.
+ */
 public class TripBuilderActivity extends AppCompatActivity implements UIErrorHandler, Observer {
     // Trip tings
     Trip tripRequest;
     UserLocation startLoc, endLoc;
-    LinearLayout fareOfferingLayout;
+    Geocoder geocoder;
     double minimumFareOffering;
     double riderFareOffering;
 
     // UI
+    LinearLayout fareOfferingLayout;
     EditText fareOfferingEditText;
     Button submitTripBtn;
 
@@ -54,6 +67,17 @@ public class TripBuilderActivity extends AppCompatActivity implements UIErrorHan
         // Set start location parameters from previous map activity
         double[] currentLatLong = getIntent().getDoubleArrayExtra("currentLatLong");
         startLoc = new UserLocation(currentLatLong[0], currentLatLong[1]);
+        geocoder = new Geocoder(this, Locale.getDefault());
+        try {
+            List<Address> addresses = geocoder.getFromLocation(
+                    currentLatLong[0],
+                    currentLatLong[1],
+                    1 // represent max location result returned, recommended 1-5
+            );
+            startLoc.setAddress(addresses.get(0).getAddressLine(0));
+        } catch (IOException e) {
+            Toast.makeText(getBaseContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
 
         // Initially hide visibility of price offering
         fareOfferingLayout =  findViewById(R.id.fareOfferingEditTextEstimationlinearLayout);
@@ -118,9 +142,11 @@ public class TripBuilderActivity extends AppCompatActivity implements UIErrorHan
                 final LatLng latLng = place.getLatLng();
                 if (startLoc == null) {
                     startLoc = new UserLocation(latLng.latitude, latLng.longitude);
+                    startLoc.setAddress(place.getAddress());
                 } else {
                     startLoc.setLatitude(latLng.latitude);
                     startLoc.setLongitude(latLng.longitude);
+                    startLoc.setAddress(place.getAddress());
                 }
 
                 if (startLoc != null && endLoc != null) {
@@ -141,9 +167,11 @@ public class TripBuilderActivity extends AppCompatActivity implements UIErrorHan
                 final LatLng latLng = place.getLatLng();
                 if (endLoc == null) {
                     endLoc = new UserLocation(latLng.latitude, latLng.longitude);
+                    endLoc.setAddress(place.getAddress());
                 } else {
                     endLoc.setLatitude(latLng.latitude);
                     endLoc.setLongitude(latLng.longitude);
+                    endLoc.setAddress(place.getAddress());
                 }
 
                 if (startLoc != null && endLoc != null) {
@@ -216,5 +244,6 @@ public class TripBuilderActivity extends AppCompatActivity implements UIErrorHan
 
     @Override
     public void onError(Error e) {
+        Toast.makeText(getBaseContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
     }
 }

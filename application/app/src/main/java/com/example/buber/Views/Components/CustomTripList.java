@@ -14,6 +14,9 @@ import com.example.buber.R;
 
 import java.util.ArrayList;
 
+/**
+ * UI Fragment for displaying a list of trip data.
+ */
 public class CustomTripList extends ArrayAdapter<TripSearchRecord> {
     public ArrayList<TripSearchRecord> tripRecords;
     public Context context;

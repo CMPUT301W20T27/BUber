@@ -7,6 +7,11 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
+/**
+ * Root class for our application data. Contains all needed data that views require. Extends the
+ * Observable class to implement MVC. Contains data like current user, current trip (if one exists),
+ * query results and mapstate.
+ */
 public class ApplicationModel extends Observable {
 
     private static final String TAG = "ApplicationModel";

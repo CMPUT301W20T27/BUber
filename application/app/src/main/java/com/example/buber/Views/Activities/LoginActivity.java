@@ -1,13 +1,13 @@
 package com.example.buber.Views.Activities;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.buber.App;
 import com.example.buber.Model.ApplicationModel;
@@ -19,6 +19,9 @@ import com.example.buber.Views.UIErrorHandler;
 import java.util.Observable;
 import java.util.Observer;
 
+/**
+ * Login Activity, handles all existing user authentication
+ */
 public class LoginActivity extends AppCompatActivity implements Observer, UIErrorHandler {
     private String TAG = "LoginActivity";
     private EditText editEmail;

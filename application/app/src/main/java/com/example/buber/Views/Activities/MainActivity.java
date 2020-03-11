@@ -11,13 +11,17 @@ import com.example.buber.Model.ApplicationModel;
 import com.example.buber.Model.Driver;
 import com.example.buber.Model.User;
 import com.example.buber.Views.UIErrorHandler;
+import static com.example.buber.Model.User.TYPE.DRIVER;
+import static com.example.buber.Model.User.TYPE.RIDER;
 
 import java.util.Observable;
 import java.util.Observer;
 
-import static com.example.buber.Model.User.TYPE.DRIVER;
-import static com.example.buber.Model.User.TYPE.RIDER;
-
+/**
+ * MainActivity. Used mostly as a router to check the current users login state and redirect
+ * to either the Login or Main map activity (in case the user is already logged in)
+ * TODO: MVC Updating and Error Handling.
+ */
 public class MainActivity extends AppCompatActivity implements Observer, UIErrorHandler {
     @Override
     protected void onCreate(Bundle savedInstanceState) {

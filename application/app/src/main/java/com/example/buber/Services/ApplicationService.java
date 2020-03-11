@@ -11,15 +11,19 @@ import com.example.buber.Model.Rider;
 import com.example.buber.Model.Trip;
 import com.example.buber.Model.User;
 import com.example.buber.Model.UserLocation;
-
+import static com.example.buber.Model.User.TYPE.DRIVER;
+import static com.example.buber.Model.User.TYPE.RIDER;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-import static com.example.buber.Model.User.TYPE.DRIVER;
-import static com.example.buber.Model.User.TYPE.RIDER;
 
+/**
+ * Represents the service layer of our application. All interactions with database occur here
+ * Handles communication between MVC frontend and database.
+ * TODO: Better error handling and refactoring to improve cohesion.
+ */
 public class ApplicationService {
     private static final String TAG = "ApplicationService";
 
@@ -48,7 +52,6 @@ public class ApplicationService {
             User.TYPE type,
             EventCompletionListener controllerListener
     ) {
-
         Account newUserAccount = new Account(firstName, lastName, email, phoneNumber);
         App.getAuthDBManager().createFirebaseUser(email, password, (resultData, err) -> {
             if (err != null) {

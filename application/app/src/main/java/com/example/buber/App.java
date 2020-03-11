@@ -9,12 +9,15 @@ import com.example.buber.DB.DBManager;
 import com.example.buber.DB.TripDBManager;
 import com.example.buber.Model.ApplicationModel;
 
+/**
+ * Root class of our application. Extends the base Android.app.Application class.
+ * Each application layer is housed as a singleton.
+ */
 public class App extends Application {
 
     private static final String TAG = "App";
-
-    // Only should contain the pieces of the MVC. App class should be responsbile
-    // for pullup/teardown of the application
+    // Only should contain the pieces of the MVC. App class should be responsible
+    // for pull up/teardown of the application
     private static final String DRIVERS_COLLECTION_NAME = "Drivers";
     private static final String RIDERS_COLLECTION_NAME = "Riders";
     private static final String TRIPS_COLLECTION_NAME = "Trips";

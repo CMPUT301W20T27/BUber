@@ -12,12 +12,16 @@ import com.example.buber.Model.UserLocation;
 import com.example.buber.Services.ApplicationService;
 import com.example.buber.Views.Activities.MapActivity;
 import com.example.buber.Views.UIErrorHandler;
-
+import static com.example.buber.Model.User.TYPE.RIDER;
 import java.util.List;
 import java.util.Observer;
 
-import static com.example.buber.Model.User.TYPE.RIDER;
-
+/**
+ * ApplicationController handles the interaction between our service layer and the model.
+ * It also handles all our updates to the application controller and bubbles up errors for our
+ * UI views to display.
+ * TODO: Better error handling and refactoring to improve cohesion.
+ */
 public class ApplicationController {
     private static final String TAG = "ApplicationController";
     private ApplicationModel model;

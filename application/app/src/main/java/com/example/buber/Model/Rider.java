@@ -6,6 +6,9 @@ import com.google.firebase.firestore.ServerTimestamp;
 
 import java.util.Date;
 
+/**
+ * Represents a User that is of type Rider. Linked to our Firebase "Drivers" collection
+ */
 public class Rider extends User {
     @DocumentId
     private String docID;

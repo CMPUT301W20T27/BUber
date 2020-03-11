@@ -25,6 +25,11 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
+/**
+ * Main Driver activity for searching for and selecting a trip. Activity loads trips and uses
+ * the model to display a list of trips that are filtered based on the users current radius.
+ * TODO: MVC Updating and Error Handling.
+ */
 public class TripSearchActivity extends AppCompatActivity implements UIErrorHandler, Observer,
         AcceptTripRequestFragment.OnFragmentInteractionListener {
 
