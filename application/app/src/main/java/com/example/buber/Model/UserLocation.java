@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 public class UserLocation {
     private double latitude;
     private double longitude;
+    private String address;
 
     // Important for db stuff
     public UserLocation() {}
@@ -16,6 +17,14 @@ public class UserLocation {
     public UserLocation(double latitude, double longitude) {
         this.latitude = latitude;
         this.longitude = longitude;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public double getLatitude() {
