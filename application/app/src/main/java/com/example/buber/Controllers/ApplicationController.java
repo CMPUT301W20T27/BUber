@@ -110,6 +110,23 @@ public class ApplicationController {
         });
     }
 
+    /**
+     * Updates the model to allow riders to find their ride requests
+     * stored in the db
+     * @param view
+     */
+    public static void getRiderCurrentTrip(UIErrorHandler view){
+        ApplicationModel m = App.getModel();
+        ApplicationService.riderCurrentTripUserLocation((resultData, err) -> {
+            if (err != null) view.onError(err);
+            else {
+                Trip sessionTrip = (Trip) resultData.get("filtered-trips");
+                m.setSessionTrip(sessionTrip);
+                Log.d("MODEL","Model was updated");
+            }
+        });
+    }
+
     public static void handleDriverTripSelect(Trip selectedTrip) {
         ApplicationModel m = App.getModel();
         selectedTrip.setStatus(Trip.STATUS.DRIVERACCEPT);

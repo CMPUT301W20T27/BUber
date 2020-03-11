@@ -17,7 +17,7 @@ public class Trip {
     private String riderID;
 
     public enum STATUS {
-            PENDING,
+            REQUESTED,
             DRIVERACCEPT,
             INPROGRESS,
             CANCELED
@@ -34,7 +34,7 @@ public class Trip {
     public Trip(String riderID, double fareOffering, UserLocation startUserLocation, UserLocation endUserLocation, String riderUserName) {
         this.driverID = null;
         this.riderID = riderID;
-        this.status = STATUS.PENDING;
+        this.status = STATUS.REQUESTED;
         this.fareOffering = fareOffering;
         this.startUserLocation = startUserLocation;
         this.endUserLocation = endUserLocation;
