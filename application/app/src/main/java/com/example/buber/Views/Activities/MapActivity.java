@@ -31,9 +31,11 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.Task;
-import static com.example.buber.Model.User.TYPE.RIDER;
+
 import java.util.Observable;
 import java.util.Observer;
+
+import static com.example.buber.Model.User.TYPE.RIDER;
 
 /**
  * Main Map activity. Activity uses similiar UI for Rider and Driver, but changes functionality based
@@ -106,6 +108,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
     @Override
     public void update(Observable o, Object arg) {
         // TODO: Update Map View
+        Toast.makeText(this, "I HAVE LISTENED LUL", Toast.LENGTH_LONG).show();
     }
 
     /**

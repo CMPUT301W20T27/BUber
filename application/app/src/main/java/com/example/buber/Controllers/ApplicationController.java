@@ -1,18 +1,18 @@
 package com.example.buber.Controllers;
 
-import android.util.Log;
+import android.content.Intent;
+import android.widget.Toast;
 
 import com.example.buber.App;
 import com.example.buber.Model.ApplicationModel;
-import com.example.buber.Model.Driver;
-import com.example.buber.Model.Rider;
 import com.example.buber.Model.Trip;
 import com.example.buber.Model.User;
 import com.example.buber.Model.UserLocation;
 import com.example.buber.Services.ApplicationService;
+import com.example.buber.Views.Activities.LoginActivity;
 import com.example.buber.Views.Activities.MapActivity;
 import com.example.buber.Views.UIErrorHandler;
-import static com.example.buber.Model.User.TYPE.RIDER;
+
 import java.util.List;
 import java.util.Observer;
 
@@ -68,16 +68,15 @@ public class ApplicationController {
         );
     }
 
-    public void login(String email, String password, User.TYPE type, UIErrorHandler view) {
+    public void login(String email, String password, User.TYPE type, LoginActivity view, Intent i) {
         ApplicationService.loginUser(email, password, type, (resultData, err) -> {
             if (err != null) view.onError(err);
             else {
                 User u = (User) resultData.get("user");
-
-                //update the login boolean's in DB
-                Log.d("DBMANAGER","CALLING UPDATENONCRITICAL");
                 updateNonCriticalUserFields(u,view);
-
+                view.startActivity(i);
+                Toast.makeText(view.getApplicationContext(), "You are NOW logged in.", Toast.LENGTH_SHORT).show();
+                view.finish();
                 model.setSessionUser(u);
             }
         });
@@ -103,9 +102,9 @@ public class ApplicationController {
             if (err != null) view.onError(err);
             else {
                 List<Trip> sessionTripList = (List<Trip>) resultData.get("filtered-trips");
-                List<String> sesssionTripUserNameList = (List<String>) resultData.get("filter-trips-usernames");
+                List<String> sessionTripUserNameList = (List<String>) resultData.get("filter-trips-usernames");
                 m.setSessionTripList(sessionTripList);
-                m.setSesssionTripUserNameList(sesssionTripUserNameList);
+                m.setSesssionTripUserNameList(sessionTripUserNameList);
             }
         });
     }
@@ -122,7 +121,6 @@ public class ApplicationController {
             else {
                 Trip sessionTrip = (Trip) resultData.get("filtered-trips");
                 m.setSessionTrip(sessionTrip);
-                Log.d("MODEL","Model was updated");
             }
         });
     }
@@ -132,7 +130,7 @@ public class ApplicationController {
         selectedTrip.setStatus(Trip.STATUS.DRIVERACCEPT);
         String userId = App.getAuthDBManager().getCurrentUserID();
         selectedTrip.setDriverID(userId);
-        ApplicationService.updateTripStatus(userId, selectedTrip, ((resultData, err) -> {
+        ApplicationService.selectTrip(userId, selectedTrip, ((resultData, err) -> {
             if (err != null) {
                 List<Observer> mapObservers = m.getObserversMatchingClass(MapActivity.class);
                 for (Observer map : mapObservers) {

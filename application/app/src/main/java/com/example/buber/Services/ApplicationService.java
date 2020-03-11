@@ -4,19 +4,20 @@ import android.util.Log;
 
 import com.example.buber.App;
 import com.example.buber.Controllers.EventCompletionListener;
-import com.example.buber.DB.DBManager;
 import com.example.buber.Model.Account;
 import com.example.buber.Model.Driver;
 import com.example.buber.Model.Rider;
 import com.example.buber.Model.Trip;
 import com.example.buber.Model.User;
 import com.example.buber.Model.UserLocation;
-import static com.example.buber.Model.User.TYPE.DRIVER;
-import static com.example.buber.Model.User.TYPE.RIDER;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+
+import static com.example.buber.Model.User.TYPE.DRIVER;
+import static com.example.buber.Model.User.TYPE.RIDER;
 
 
 /**
@@ -35,8 +36,10 @@ public class ApplicationService {
                             if (err != null) {
                                 controllerListener.onCompletion(null, new Error(err.getMessage()));
                                 return;
+                            } else {
+                                controllerListener.onCompletion(resultData, null);
                             }
-                        });
+                        }, true);
     }
 
     public static void createNewUser(
@@ -99,7 +102,7 @@ public class ApplicationService {
                 if (tripData != null && tripData.size() > 0) {
                     for (Trip t : tripData) {
                         double distance = driverLocation.distanceTo(t.getStartUserLocation());
-                        if (distance <= RADIUS && t.getStatus() == Trip.STATUS.REQUESTED) {
+                        if (distance <= RADIUS && t.getStatus() == Trip.STATUS.PENDING) {
                             filterTrips.add(t);
                             filterTripIds.add(t.getRiderID());
                         }
@@ -147,8 +150,8 @@ public class ApplicationService {
         });
     }
 
-    public static void updateTripStatus(String uid, Trip selectedTrip, EventCompletionListener controllerListener) {
-        App.getDbManager().updateTrip(uid, selectedTrip, controllerListener);
+    public static void selectTrip(String uid, Trip selectedTrip, EventCompletionListener controllerListener) {
+        App.getDbManager().updateTrip(uid, selectedTrip, controllerListener, true);
     }
     public static void updateUser(User updateSessionUser, EventCompletionListener listener) {
         String uID = App.getAuthDBManager().getCurrentUserID();

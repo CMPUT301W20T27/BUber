@@ -1,6 +1,5 @@
 package com.example.buber.Views.Activities;
 
-import android.content.Intent;
 import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
@@ -202,7 +201,7 @@ public class TripBuilderActivity extends AppCompatActivity implements UIErrorHan
                         username
                         );
                 App.getController().createNewTrip(tripRequest, this);
-                startActivity(new Intent(getBaseContext(), MapActivity.class));
+                this.finish();
             } else {
                 // Remind user of minimum cost
                 recalculateFareOffering();

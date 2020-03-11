@@ -17,7 +17,7 @@ public class Trip {
     private String riderID;
 
     public enum STATUS {
-            REQUESTED,
+        PENDING,
             DRIVERACCEPT,
             INPROGRESS,
             CANCELED
@@ -34,7 +34,7 @@ public class Trip {
     public Trip(String riderID, double fareOffering, UserLocation startUserLocation, UserLocation endUserLocation, String riderUserName) {
         this.driverID = null;
         this.riderID = riderID;
-        this.status = STATUS.REQUESTED;
+        this.status = STATUS.PENDING;
         this.fareOffering = fareOffering;
         this.startUserLocation = startUserLocation;
         this.endUserLocation = endUserLocation;
@@ -96,6 +96,24 @@ public class Trip {
 
     public void setRiderUserName(String riderUserName) {
         this.riderUserName = riderUserName;
+    }
+
+    public boolean nextStatusValid(Trip.STATUS newStatus) {
+        if (this.getStatus() == Trip.STATUS.PENDING) {
+            if (newStatus == Trip.STATUS.DRIVERACCEPT || newStatus == Trip.STATUS.CANCELED) {
+                return true;
+            }
+        } else if (this.getStatus() == Trip.STATUS.DRIVERACCEPT) {
+            if (newStatus == Trip.STATUS.INPROGRESS || newStatus == Trip.STATUS.PENDING || newStatus == Trip.STATUS.CANCELED) {
+                return true;
+            }
+        } else if (this.getStatus() == Trip.STATUS.INPROGRESS) {
+            if (newStatus == Trip.STATUS.CANCELED) {
+                return true;
+            }
+
+        }
+        return false;
     }
 
     @NonNull
