@@ -99,7 +99,7 @@ public class ApplicationService {
                 if (tripData != null && tripData.size() > 0) {
                     for (Trip t : tripData) {
                         double distance = driverLocation.distanceTo(t.getStartUserLocation());
-                        if (distance <= RADIUS && t.getStatus() == Trip.STATUS.PENDING) {
+                        if (distance <= RADIUS && t.getStatus() == Trip.STATUS.REQUESTED) {
                             filterTrips.add(t);
                             filterTripIds.add(t.getRiderID());
                         }
@@ -108,6 +108,36 @@ public class ApplicationService {
                     HashMap<String, List> filteredTripsData = new HashMap<>();
                     filteredTripsData.put("filtered-trips", filterTrips);
                     filteredTripsData.put("filter-trips-usernames", filterTripUserNames);
+                    controllerListener.onCompletion(filteredTripsData, null);
+
+                } else {
+                    controllerListener.onCompletion(null, new Error("Could not find trips"));
+                }
+            }
+        });
+    }
+
+    public static void riderCurrentTripUserLocation(EventCompletionListener controllerListener) {
+        Log.d("APPSERVICE","Trying to find rider trip");
+        App.getDbManager().getTrips((resultData, err) -> {
+            if (err != null) controllerListener.onCompletion(null, err);
+            else {
+                Log.d("APPSERVICE","got data");
+                Trip filterTrips = new Trip();
+                List<String> filterTripUserNames = new LinkedList<>();
+                List<Trip> tripData = (List<Trip>) resultData.get("all-trips");
+                if (tripData != null && tripData.size() > 0) {
+                    for (Trip t : tripData) {
+                        if (t.getRiderID().equals(App.getAuthDBManager().getCurrentUserID())) {
+                            Log.d("APPSERVICE","Found a trip");
+                            filterTrips = t;
+                            break;
+                        }
+                    }
+
+                    HashMap<String, Trip> filteredTripsData = new HashMap<>();
+                    filteredTripsData.put("filtered-trips", filterTrips);
+
                     controllerListener.onCompletion(filteredTripsData, null);
 
                 } else {

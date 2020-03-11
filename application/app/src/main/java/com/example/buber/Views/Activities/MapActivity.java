@@ -260,6 +260,10 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         startActivity(intent);
     }
 
+    public void handleTestClick(View v){
+        startActivity(new Intent(MapActivity.this, RequestStatusActivity.class));
+    }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
