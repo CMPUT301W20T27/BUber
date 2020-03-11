@@ -1,6 +1,7 @@
 package com.example.buber.Views.Activities;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -8,6 +9,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.buber.App;
 import com.example.buber.Controllers.ApplicationController;
+import com.example.buber.DB.TripDBManager;
+import com.example.buber.DB.TripListener;
 import com.example.buber.Model.ApplicationModel;
 import com.example.buber.Model.Trip;
 import com.example.buber.Model.User;
@@ -81,6 +84,9 @@ public class TripSearchActivity extends AppCompatActivity implements UIErrorHand
         // TODO: Backend code for selecting trip
         Trip selectedTrip = App.getModel().getSessionTripList().get(position);
         ApplicationController.handleDriverTripSelect(selectedTrip);
+
+        //TODO: Attach a listener to the Riders Trip.
+
         // Navigate back to main activity
         this.finish();
     }

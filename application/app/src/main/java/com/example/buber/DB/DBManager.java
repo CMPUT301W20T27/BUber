@@ -3,7 +3,9 @@ package com.example.buber.DB;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
+import com.example.buber.App;
 import com.example.buber.Controllers.EventCompletionListener;
 import com.example.buber.Model.Driver;
 import com.example.buber.Model.Rider;
@@ -11,7 +13,9 @@ import com.example.buber.Model.Trip;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.SetOptions;
 
 import java.util.HashMap;
@@ -49,6 +53,7 @@ public class DBManager {
         collectionDriver = database.collection(driverCollectionName);
         collectionRider = database.collection(riderCollectionName);
         collectionTrip = database.collection(tripCollectionName);
+        Log.d(TAG, "DBManager instansitated");
     }
     /*
     public boolean isRiderLoggedOn(String docID){
@@ -100,10 +105,13 @@ public class DBManager {
     }
 
     public void createTrip(Trip tripRequest, EventCompletionListener listener) {
+        Log.d(TAG, "Creating trip...");
         collectionTrip
-                .document(tripRequest.getRiderID())
-                .set(tripRequest)
+                .add(tripRequest)
                 .addOnSuccessListener(documentReference -> {
+                    Log.d(TAG, "Trip Created Successfully");
+                    tripRequest.setDocID(documentReference.getId()); // Set the doc id for the trip. VERY IMPORTANT!!!
+
                     HashMap<String, Trip> toReturn = new HashMap<>();
                     toReturn.put("trip", tripRequest);
                     listener.onCompletion(toReturn, null);
@@ -150,8 +158,8 @@ public class DBManager {
     public void getTrip(String docID, EventCompletionListener listener) {
         collectionTrip.document(docID)
                 .get().addOnSuccessListener(documentSnapshot -> {
-            HashMap<String, Rider> toReturn = new HashMap<>();
-            toReturn.put("trip", documentSnapshot.toObject(Rider.class));
+            HashMap<String, Trip> toReturn = new HashMap<>();
+            toReturn.put("trip", documentSnapshot.toObject(Trip.class));
             listener.onCompletion(toReturn, null);
         }).addOnFailureListener((@NonNull Exception e) -> {
             Log.d(TAG, e.getMessage());

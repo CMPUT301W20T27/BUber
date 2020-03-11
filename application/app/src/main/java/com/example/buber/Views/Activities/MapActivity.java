@@ -1,6 +1,7 @@
 package com.example.buber.Views.Activities;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -16,7 +17,9 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.buber.App;
+import com.example.buber.DB.TripListener;
 import com.example.buber.Model.ApplicationModel;
+import com.example.buber.Model.Trip;
 import com.example.buber.Model.User;
 import com.example.buber.Model.UserLocation;
 import com.example.buber.R;
@@ -37,7 +40,9 @@ import java.util.Observer;
 
 import static com.example.buber.Model.User.TYPE.RIDER;
 
-public class MapActivity extends AppCompatActivity implements Observer, OnMapReadyCallback, UIErrorHandler {
+public class MapActivity extends AppCompatActivity implements Observer, OnMapReadyCallback, UIErrorHandler, TripListener {
+
+    private static final String TAG = "MapActivity";
 
     private static final int ERROR_DIALOG_REQUEST = 9001;
     private GoogleMap mMap;
@@ -57,7 +62,6 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
 
     // State
     private boolean showSideBar;
-
 
 
     @Override
@@ -89,9 +93,25 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
 
         User sessionUser = App.getModel().getSessionUser();
 
-        mainActionButton.setText(sessionUser.getType() == RIDER ? MAIN_ACTION_BUTTON_RIDER_TEXT : MAIN_ACTION_BUTTON_DRIVER_TEXT);
+        mainActionButton.setText(sessionUser.getType() == RIDER ? MAIN_ACTION_BUTTON_RIDER_TEXT : MAIN_ACTION_BUTTON_DRIVER_TEXT);              //Something here has made my app crash(Potential bug)
+
+        App.getTripDBManager().setListener(this);
 
     }
+        /**
+         *  To get notified when a trip is being updated, you need to do 3 things:
+         *  1. Set the session trip (TripDBManager is an observer and will observe and update whenever the session trip is changed or updated)
+         *  2. Set yourself as a listener on TripDBManager using App.getTripDBManager().setListenter(this)
+         *  3. Implement TripListener interface and override the method
+         * @param status
+         */
+        @Override
+        public void onTripStatusUpdate(Trip.STATUS status) {
+            Log.d(TAG, "OMG I GOT A TRIP UPDATE. Status: " + status);
+//            TODO: somehow create something that the rider can see on the view
+        }
+
+
 
     public void initializeMap(){
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
@@ -107,6 +127,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
     this code is copied from google map api documentation
      In order to get current location at runtime, permissions must be fulfilled
      **/
+
     private void getLocationPermission() {
         /*
          * Request location permission, so that we can get the location of the

@@ -1,13 +1,17 @@
 package com.example.buber;
 
 import android.app.Application;
+import android.util.Log;
 
 import com.example.buber.Controllers.ApplicationController;
 import com.example.buber.DB.AuthDBManager;
 import com.example.buber.DB.DBManager;
+import com.example.buber.DB.TripDBManager;
 import com.example.buber.Model.ApplicationModel;
 
 public class App extends Application {
+
+    private static final String TAG = "App";
 
     // Only should contain the pieces of the MVC. App class should be responsbile
     // for pullup/teardown of the application
@@ -18,14 +22,18 @@ public class App extends Application {
     transient private static ApplicationController controller;
     transient private static AuthDBManager authDBManager;
     transient private static DBManager dbManager;
+    transient private static TripDBManager tripDBManager;
 
     @Override
     public void onCreate() {
         super.onCreate();
+        Log.d(TAG, "onCreate APP");
+        getTripDBManager();
         getModel();
         getController();
         getAuthDBManager();
         getDbManager();
+
     }
 
     @Override
@@ -35,6 +43,7 @@ public class App extends Application {
         controller = null;
         dbManager = null;
         authDBManager = null;
+        tripDBManager = null;
     }
 
     public static ApplicationModel getModel() {
@@ -62,11 +71,22 @@ public class App extends Application {
     }
 
     public static DBManager getDbManager() {
+        Log.d(TAG, "in get db Manager");
         if (dbManager== null) {
             dbManager = new DBManager(DRIVERS_COLLECTION_NAME, RIDERS_COLLECTION_NAME, TRIPS_COLLECTION_NAME);
         }
 
         return dbManager;
+    }
+
+    public static TripDBManager getTripDBManager() {
+        Log.d(TAG, "in get Trip Manager");
+        if (tripDBManager == null) {
+            Log.d(TAG, "Creating Trip Manager");
+            tripDBManager = new TripDBManager();
+        }
+
+        return tripDBManager;
     }
 
 }

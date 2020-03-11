@@ -19,6 +19,7 @@ import java.util.Observer;
 import static com.example.buber.Model.User.TYPE.RIDER;
 
 public class ApplicationController {
+    private static final String TAG = "ApplicationController";
     private ApplicationModel model;
 
     public ApplicationController(ApplicationModel model) {
@@ -32,6 +33,7 @@ public class ApplicationController {
                     if (err != null) view.onError(err);
                     else {
                         Trip tripData =  (Trip) resultData.get("trip");
+                        Log.d(TAG, "session Trip being set... trip: " + tripData);
                         model.setSessionTrip(tripData);
                     }
                 }
@@ -108,7 +110,7 @@ public class ApplicationController {
 
     public static void handleDriverTripSelect(Trip selectedTrip) {
         ApplicationModel m = App.getModel();
-        selectedTrip.setStatus(Trip.STATUS.DRIVERACCEPT);
+        selectedTrip.setStatus(Trip.STATUS.DRIVER_ACCEPT);
         String userId = App.getAuthDBManager().getCurrentUserID();
         selectedTrip.setDriverID(userId);
         ApplicationService.updateTripStatus(userId, selectedTrip, ((resultData, err) -> {

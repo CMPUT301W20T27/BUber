@@ -26,6 +26,7 @@ public class MainActivity extends AppCompatActivity implements Observer, UIError
         ApplicationModel m = App.getModel();
         m.addObserver(this);
         handleLoginStatus();
+
     }
 
     @Override

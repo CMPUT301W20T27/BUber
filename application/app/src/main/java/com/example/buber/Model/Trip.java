@@ -2,20 +2,29 @@ package com.example.buber.Model;
 import androidx.annotation.NonNull;
 
 import com.google.firebase.firestore.DocumentId;
+import com.google.firebase.firestore.ServerTimestamp;
+
+import java.util.Date;
 
 public class Trip {
 
     @DocumentId
     private String docID;
 
+    @ServerTimestamp
+    private Date timeStamp;
+
     private String driverID;
     private String riderID;
 
     public enum STATUS {
-            PENDING,
-            DRIVERACCEPT,
-            INPROGRESS,
-            CANCELED
+            REQUESTED, // Rider has requested a Trip
+            DRIVER_ACCEPT, // Driver has accepted the riders Trip
+            RIDER_ACCEPT, // Rider has accepted the Driver
+            COMMING,    // The Driver is comming to pick up rider
+            ON_ROUTE,   // On route to destination
+            COMPLETED,  // Ride is over :(
+            CANCELED    // Oh no rider was canceled
     }
 
     private STATUS status;
@@ -49,7 +58,7 @@ public class Trip {
     public Trip(String riderID, double fareOffering, UserLocation startUserLocation, UserLocation endUserLocation, String riderUserName) {
         this.driverID = null;
         this.riderID = riderID;
-        this.status = STATUS.PENDING;
+        this.status = STATUS.REQUESTED;
         this.fareOffering = fareOffering;
         this.startUserLocation = startUserLocation;
         this.endUserLocation = endUserLocation;
@@ -91,6 +100,22 @@ public class Trip {
 
     public void setRiderUserName(String riderUserName) {
         this.riderUserName = riderUserName;
+    }
+
+    public String getDocID() {
+        return docID;
+    }
+
+    public void setDocID(String docID) {
+        this.docID = docID;
+    }
+
+    public Date getTimeStamp() {
+        return timeStamp;
+    }
+
+    public void setTimeStamp(Date timeStamp) {
+        this.timeStamp = timeStamp;
     }
 
     @NonNull

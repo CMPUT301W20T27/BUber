@@ -1,11 +1,16 @@
 package com.example.buber.Model;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
 public class ApplicationModel extends Observable {
+
+    private static final String TAG = "ApplicationModel";
+
     private User sessionUser;
     private Trip sessionTrip;
     private List<Trip> sessionTripList;
@@ -40,6 +45,7 @@ public class ApplicationModel extends Observable {
     public void setSessionTrip(Trip sessionTrip) {
         this.sessionTrip = sessionTrip;
         setChanged();
+        Log.d(TAG, "Notifying Observers... Trip: " + sessionTrip);
         notifyObservers();
     }
 

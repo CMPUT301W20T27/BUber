@@ -32,6 +32,9 @@ public class ApplicationService {
                                 controllerListener.onCompletion(null, new Error(err.getMessage()));
                                 return;
                             }
+
+                            // NEED TO PASS TRIP TO CONTROLLER!!!
+                            controllerListener.onCompletion(resultData, err);
                         });
     }
 
@@ -96,7 +99,7 @@ public class ApplicationService {
                 if (tripData != null && tripData.size() > 0) {
                     for (Trip t : tripData) {
                         double distance = driverLocation.distanceTo(t.getStartUserLocation());
-                        if (distance <= RADIUS && t.getStatus() == Trip.STATUS.PENDING) {
+                        if (distance <= RADIUS && t.getStatus() == Trip.STATUS.REQUESTED) {
                             filterTrips.add(t);
                             filterTripIds.add(t.getRiderID());
                         }
