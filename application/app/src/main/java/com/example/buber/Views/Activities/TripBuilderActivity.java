@@ -28,6 +28,12 @@ import java.util.Arrays;
 import java.util.Observable;
 import java.util.Observer;
 
+/**
+ * Main Rider activity for building and creating a trip. Activity generates a form that uses the
+ * Google search api to gather user locations. When form is submitted, new Trip instance is created
+ * and added to Firebase.
+ * TODO: MVC Updating and Error Handling.
+ */
 public class TripBuilderActivity extends AppCompatActivity implements UIErrorHandler, Observer {
     // Trip tings
     Trip tripRequest;

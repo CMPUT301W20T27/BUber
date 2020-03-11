@@ -17,6 +17,10 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * Repository for accessing firebase. Used to perform CRUD (Create, Read, Update Destroy) on
+ * our Firebase collections. Uses listeners to handle asynchronous reads/writes to Firebase.
+ */
 public class DBManager {
 
     private static final String TAG = "In Database Manager";

@@ -12,6 +12,12 @@ import com.example.buber.Views.UIErrorHandler;
 import java.util.List;
 import java.util.Observer;
 
+/**
+ * ApplicationController handles the interaction between our service layer and the model.
+ * It also handles all our updates to the application controller and bubbles up errors for our
+ * UI views to display.
+ * TODO: Better error handling and refactoring to improve cohesion.
+ */
 public class ApplicationController {
     private ApplicationModel model;
 

@@ -5,6 +5,9 @@ import android.widget.EditText;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Validation utility functions for login form.
+ */
 public class LoginFormUtils {
 
 

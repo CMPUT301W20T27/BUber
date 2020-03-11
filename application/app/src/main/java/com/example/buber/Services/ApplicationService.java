@@ -14,6 +14,11 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * Represents the service layer of our application. All interactions with database occur here
+ * Handles communication between MVC frontend and database.
+ * TODO: Better error handling and refactoring to improve cohesion.
+ */
 public class ApplicationService {
     private static final String TAG = "ApplicationService";
 
@@ -39,7 +44,6 @@ public class ApplicationService {
             User.TYPE type,
             EventCompletionListener controllerListener
     ) {
-
         Account newUserAccount = new Account(firstName, lastName, email, phoneNumber);
         App.getAuthDBManager().createFirebaseUser(email, password, (resultData, err) -> {
             if (err != null) {

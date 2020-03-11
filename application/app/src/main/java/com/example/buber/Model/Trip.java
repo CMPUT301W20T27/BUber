@@ -3,6 +3,11 @@ import androidx.annotation.NonNull;
 
 import com.google.firebase.firestore.DocumentId;
 
+/**
+ * Represents a trip a rider is wishing to take. Stores two locations, one for the start and end.
+ * Status represents the current status of the trip (pending is before a driver accepts, then
+ * driveraccept, then inprogress, and cancelled if a user chooses to do so).
+ */
 public class Trip {
 
     @DocumentId

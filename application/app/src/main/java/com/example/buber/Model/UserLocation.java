@@ -2,6 +2,10 @@ package com.example.buber.Model;
 
 import androidx.annotation.NonNull;
 
+/**
+ * Used to represent a location that can be parsed by Google's map API. Currently just a
+ * latitude and longitude with some simple methods for calculating distance between locations.
+ */
 public class UserLocation {
     private double latitude;
     private double longitude;
@@ -67,4 +71,5 @@ public class UserLocation {
     public String toString() {
         return "Lat: " + getLatitude() + " Long: " + getLongitude();
     }
+
 }
