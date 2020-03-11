@@ -8,7 +8,6 @@ import com.example.buber.Controllers.EventCompletionListener;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-
 import java.util.HashMap;
 
 /**
@@ -78,7 +77,9 @@ public class AuthDBManager {
 
     public void getCurrentSessionUser(EventCompletionListener listener) {
         if (isLoggedIn()) {
-            String uid = mAuth.getUid();
+            String uid = mAuth.getUid();  //looks like rider + driver have same uid
+            Log.d("UID",uid);
+
             // TODO: Differentiate between Rider/Driver
             App.getDbManager().getDriver(uid, ((resultData, err) -> {
                 if (resultData != null) {

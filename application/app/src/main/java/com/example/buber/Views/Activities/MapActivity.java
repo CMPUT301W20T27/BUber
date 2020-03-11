@@ -31,7 +31,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.Task;
-
+import static com.example.buber.Model.User.TYPE.RIDER;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -94,7 +94,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
 
         User sessionUser = App.getModel().getSessionUser();
 
-        mainActionButton.setText(sessionUser.getType() == User.TYPE.RIDER ? MAIN_ACTION_BUTTON_RIDER_TEXT : MAIN_ACTION_BUTTON_DRIVER_TEXT);
+        mainActionButton.setText(sessionUser.getType() == RIDER ? MAIN_ACTION_BUTTON_RIDER_TEXT : MAIN_ACTION_BUTTON_DRIVER_TEXT);
 
     }
 
@@ -225,6 +225,11 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
     }
 
     public void handleLogoutButtonClick(View v) {
+        User curUser = App.getModel().getSessionUser();
+        curUser.setType(null);
+        Log.d("APPSERVICE","map logging out");
+        App.getController().updateNonCriticalUserFields(curUser,this);
+
         App.getController().logout();
         startActivity(new Intent(MapActivity.this, LoginActivity.class));
         this.finish();
@@ -245,7 +250,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
     public void handleMainActionClick(View v) {
         User sessionUser = App.getModel().getSessionUser();
         // Decide dynamically to run rider or driver actions depending on current user
-        Class resultActivity = sessionUser.getType() == User.TYPE.RIDER ? TripBuilderActivity.class : TripSearchActivity.class;
+        Class resultActivity = sessionUser.getType() == RIDER ? TripBuilderActivity.class : TripSearchActivity.class;
         Intent intent = new Intent(getBaseContext(), resultActivity);
         if (sessionUser.getType() == User.TYPE.RIDER) {
             intent.putExtra(

@@ -12,13 +12,15 @@ public class Driver extends User {
 
     private double rating;
 
+    private boolean driverLoggedOn;
+
     @DocumentId
     private String docID;
 
     @ServerTimestamp
     public Date timestamp;
 
-    public Driver() { setType(TYPE.DRIVER); }
+    public Driver() { setType(TYPE.DRIVER); driverLoggedOn=false;}
 
     public Driver(String username, Account account) {
         super(username, account);
@@ -48,5 +50,13 @@ public class Driver extends User {
 
     public void setTimestamp(Date timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public boolean getDriverLoggedOn() {
+        return driverLoggedOn;
+    }
+
+    public void setLoggedOn(boolean loggedOn) {
+        driverLoggedOn = loggedOn;
     }
 }

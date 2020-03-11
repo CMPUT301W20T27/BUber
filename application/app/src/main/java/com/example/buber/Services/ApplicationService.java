@@ -1,18 +1,23 @@
 package com.example.buber.Services;
 
+import android.util.Log;
+
 import com.example.buber.App;
 import com.example.buber.Controllers.EventCompletionListener;
+import com.example.buber.DB.DBManager;
 import com.example.buber.Model.Account;
 import com.example.buber.Model.Driver;
 import com.example.buber.Model.Rider;
 import com.example.buber.Model.Trip;
 import com.example.buber.Model.User;
 import com.example.buber.Model.UserLocation;
-
+import static com.example.buber.Model.User.TYPE.DRIVER;
+import static com.example.buber.Model.User.TYPE.RIDER;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+
 
 /**
  * Represents the service layer of our application. All interactions with database occur here
@@ -119,15 +124,36 @@ public class ApplicationService {
         String uID = App.getAuthDBManager().getCurrentUserID();
         Driver tmpDriver = new Driver(updateSessionUser.getUsername(),updateSessionUser.getAccount());
         Rider tmpRider = new Rider(updateSessionUser.getUsername(),updateSessionUser.getAccount());
+        if(updateSessionUser.getType()==RIDER){
+            tmpDriver.setLoggedOn(false);
+            tmpRider.setRiderLoggedOn(true);
+        }
+        else if(updateSessionUser.getType()==DRIVER){
+            tmpDriver.setLoggedOn(true);
+            tmpRider.setRiderLoggedOn(false);
+        }
+        else{  //logging out
+            Log.d("DBMANAGER","Logging out");
+            tmpDriver.setLoggedOn(false);
+            tmpRider.setRiderLoggedOn(false);
+        }
         App.getDbManager().updateRider(uID, tmpRider, (resultData, err) -> {
             if (err == null) {
+                Log.d("DBMANAGER","TRYING TO UPDATE DRIVER");
                 App.getDbManager().updateDriver(uID,tmpDriver, (resultData1, err1) -> {
                     if (err1 == null) {
                         listener.onCompletion(null, null);
                     }
                 });
             }
+                Log.d("DBMANAGER","Reached here");
         });
+        App.getDbManager().updateDriver(uID,tmpDriver, (resultData1, err1) -> {
+            if (err1 == null) {
+                listener.onCompletion(null, null);
+            }
+        });
+
     }
 
 }

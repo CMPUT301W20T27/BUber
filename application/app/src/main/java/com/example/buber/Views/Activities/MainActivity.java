@@ -8,8 +8,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.buber.App;
 import com.example.buber.Model.ApplicationModel;
+import com.example.buber.Model.Driver;
 import com.example.buber.Model.User;
 import com.example.buber.Views.UIErrorHandler;
+import static com.example.buber.Model.User.TYPE.DRIVER;
+import static com.example.buber.Model.User.TYPE.RIDER;
 
 import java.util.Observable;
 import java.util.Observer;
@@ -44,12 +47,31 @@ public class MainActivity extends AppCompatActivity implements Observer, UIError
     private void handleLoginStatus() {
         if(App.getAuthDBManager().isLoggedIn()) {
             Log.d("LOGIN","Already logged in");
+            Log.d("DBMANAGER","already logged in");
             App.getAuthDBManager().getCurrentSessionUser((resultData, err) -> {
                 if (resultData != null) {
-                    App.getModel().setSessionUser((User) resultData.get("user"));
-                    startActivity(new Intent(MainActivity.this, MapActivity.class));
-                    this.finish();
-                } else {
+
+                    //this fetched driver is from the db
+                    Driver tmpDriver = (Driver) resultData.get("user");
+
+                    if(tmpDriver.getDriverLoggedOn()) {
+                        User tmpUser = (User) resultData.get("user");
+                        tmpUser.setType(DRIVER);
+                        App.getModel().setSessionUser(tmpUser);
+                        Log.d("LOGIN","Logging in as driver");
+                        startActivity(new Intent(MainActivity.this, MapActivity.class));
+                        this.finish();
+                    }
+                    else{
+                        User tmpUser = (User) resultData.get("user");
+                        tmpUser.setType(RIDER);
+                        App.getModel().setSessionUser(tmpUser);
+                        Log.d("LOGIN","Logging in as rider");
+                        startActivity(new Intent(MainActivity.this, MapActivity.class));
+                        this.finish();
+                    }
+                }
+                else {
                     Toast.makeText(this, err.getMessage(), Toast.LENGTH_LONG);
                 }
             });

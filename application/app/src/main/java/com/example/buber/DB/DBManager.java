@@ -9,6 +9,7 @@ import com.example.buber.Model.Driver;
 import com.example.buber.Model.Rider;
 import com.example.buber.Model.Trip;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
@@ -53,8 +54,27 @@ public class DBManager {
         collectionRider = database.collection(riderCollectionName);
         collectionTrip = database.collection(tripCollectionName);
     }
+    /*
+    public boolean isRiderLoggedOn(String docID){
+        Log.d("AnotherDBTEST",docID);
+        boolean retValue;
+        collectionRider.document(docID)
+                .get().addOnSuccessListener(documentSnapshot -> {
+           Rider tempRider = documentSnapshot.toObject(Rider.class);
+           if(tempRider.getRiderLoggedOn()){
+               Log.d("HURRAY","Rider is logged on");
+               retValue = true;
+            }
+           else{
+               Log.d("NOTHURRAY","Rider is not logged on");
+           }
+        }).addOnFailureListener((@NonNull Exception e) -> {
+            Log.d(TAG, e.getMessage());
+        });
 
-
+        return false;
+    }
+     */
     /* CREATE */
     public void createRider(String docID, Rider r, EventCompletionListener listener) {
         collectionRider.document(docID).set(r)
@@ -161,6 +181,7 @@ public class DBManager {
 
     /* UPDATE */
     public void updateRider(String docID, Rider updatedRider, EventCompletionListener listener) {
+        Log.d("DBMANAGER","Updating Rider");
         collectionRider.document(docID)
                 .set(updatedRider, SetOptions.merge())
                 .addOnSuccessListener(documentSnapshot -> {
@@ -174,6 +195,7 @@ public class DBManager {
     }
 
     public void updateDriver(String docID, Driver updatedDriver, EventCompletionListener listener) {
+        Log.d("DBMANAGER","Updating driver");
         collectionDriver.document(docID)
                 .set(updatedDriver, SetOptions.merge())
                 .addOnSuccessListener(documentSnapshot -> {
