@@ -36,7 +36,6 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.Task;
 
-import java.util.Hashtable;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -114,6 +113,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         if (sessionTrip == null) {
             this.setCurrentTripStatus(null);
         } else if (sessionTrip.getStatus() != currentTripStatus) {
+            Toast.makeText(this, "Trip status changed to: " + sessionTrip.getStatus(), Toast.LENGTH_SHORT).show();
             this.setCurrentTripStatus(sessionTrip.getStatus());
         }
         showActiveMainActionButton();
@@ -167,6 +167,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
                     riderRequestCancelMainBtn.setVisibility(View.VISIBLE);
                     break;
                 case DRIVER_ACCEPT:
+                    riderRequestCancelMainBtn.setVisibility(View.VISIBLE);
                     break;
                 case DRIVER_PICKING_UP:
                     break;
