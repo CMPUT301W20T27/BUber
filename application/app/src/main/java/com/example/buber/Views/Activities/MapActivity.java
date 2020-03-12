@@ -33,6 +33,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.Task;
 
+import java.util.Hashtable;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -47,6 +48,7 @@ import static com.example.buber.Model.User.TYPE.RIDER;
  */
 public class MapActivity extends AppCompatActivity implements Observer, OnMapReadyCallback, UIErrorHandler {
 
+    // GOOGLE MAP state
     private static final int ERROR_DIALOG_REQUEST = 9001;
     private GoogleMap mMap;
     private boolean mLocationPermissionGranted = false;
@@ -54,24 +56,28 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private Location mLastKnownUserLocation;
     private static final float DEFAULT_ZOOM = 15;
+
+    // RIDER ACTION MESSAGES
     private final String MAIN_ACTION_BUTTON_RIDER_TEXT = "Request a Ride";
+    private final String MAIN_ACTION_BUTTON_REQ_CANCEL_TEXT = "Cancel your current ride request";
+
+    // DRIVER ACTION MESSAGES
     private final String MAIN_ACTION_BUTTON_DRIVER_TEXT = "Search for Active Rides";
     private Trip.STATUS currentTripStatus = null;
 
-    // Views
+    // MAIN ACTION BUTTONS
+    private Button mainActionButton;
+
+    // SIDEBAR STATE
+    private boolean showSideBar;
     private Button settingsButton;
     private Button accountButton;
     private View sideBarView;
-    private Button mainActionButton;
-
-    // State
-    private boolean showSideBar;
 
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d("map","in map");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
 
@@ -84,48 +90,144 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
                     "map connection failed",Toast.LENGTH_SHORT).show();
         }
 
+
+        // INSTANTIATE SIDEBAR BUTTONS
         settingsButton = findViewById(R.id.settings_button);
         accountButton = findViewById(R.id.account_button);
         sideBarView = findViewById(R.id.sidebar);
+
+
+        // INSTANTIATE MAIN ACTION BUTTONS
         mainActionButton = findViewById(R.id.rider_request_button);
 
-        sideBarView.setVisibility(View.INVISIBLE);
-        settingsButton.setVisibility(View.VISIBLE);
-        mainActionButton.setVisibility(View.VISIBLE);
-        showSideBar = false;
+        // HIDE SIDEBAR
+        hideSettingsPanel();
 
         App.getModel().addObserver(this);
-
         User sessionUser = App.getModel().getSessionUser();
-
         mainActionButton.setText(sessionUser.getType() == RIDER ? MAIN_ACTION_BUTTON_RIDER_TEXT : MAIN_ACTION_BUTTON_DRIVER_TEXT);
         setCurrentTripStatus(null);
     }
 
-    public void initializeMap(){
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
-        mapFragment.getMapAsync(MapActivity.this);  //calls onMapReady
-    }
-
+    /* OBSERVING OBSERVABLES */
     @Override
     public void update(Observable o, Object arg) {
         // TODO: Update Map View
         Trip sessionTrip = App.getModel().getSessionTrip();
         if (sessionTrip != null && sessionTrip.getStatus() != currentTripStatus) {
             setCurrentTripStatus(sessionTrip.getStatus());
+            switch (sessionTrip.getStatus()) {
+                case PENDING:
+                    mainActionButton.setText(MAIN_ACTION_BUTTON_REQ_CANCEL_TEXT);
+            }
             Toast.makeText(this, "New Trip Status " + sessionTrip.getStatus().toString(), Toast.LENGTH_LONG).show();
         }
     }
 
-    /**
-    this code is copied from google map api documentation
-     In order to get current location at runtime, permissions must be fulfilled
-     **/
+    /* MAIN ACTION BUTTON HANDLERS */
+    public void handleScreenClick(View v) {
+        if (showSideBar) {
+            showSideBar = false;
+            sideBarView.setVisibility(View.INVISIBLE);
+            settingsButton.setVisibility(View.VISIBLE);
+            mainActionButton.setVisibility(View.VISIBLE);
+        } else {
+            // TODO: Handle Everything else
+        }
+    }
+
+    public void handleMainActionClick(View v) {
+        User sessionUser = App.getModel().getSessionUser();
+        // Decide dynamically to run rider or driver actions depending on current user
+        Class resultActivity = sessionUser.getType() == RIDER ? TripBuilderActivity.class : TripSearchActivity.class;
+        Intent intent = new Intent(getBaseContext(), resultActivity);
+        if (sessionUser.getType() == User.TYPE.RIDER) {
+            intent.putExtra(
+                    "currentLatLong",
+                    new double[] {mLastKnownUserLocation.getLatitude(), mLastKnownUserLocation.getLongitude()});
+        }
+        startActivity(intent);
+    }
+
+    public void showMainActionButton() {
+        mainActionButton.setVisibility(View.VISIBLE);
+        switch (this.currentTripStatus) {
+        }
+    }
+
+    public void hideMainActionButtons() {
+        mainActionButton.setVisibility(View.INVISIBLE);
+    }
+
+
+    /* HANDLING SETTINGS PANEL BUTTONS */
+    public void handleTestClick(View v){
+        startActivity(new Intent(MapActivity.this, RequestStatusActivity.class));
+    }
+
+    public void handleAccountButtonClick(View v) {
+        startActivity(new Intent(MapActivity.this, EditAccountActivity.class));
+    }
+
+    public void handleLogoutButtonClick(View v) {
+        User curUser = App.getModel().getSessionUser();
+        curUser.setType(null);
+        Log.d("APPSERVICE","map logging out");
+        App.getController().updateNonCriticalUserFields(curUser,this);
+
+        App.getController().logout();
+        startActivity(new Intent(MapActivity.this, LoginActivity.class));
+        this.finish();
+    }
+
+    public void showSettingsPanel(View v) {
+        sideBarView.setVisibility(View.VISIBLE);
+        settingsButton.setVisibility(View.INVISIBLE);
+        hideMainActionButtons();
+        showSideBar = true;
+    }
+
+    public void hideSettingsPanel() {
+        sideBarView.setVisibility(View.INVISIBLE);
+        settingsButton.setVisibility(View.VISIBLE);
+        showSideBar = false;
+    }
+
+    /* DECLARING LIFECYCLE METHODS */
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        // THIS CODE SHOULD BE IMPLEMENTED IN EVERY VIEW
+        ApplicationModel m = App.getModel();
+        m.deleteObserver(this);
+    }
+
+    @Override
+    public void onError(Error e) {
+        // TODO: Handle UI Errors
+    }
+
+    public Trip.STATUS getCurrentTripStatus() {
+        return currentTripStatus;
+    }
+
+    public void setCurrentTripStatus(Trip.STATUS currentTripStatus) {
+        this.currentTripStatus = currentTripStatus;
+    }
+
+
+    /* BUILDING CUSTOM GOOGLE MAP (CODE REFERENCED FROM GOOGLE API DOCS) */
+    public void initializeMap(){
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        mapFragment.getMapAsync(MapActivity.this);  //calls onMapReady
+    }
+
     private void getLocationPermission() {
         /*
          * Request location permission, so that we can get the location of the
          * device. The result of the permission request is handled by a callback,
          * onRequestPermissionsResult.
+         * Code reference from Google API docs
          */
         if (ContextCompat.checkSelfPermission(this.getApplicationContext(),
                 android.Manifest.permission.ACCESS_FINE_LOCATION)
@@ -156,11 +258,11 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
 
                         App.getController()
                                 .updateUserLocation(
-                                    new UserLocation(
-                                            mLastKnownUserLocation.getLatitude(),
-                                            mLastKnownUserLocation.getLongitude()
-                                    )
-                        );
+                                        new UserLocation(
+                                                mLastKnownUserLocation.getLatitude(),
+                                                mLastKnownUserLocation.getLongitude()
+                                        )
+                                );
 
 
                         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
@@ -182,11 +284,9 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         }
     }
 
-    /**
-     //this code is copied from google map api documentation
-     **/
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        //this code is copied from google map api documentation
         mLocationPermissionGranted = false;
         switch (requestCode) {
             case PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION: {
@@ -222,65 +322,6 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         return false;
     }
 
-    public void handleSettingsButtonClick(View v) {
-        sideBarView.setVisibility(View.VISIBLE);
-        settingsButton.setVisibility(View.INVISIBLE);
-        mainActionButton.setVisibility(View.INVISIBLE);
-        showSideBar = true;
-    }
-
-    public void handleAccountButtonClick(View v) {
-        startActivity(new Intent(MapActivity.this, EditAccountActivity.class));
-    }
-
-    public void handleLogoutButtonClick(View v) {
-        User curUser = App.getModel().getSessionUser();
-        curUser.setType(null);
-        Log.d("APPSERVICE","map logging out");
-        App.getController().updateNonCriticalUserFields(curUser,this);
-
-        App.getController().logout();
-        startActivity(new Intent(MapActivity.this, LoginActivity.class));
-        this.finish();
-    }
-
-
-    public void handleScreenClick(View v) {
-        if (showSideBar) {
-            showSideBar = false;
-            sideBarView.setVisibility(View.INVISIBLE);
-            settingsButton.setVisibility(View.VISIBLE);
-            mainActionButton.setVisibility(View.VISIBLE);
-        } else {
-            // TODO: Handle Everything else
-        }
-    }
-
-    public void handleMainActionClick(View v) {
-        User sessionUser = App.getModel().getSessionUser();
-        // Decide dynamically to run rider or driver actions depending on current user
-        Class resultActivity = sessionUser.getType() == RIDER ? TripBuilderActivity.class : TripSearchActivity.class;
-        Intent intent = new Intent(getBaseContext(), resultActivity);
-        if (sessionUser.getType() == User.TYPE.RIDER) {
-            intent.putExtra(
-                    "currentLatLong",
-                    new double[] {mLastKnownUserLocation.getLatitude(), mLastKnownUserLocation.getLongitude()});
-        }
-        startActivity(intent);
-    }
-
-    public void handleTestClick(View v){
-        startActivity(new Intent(MapActivity.this, RequestStatusActivity.class));
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        // THIS CODE SHOULD BE IMPLEMENTED IN EVERY VIEW
-        ApplicationModel m = App.getModel();
-        m.deleteObserver(this);
-    }
-
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
@@ -296,18 +337,5 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
                 settingsButton.setVisibility(View.VISIBLE);
             }
         });
-    }
-
-    @Override
-    public void onError(Error e) {
-        // TODO: Handle UI Errors
-    }
-
-    public Trip.STATUS getCurrentTripStatus() {
-        return currentTripStatus;
-    }
-
-    public void setCurrentTripStatus(Trip.STATUS currentTripStatus) {
-        this.currentTripStatus = currentTripStatus;
     }
 }
