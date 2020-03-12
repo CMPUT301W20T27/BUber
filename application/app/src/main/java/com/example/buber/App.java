@@ -39,6 +39,11 @@ public class App extends Application {
         controller = null;
         dbManager = null;
         authDBManager = null;
+
+        // Remove any triplisteners the app may have
+        if (model.getTripListener() != null) {
+            model.getTripListener().remove();
+        }
     }
 
     public static ApplicationModel getModel() {

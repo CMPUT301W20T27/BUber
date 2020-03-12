@@ -1,5 +1,7 @@
 package com.example.buber.Model;
 
+import com.google.firebase.firestore.ListenerRegistration;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
@@ -14,9 +16,9 @@ public class ApplicationModel extends Observable {
     private User sessionUser;
     private Trip sessionTrip;
     private List<Trip> sessionTripList;
-    private List<String> sesssionTripUserNameList;
     private List<Observer> obs = new ArrayList<>();
     private Double mapBounds[];
+    private ListenerRegistration tripListener;
 
     public List<Trip> getSessionTripList() {
         return sessionTripList;
@@ -58,15 +60,6 @@ public class ApplicationModel extends Observable {
         return res;
     }
 
-    public List<String> getSesssionTripUserNameList() {
-        return sesssionTripUserNameList;
-    }
-
-    public void setSesssionTripUserNameList(List<String> sesssionTripUserNameList) {
-        this.sesssionTripUserNameList = sesssionTripUserNameList;
-    }
-
-
     @Override
     public synchronized void addObserver(Observer o) {
         this.obs.add(o);
@@ -77,5 +70,13 @@ public class ApplicationModel extends Observable {
     public synchronized void deleteObserver(Observer o) {
         this.obs.remove(o);
         super.deleteObserver(o);
+    }
+
+    public ListenerRegistration getTripListener() {
+        return tripListener;
+    }
+
+    public void setTripListener(ListenerRegistration tripListener) {
+        this.tripListener = tripListener;
     }
 }

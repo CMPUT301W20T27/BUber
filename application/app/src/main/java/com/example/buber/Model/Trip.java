@@ -17,10 +17,11 @@ public class Trip {
     private String riderID;
 
     public enum STATUS {
-            REQUESTED,
-            DRIVERACCEPT,
-            INPROGRESS,
-            CANCELED
+        PENDING,
+        DRIVER_ACCEPT,
+        DRIVER_PICKING_UP,
+        EN_ROUTE,
+        COMPLETED
     }
 
     private STATUS status;
@@ -34,7 +35,7 @@ public class Trip {
     public Trip(String riderID, double fareOffering, UserLocation startUserLocation, UserLocation endUserLocation, String riderUserName) {
         this.driverID = null;
         this.riderID = riderID;
-        this.status = STATUS.REQUESTED;
+        this.status = STATUS.PENDING;
         this.fareOffering = fareOffering;
         this.startUserLocation = startUserLocation;
         this.endUserLocation = endUserLocation;
@@ -96,6 +97,29 @@ public class Trip {
 
     public void setRiderUserName(String riderUserName) {
         this.riderUserName = riderUserName;
+    }
+
+    public boolean nextStatusValid(Trip.STATUS newStatus) {
+        if (this.getStatus() == Trip.STATUS.PENDING) {
+            if (newStatus == Trip.STATUS.DRIVER_ACCEPT) {
+                return true;
+            }
+        } else if (this.getStatus() == Trip.STATUS.DRIVER_ACCEPT) {
+            if (newStatus == Trip.STATUS.DRIVER_PICKING_UP || newStatus == Trip.STATUS.PENDING) {
+                return true;
+            }
+        } else if (this.getStatus() == Trip.STATUS.DRIVER_PICKING_UP) {
+            if (newStatus == Trip.STATUS.EN_ROUTE || newStatus == STATUS.PENDING) {
+                return true;
+            }
+        }else if (this.getStatus() == STATUS.EN_ROUTE) {
+            if (newStatus == STATUS.COMPLETED || newStatus == STATUS.PENDING) {
+                return true;
+            }
+        } else if (this.getStatus() == newStatus) {
+            return true;
+        }
+        return false;
     }
 
     @NonNull

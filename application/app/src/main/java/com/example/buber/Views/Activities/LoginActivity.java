@@ -27,6 +27,8 @@ public class LoginActivity extends AppCompatActivity implements Observer, UIErro
     private EditText editEmail;
     private EditText editPassword;
     private Button logoutButton;
+    private Button driverLoginBtn;
+    private Button riderLoginBtn;
     private int driverLoginBtnID;
 
     @Override
@@ -39,15 +41,20 @@ public class LoginActivity extends AppCompatActivity implements Observer, UIErro
 
         editEmail = findViewById(R.id.loginEmailEditText);
         editPassword = findViewById(R.id.loginPasswordEditText);
+        driverLoginBtn = findViewById(R.id.loginDriverButton);
+        riderLoginBtn = findViewById(R.id.loginRiderButton);
         driverLoginBtnID = R.id.loginDriverButton;
     }
 
     public void handleLoginClick(View view) {
+        driverLoginBtn.setEnabled(false);
+        riderLoginBtn.setEnabled(false);
         if (LoginFormUtils.validateForm(editEmail, editPassword)) {
             String email = editEmail.getText().toString();
             String password = editPassword.getText().toString();
             User.TYPE loginType = view.getId() == driverLoginBtnID ? User.TYPE.DRIVER : User.TYPE.RIDER;
-            App.getController().login(email, password, loginType, this);
+            Intent i = new Intent(LoginActivity.this, MapActivity.class);
+            App.getController().login(email, password, loginType, this, i);
         }
     }
 
@@ -58,12 +65,7 @@ public class LoginActivity extends AppCompatActivity implements Observer, UIErro
 
     @Override
     public void update(Observable o, Object arg) {
-        ApplicationModel m = (ApplicationModel) o;
-        if (m.getSessionUser() != null) {
-            startActivity(new Intent(LoginActivity.this, MapActivity.class));
-            Toast.makeText(LoginActivity.this, "You are NOW logged in.", Toast.LENGTH_SHORT).show();
-            this.finish();
-        }
+
     }
 
     @Override
@@ -83,5 +85,7 @@ public class LoginActivity extends AppCompatActivity implements Observer, UIErro
     public void onError(Error e) {
         String msg = e.getMessage();
         Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
+        driverLoginBtn.setEnabled(true);
+        riderLoginBtn.setEnabled(true);
     }
 }

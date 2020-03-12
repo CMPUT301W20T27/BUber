@@ -4,14 +4,15 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.example.buber.App;
 import com.example.buber.Controllers.EventCompletionListener;
 import com.example.buber.Model.Driver;
 import com.example.buber.Model.Rider;
 import com.example.buber.Model.Trip;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.SetOptions;
 
 import java.util.HashMap;
@@ -54,27 +55,7 @@ public class DBManager {
         collectionRider = database.collection(riderCollectionName);
         collectionTrip = database.collection(tripCollectionName);
     }
-    /*
-    public boolean isRiderLoggedOn(String docID){
-        Log.d("AnotherDBTEST",docID);
-        boolean retValue;
-        collectionRider.document(docID)
-                .get().addOnSuccessListener(documentSnapshot -> {
-           Rider tempRider = documentSnapshot.toObject(Rider.class);
-           if(tempRider.getRiderLoggedOn()){
-               Log.d("HURRAY","Rider is logged on");
-               retValue = true;
-            }
-           else{
-               Log.d("NOTHURRAY","Rider is not logged on");
-           }
-        }).addOnFailureListener((@NonNull Exception e) -> {
-            Log.d(TAG, e.getMessage());
-        });
 
-        return false;
-    }
-     */
     /* CREATE */
     public void createRider(String docID, Rider r, EventCompletionListener listener) {
         collectionRider.document(docID).set(r)
@@ -103,7 +84,7 @@ public class DBManager {
         });
     }
 
-    public void createTrip(Trip tripRequest, EventCompletionListener listener) {
+    public void createTrip(Trip tripRequest, EventCompletionListener listener, boolean listenForUpdates) {
         collectionTrip
                 .document(tripRequest.getRiderID())
                 .set(tripRequest)
@@ -111,6 +92,23 @@ public class DBManager {
                     HashMap<String, Trip> toReturn = new HashMap<>();
                     toReturn.put("trip", tripRequest);
                     listener.onCompletion(toReturn, null);
+                    if (listenForUpdates) {
+                       ListenerRegistration lr = collectionTrip.document(tripRequest.getRiderID()).addSnapshotListener((documentSnapshot, e) -> {
+                            Trip newTrip = documentSnapshot.toObject(Trip.class);
+                            Trip.STATUS newStatus = newTrip.getStatus();
+
+                            if (tripRequest.nextStatusValid(newStatus)) {
+                                Log.d(TAG, newTrip.getStatus().toString());
+
+                            }
+                            Trip sessionTrip = App.getModel().getSessionTrip();
+                            if (sessionTrip != null) {
+                                sessionTrip.setStatus(newStatus);
+                                App.getModel().setSessionTrip(sessionTrip);
+                            }
+                        });
+                       App.getModel().setTripListener(lr);
+                    }
                 })
                 .addOnFailureListener((@NonNull Exception e) -> {
                     Log.d(TAG, e.getMessage());
@@ -154,8 +152,9 @@ public class DBManager {
     public void getTrip(String docID, EventCompletionListener listener) {
         collectionTrip.document(docID)
                 .get().addOnSuccessListener(documentSnapshot -> {
-            HashMap<String, Rider> toReturn = new HashMap<>();
-            toReturn.put("trip", documentSnapshot.toObject(Rider.class));
+            HashMap<String, Trip> toReturn = new HashMap<>();
+            Trip t = documentSnapshot.toObject(Trip.class);
+            toReturn.put("trip", t);
             listener.onCompletion(toReturn, null);
         }).addOnFailureListener((@NonNull Exception e) -> {
             Log.d(TAG, e.getMessage());
@@ -208,10 +207,20 @@ public class DBManager {
                 });
     }
 
-    public void updateTrip(String docID, Trip updatedTrip, EventCompletionListener listener) {
+    public void updateTrip(String docID, Trip updatedTrip, EventCompletionListener listener, boolean listenForUpdates) {
         collectionTrip.document(docID)
                 .set(updatedTrip, SetOptions.merge())
-                .addOnSuccessListener(documentSnapshot -> {
+                .addOnSuccessListener(aVoid -> {
+                    if (listenForUpdates) {
+                        ListenerRegistration lr = collectionTrip.document(updatedTrip.getRiderID()).addSnapshotListener((documentSnapshot1, e) -> {
+                            Trip newTrip = documentSnapshot1.toObject(Trip.class);
+                            Trip.STATUS newStatus = newTrip.getStatus();
+                            if (updatedTrip.nextStatusValid(newStatus)) {
+                                App.getModel().getSessionTrip().setStatus(newStatus);
+                            }
+                        });
+                        App.getModel().setTripListener(lr);
+                    }
                     listener.onCompletion(null, null);
                 })
                 .addOnFailureListener((@NonNull Exception e) -> {
@@ -260,4 +269,5 @@ public class DBManager {
                     listener.onCompletion(null, err);
                 });
     }
+
 }
