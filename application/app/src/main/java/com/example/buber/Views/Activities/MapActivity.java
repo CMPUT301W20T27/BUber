@@ -72,7 +72,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
     private boolean showSideBar;
     private Button settingsButton;
     private View sideBarView;
-
+    private Button statusButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,6 +100,10 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         // INSTANTIATE DRIVER MAIN ACTION BUTTONS
         driverShowRequestsMainBtn = findViewById(R.id.driver_show_requests_btn);
 
+        // INSTANTIATE STATUS BUTTON
+        statusButton = findViewById(R.id.testButton);
+        statusButton.setText("Ride Status");
+        statusButton.setEnabled(false);
         // HIDE SIDEBAR
         hideSettingsPanel();
 
@@ -112,6 +116,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         Trip sessionTrip = App.getModel().getSessionTrip();
         if (sessionTrip == null) {
             this.setCurrentTripStatus(null);
+
         } else if (sessionTrip.getStatus() != currentTripStatus) {
             Toast.makeText(this, "Trip status changed to: " + sessionTrip.getStatus(), Toast.LENGTH_SHORT).show();
             this.setCurrentTripStatus(sessionTrip.getStatus());
@@ -136,6 +141,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
                 case DialogInterface.BUTTON_POSITIVE:
                     Toast.makeText(MapActivity.this, "Cancelling trip...", Toast.LENGTH_SHORT).show();
                     ApplicationController.deleteRiderCurrentTrip(MapActivity.this);
+                    statusButton.setEnabled(false);
                     break;
                 case DialogInterface.BUTTON_NEGATIVE:
                     break;
@@ -166,6 +172,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
             switch (this.currentTripStatus) {
                 case PENDING:
                     riderRequestCancelMainBtn.setVisibility(View.VISIBLE);
+                    statusButton.setEnabled(true);
                     break;
                 case DRIVER_ACCEPT:
                     riderRequestCancelMainBtn.setVisibility(View.VISIBLE);
