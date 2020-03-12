@@ -72,7 +72,6 @@ public class TripSearchActivity extends AppCompatActivity implements UIErrorHand
         ApplicationModel m = (ApplicationModel) o;
         User sessionUser = m.getSessionUser();
         List<Trip> tripList = m.getSessionTripList();
-        List<String> sesssionTripUserNameList = m.getSesssionTripUserNameList();
         if (tripList != null) {
             tripDataList.clear();
             for (Trip t : tripList) {

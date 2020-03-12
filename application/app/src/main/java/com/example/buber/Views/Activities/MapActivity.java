@@ -17,6 +17,7 @@ import androidx.core.content.ContextCompat;
 
 import com.example.buber.App;
 import com.example.buber.Model.ApplicationModel;
+import com.example.buber.Model.Trip;
 import com.example.buber.Model.User;
 import com.example.buber.Model.UserLocation;
 import com.example.buber.R;
@@ -55,6 +56,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
     private static final float DEFAULT_ZOOM = 15;
     private final String MAIN_ACTION_BUTTON_RIDER_TEXT = "Request a Ride";
     private final String MAIN_ACTION_BUTTON_DRIVER_TEXT = "Search for Active Rides";
+    private Trip.STATUS currentTripStatus = null;
 
     // Views
     private Button settingsButton;
@@ -97,7 +99,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         User sessionUser = App.getModel().getSessionUser();
 
         mainActionButton.setText(sessionUser.getType() == RIDER ? MAIN_ACTION_BUTTON_RIDER_TEXT : MAIN_ACTION_BUTTON_DRIVER_TEXT);
-
+        setCurrentTripStatus(null);
     }
 
     public void initializeMap(){
@@ -108,7 +110,11 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
     @Override
     public void update(Observable o, Object arg) {
         // TODO: Update Map View
-        Toast.makeText(this, "I HAVE LISTENED LUL", Toast.LENGTH_LONG).show();
+        Trip sessionTrip = App.getModel().getSessionTrip();
+        if (sessionTrip != null && sessionTrip.getStatus() != currentTripStatus) {
+            setCurrentTripStatus(sessionTrip.getStatus());
+            Toast.makeText(this, "New Trip Status " + sessionTrip.getStatus().toString(), Toast.LENGTH_LONG).show();
+        }
     }
 
     /**
@@ -295,5 +301,13 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
     @Override
     public void onError(Error e) {
         // TODO: Handle UI Errors
+    }
+
+    public Trip.STATUS getCurrentTripStatus() {
+        return currentTripStatus;
+    }
+
+    public void setCurrentTripStatus(Trip.STATUS currentTripStatus) {
+        this.currentTripStatus = currentTripStatus;
     }
 }

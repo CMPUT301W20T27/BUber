@@ -18,9 +18,10 @@ public class Trip {
 
     public enum STATUS {
         PENDING,
-            DRIVERACCEPT,
-            INPROGRESS,
-            CANCELED
+        DRIVER_ACCEPT,
+        DRIVER_PICKING_UP,
+        EN_ROUTE,
+        COMPLETED
     }
 
     private STATUS status;
@@ -100,18 +101,23 @@ public class Trip {
 
     public boolean nextStatusValid(Trip.STATUS newStatus) {
         if (this.getStatus() == Trip.STATUS.PENDING) {
-            if (newStatus == Trip.STATUS.DRIVERACCEPT || newStatus == Trip.STATUS.CANCELED) {
+            if (newStatus == Trip.STATUS.DRIVER_ACCEPT) {
                 return true;
             }
-        } else if (this.getStatus() == Trip.STATUS.DRIVERACCEPT) {
-            if (newStatus == Trip.STATUS.INPROGRESS || newStatus == Trip.STATUS.PENDING || newStatus == Trip.STATUS.CANCELED) {
+        } else if (this.getStatus() == Trip.STATUS.DRIVER_ACCEPT) {
+            if (newStatus == Trip.STATUS.DRIVER_PICKING_UP || newStatus == Trip.STATUS.PENDING) {
                 return true;
             }
-        } else if (this.getStatus() == Trip.STATUS.INPROGRESS) {
-            if (newStatus == Trip.STATUS.CANCELED) {
+        } else if (this.getStatus() == Trip.STATUS.DRIVER_PICKING_UP) {
+            if (newStatus == Trip.STATUS.EN_ROUTE || newStatus == STATUS.PENDING) {
                 return true;
             }
-
+        }else if (this.getStatus() == STATUS.EN_ROUTE) {
+            if (newStatus == STATUS.COMPLETED || newStatus == STATUS.PENDING) {
+                return true;
+            }
+        } else if (this.getStatus() == newStatus) {
+            return true;
         }
         return false;
     }

@@ -12,6 +12,7 @@ import com.example.buber.Model.Trip;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.SetOptions;
 
 import java.util.HashMap;
@@ -92,7 +93,7 @@ public class DBManager {
                     toReturn.put("trip", tripRequest);
                     listener.onCompletion(toReturn, null);
                     if (listenForUpdates) {
-                       collectionTrip.document(tripRequest.getRiderID()).addSnapshotListener((documentSnapshot, e) -> {
+                       ListenerRegistration lr = collectionTrip.document(tripRequest.getRiderID()).addSnapshotListener((documentSnapshot, e) -> {
                             Trip newTrip = documentSnapshot.toObject(Trip.class);
                             Trip.STATUS newStatus = newTrip.getStatus();
 
@@ -106,6 +107,7 @@ public class DBManager {
                                 App.getModel().setSessionTrip(sessionTrip);
                             }
                         });
+                       App.getModel().setTripListener(lr);
                     }
                 })
                 .addOnFailureListener((@NonNull Exception e) -> {
@@ -210,13 +212,14 @@ public class DBManager {
                 .set(updatedTrip, SetOptions.merge())
                 .addOnSuccessListener(aVoid -> {
                     if (listenForUpdates) {
-                        collectionTrip.document(updatedTrip.getRiderID()).addSnapshotListener((documentSnapshot1, e) -> {
+                        ListenerRegistration lr = collectionTrip.document(updatedTrip.getRiderID()).addSnapshotListener((documentSnapshot1, e) -> {
                             Trip newTrip = documentSnapshot1.toObject(Trip.class);
                             Trip.STATUS newStatus = newTrip.getStatus();
                             if (updatedTrip.nextStatusValid(newStatus)) {
                                 App.getModel().getSessionTrip().setStatus(newStatus);
                             }
                         });
+                        App.getModel().setTripListener(lr);
                     }
                     listener.onCompletion(null, null);
                 })

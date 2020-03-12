@@ -102,9 +102,7 @@ public class ApplicationController {
             if (err != null) view.onError(err);
             else {
                 List<Trip> sessionTripList = (List<Trip>) resultData.get("filtered-trips");
-                List<String> sessionTripUserNameList = (List<String>) resultData.get("filter-trips-usernames");
                 m.setSessionTripList(sessionTripList);
-                m.setSesssionTripUserNameList(sessionTripUserNameList);
             }
         });
     }
@@ -127,7 +125,7 @@ public class ApplicationController {
 
     public static void handleDriverTripSelect(Trip selectedTrip) {
         ApplicationModel m = App.getModel();
-        selectedTrip.setStatus(Trip.STATUS.DRIVERACCEPT);
+        selectedTrip.setStatus(Trip.STATUS.DRIVER_ACCEPT);
         String userId = App.getAuthDBManager().getCurrentUserID();
         selectedTrip.setDriverID(userId);
         ApplicationService.selectTrip(userId, selectedTrip, ((resultData, err) -> {

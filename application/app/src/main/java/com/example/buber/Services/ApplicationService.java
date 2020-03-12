@@ -1,7 +1,5 @@
 package com.example.buber.Services;
 
-import android.util.Log;
-
 import com.example.buber.App;
 import com.example.buber.Controllers.EventCompletionListener;
 import com.example.buber.Model.Account;
@@ -96,7 +94,6 @@ public class ApplicationService {
             if (err != null) controllerListener.onCompletion(null, err);
             else {
                 List<Trip> filterTrips = new LinkedList<>();
-                List<String> filterTripUserNames = new LinkedList<>();
                 List<Trip> tripData = (List<Trip>) resultData.get("all-trips");
                 List<String> filterTripIds = new ArrayList<>();
                 if (tripData != null && tripData.size() > 0) {
@@ -110,7 +107,6 @@ public class ApplicationService {
 
                     HashMap<String, List> filteredTripsData = new HashMap<>();
                     filteredTripsData.put("filtered-trips", filterTrips);
-                    filteredTripsData.put("filter-trips-usernames", filterTripUserNames);
                     controllerListener.onCompletion(filteredTripsData, null);
 
                 } else {
@@ -121,18 +117,15 @@ public class ApplicationService {
     }
 
     public static void riderCurrentTripUserLocation(EventCompletionListener controllerListener) {
-        Log.d("APPSERVICE","Trying to find rider trip");
         App.getDbManager().getTrips((resultData, err) -> {
             if (err != null) controllerListener.onCompletion(null, err);
             else {
-                Log.d("APPSERVICE","got data");
                 Trip filterTrips = new Trip();
                 List<String> filterTripUserNames = new LinkedList<>();
                 List<Trip> tripData = (List<Trip>) resultData.get("all-trips");
                 if (tripData != null && tripData.size() > 0) {
                     for (Trip t : tripData) {
                         if (t.getRiderID().equals(App.getAuthDBManager().getCurrentUserID())) {
-                            Log.d("APPSERVICE","Found a trip");
                             filterTrips = t;
                             break;
                         }
@@ -166,20 +159,17 @@ public class ApplicationService {
             tmpRider.setRiderLoggedOn(false);
         }
         else{  //logging out
-            Log.d("DBMANAGER","Logging out");
             tmpDriver.setLoggedOn(false);
             tmpRider.setRiderLoggedOn(false);
         }
         App.getDbManager().updateRider(uID, tmpRider, (resultData, err) -> {
             if (err == null) {
-                Log.d("DBMANAGER","TRYING TO UPDATE DRIVER");
                 App.getDbManager().updateDriver(uID,tmpDriver, (resultData1, err1) -> {
                     if (err1 == null) {
                         listener.onCompletion(null, null);
                     }
                 });
             }
-                Log.d("DBMANAGER","Reached here");
         });
         App.getDbManager().updateDriver(uID,tmpDriver, (resultData1, err1) -> {
             if (err1 == null) {
