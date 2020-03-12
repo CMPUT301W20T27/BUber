@@ -1,10 +1,13 @@
 package com.example.buber;
 
+import android.view.View;
 import android.widget.EditText;
 
+import androidx.appcompat.widget.AppCompatTextView;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.ActivityTestRule;
 
+import com.example.buber.Model.Trip;
 import com.example.buber.Views.Activities.MainActivity;
 import com.example.buber.Views.Activities.MapActivity;
 import com.example.buber.Views.Activities.RequestStatusActivity;
@@ -34,12 +37,20 @@ public class RiderUITests {
         runLogin();
     }
 
+    public void cleanUp() {
+        // Remove trip from firebase
+        if (solo.waitForText("Cancel Your Current Ride Request")) {
+            solo.clickOnText("Cancel Your Current Ride Request");
+            solo.clickOnText("Yes");
+            assertTrue(solo.waitForText("Request a Ride"));
+        }
+
+    }
+
     @Test
     public void testRideCreation() {
         solo.clickOnButton("Request a Ride");
         assertTrue(solo.waitForActivity(TripBuilderActivity.class, 1000));
-        TripBuilderActivity current = (TripBuilderActivity) solo.getCurrentActivity();
-
         solo.clickOnView(solo.getView(R.id.to_autocomplete_fragment));
         solo.sleep(1000);
         solo.clickOnText("Search");
@@ -49,6 +60,7 @@ public class RiderUITests {
         assertTrue(solo.waitForText("Submit Trip Request"));
         solo.clickOnText("Submit Trip Request");
         assertTrue(solo.waitForActivity(MapActivity.class));
+        this.cleanUp();
     }
 
     @Test
@@ -64,29 +76,84 @@ public class RiderUITests {
     public void testDisallowNewRideCreation() {
         solo.clickOnButton("Request a Ride");
         assertTrue(solo.waitForActivity(TripBuilderActivity.class, 1000));
+        solo.clickOnView(solo.getView(R.id.to_autocomplete_fragment));
+        solo.sleep(1000);
+        solo.clickOnText("Search");
+        solo.enterText(2, "Cupertino");
+        solo.sleep(1000);
+        solo.clickOnText("Cupertino Library");
+        assertTrue(solo.waitForText("Submit Trip Request"));
+        solo.clickOnText("Submit Trip Request");
+        assertTrue(solo.waitForActivity(MapActivity.class));
         assertTrue(solo.waitForText("Cancel Your Current Ride Request"));
+        this.cleanUp();
     }
 
     @Test
     public void testRiderNotifyAcceptRequest() {
-
+        solo.clickOnButton("Request a Ride");
+        assertTrue(solo.waitForActivity(TripBuilderActivity.class, 1000));
+        solo.clickOnView(solo.getView(R.id.to_autocomplete_fragment));
+        solo.sleep(1000);
+        solo.clickOnText("Search");
+        solo.enterText(2, "Cupertino");
+        solo.sleep(1000);
+        solo.clickOnText("Cupertino Library");
+        assertTrue(solo.waitForText("Submit Trip Request"));
+        solo.clickOnText("Submit Trip Request");
+        assertTrue(solo.waitForActivity(MapActivity.class));
+        solo.sleep(1000);
+        Trip sessionTrip = App.getModel().getSessionTrip();
+        solo.sleep(1000);
+        if (sessionTrip != null) {
+            sessionTrip.setStatus(Trip.STATUS.DRIVER_ACCEPT);
+            App.getDbManager().updateTrip(sessionTrip.getRiderID(), sessionTrip, ((resultData, err) -> {}), false);
+        }
+        assertTrue(solo.waitForText("Trip status changed to: DRIVER_ACCEPT"));
+        this.cleanUp();
     }
 
     @Test
     public void testInvalidFareEntry() {
-
+        solo.clickOnButton("Request a Ride");
+        assertTrue(solo.waitForActivity(TripBuilderActivity.class, 1000));
+        solo.clickOnView(solo.getView(R.id.to_autocomplete_fragment));
+        solo.sleep(1000);
+        solo.clickOnText("Search");
+        solo.enterText(2, "Cupertino");
+        solo.sleep(1000);
+        solo.clickOnText("Cupertino Library");
+        AppCompatTextView input = (AppCompatTextView) solo.getView(R.id.fareOfferingTextView);
+        solo.clearEditText((EditText) solo.getView(R.id.fareOfferingEditText));
+        solo.enterText((EditText) solo.getView(R.id.fareOfferingEditText), "0");
+        solo.clickOnText("Submit Trip Request");
+        assertTrue(solo.waitForText("Please enter an amount higher than or equal to:"));
     }
 
     @Test
     public void testTripCancel() {
-
+        solo.clickOnButton("Request a Ride");
+        assertTrue(solo.waitForActivity(TripBuilderActivity.class, 1000));
+        solo.clickOnView(solo.getView(R.id.to_autocomplete_fragment));
+        solo.sleep(1000);
+        solo.clickOnText("Search");
+        solo.enterText(2, "Cupertino");
+        solo.sleep(1000);
+        solo.clickOnText("Cupertino Library");
+        assertTrue(solo.waitForText("Submit Trip Request"));
+        solo.clickOnText("Submit Trip Request");
+        assertTrue(solo.waitForActivity(MapActivity.class));
+        assertTrue(solo.waitForText("Cancel Your Current Ride Request"));
+        solo.clickOnText("Cancel Your Current Ride Request");
+        solo.clickOnText("Yes");
+        assertTrue(solo.waitForText("Request a Ride"));
     }
 
     @Test
     public void testInvalidTripEntry() {
-        solo.clickOnButton("REQUEST A RIDE");
+        solo.clickOnButton("Request a Ride");
         assertTrue(solo.waitForActivity(TripBuilderActivity.class, 1000));
-        assertFalse(solo.searchButton("SUBMIT TRIP REQUEST"));
+        assertFalse(solo.getView(R.id.submitTripBtn).getVisibility() == View.INVISIBLE);
     }
 
     public void runLogin() {
