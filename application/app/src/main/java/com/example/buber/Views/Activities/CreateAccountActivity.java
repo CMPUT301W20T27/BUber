@@ -18,6 +18,11 @@ import com.example.buber.Views.UIErrorHandler;
 import java.util.Observable;
 import java.util.Observer;
 
+/**
+ * Handles all new account activity creation. Valids the user input form and uses the application
+ * controller to pass data to Firebase.
+ * TODO: Allow ability to sign up and initially sign in as rider or driver.
+ */
 public class CreateAccountActivity extends AppCompatActivity implements View.OnClickListener, Observer, UIErrorHandler {
 
     private Button btnCreate;

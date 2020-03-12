@@ -20,6 +20,9 @@ import com.example.buber.Views.UIErrorHandler;
 import java.util.Observable;
 import java.util.Observer;
 
+/**
+ * Handles all User account updating.
+ */
 public class EditAccountActivity extends AppCompatActivity implements Observer, UIErrorHandler {
 
     private EditText editUserName;
@@ -62,8 +65,6 @@ public class EditAccountActivity extends AppCompatActivity implements Observer, 
     }
 
     public void fillData(){
-        //TODO:: make sure session user is correct for drivers.
-
         User curUser = App.getModel().getSessionUser();
 
         oldUserName = curUser.getUsername();

@@ -7,10 +7,14 @@ import com.example.buber.DB.AuthDBManager;
 import com.example.buber.DB.DBManager;
 import com.example.buber.Model.ApplicationModel;
 
+/**
+ * Root class of our application. Extends the base Android.app.Application class.
+ * Each application layer is housed as a singleton.
+ */
 public class App extends Application {
 
-    // Only should contain the pieces of the MVC. App class should be responsbile
-    // for pullup/teardown of the application
+    // Only should contain the pieces of the MVC. App class should be responsible
+    // for pull up/teardown of the application
     private static final String DRIVERS_COLLECTION_NAME = "Drivers";
     private static final String RIDERS_COLLECTION_NAME = "Riders";
     private static final String TRIPS_COLLECTION_NAME = "Trips";
@@ -35,6 +39,11 @@ public class App extends Application {
         controller = null;
         dbManager = null;
         authDBManager = null;
+
+        // Remove any triplisteners the app may have
+        if (model.getTripListener() != null) {
+            model.getTripListener().remove();
+        }
     }
 
     public static ApplicationModel getModel() {

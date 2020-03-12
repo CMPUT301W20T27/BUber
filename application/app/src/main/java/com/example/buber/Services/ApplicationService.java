@@ -1,10 +1,7 @@
 package com.example.buber.Services;
 
-import android.util.Log;
-
 import com.example.buber.App;
 import com.example.buber.Controllers.EventCompletionListener;
-import com.example.buber.DB.DBManager;
 import com.example.buber.Model.Account;
 import com.example.buber.Model.Driver;
 import com.example.buber.Model.Rider;
@@ -20,6 +17,12 @@ import java.util.List;
 import static com.example.buber.Model.User.TYPE.DRIVER;
 import static com.example.buber.Model.User.TYPE.RIDER;
 
+
+/**
+ * Represents the service layer of our application. All interactions with database occur here
+ * Handles communication between MVC frontend and database.
+ * TODO: Better error handling and refactoring to improve cohesion.
+ */
 public class ApplicationService {
     private static final String TAG = "ApplicationService";
 
@@ -31,9 +34,12 @@ public class ApplicationService {
                             if (err != null) {
                                 controllerListener.onCompletion(null, new Error(err.getMessage()));
                                 return;
+                            } else {
+                                controllerListener.onCompletion(resultData, null);
                             }
-                        });
+                        }, true);
     }
+
 
     public static void createNewUser(
             String username,
@@ -45,7 +51,6 @@ public class ApplicationService {
             User.TYPE type,
             EventCompletionListener controllerListener
     ) {
-
         Account newUserAccount = new Account(firstName, lastName, email, phoneNumber);
         App.getAuthDBManager().createFirebaseUser(email, password, (resultData, err) -> {
             if (err != null) {
@@ -90,7 +95,6 @@ public class ApplicationService {
             if (err != null) controllerListener.onCompletion(null, err);
             else {
                 List<Trip> filterTrips = new LinkedList<>();
-                List<String> filterTripUserNames = new LinkedList<>();
                 List<Trip> tripData = (List<Trip>) resultData.get("all-trips");
                 List<String> filterTripIds = new ArrayList<>();
                 if (tripData != null && tripData.size() > 0) {
@@ -104,7 +108,6 @@ public class ApplicationService {
 
                     HashMap<String, List> filteredTripsData = new HashMap<>();
                     filteredTripsData.put("filtered-trips", filterTrips);
-                    filteredTripsData.put("filter-trips-usernames", filterTripUserNames);
                     controllerListener.onCompletion(filteredTripsData, null);
 
                 } else {
@@ -114,9 +117,41 @@ public class ApplicationService {
         });
     }
 
-    public static void updateTripStatus(String uid, Trip selectedTrip, EventCompletionListener controllerListener) {
-        App.getDbManager().updateTrip(uid, selectedTrip, controllerListener);
+    public static void riderCurrentTripUserLocation(EventCompletionListener controllerListener) {
+        App.getDbManager().getTrips((resultData, err) -> {
+            if (err != null) controllerListener.onCompletion(null, err);
+            else {
+                Trip filterTrips = new Trip();
+                List<String> filterTripUserNames = new LinkedList<>();
+                List<Trip> tripData = (List<Trip>) resultData.get("all-trips");
+                if (tripData != null && tripData.size() > 0) {
+                    for (Trip t : tripData) {
+                        if (t.getRiderID().equals(App.getAuthDBManager().getCurrentUserID())) {
+                            filterTrips = t;
+                            break;
+                        }
+                    }
+
+                    HashMap<String, Trip> filteredTripsData = new HashMap<>();
+                    filteredTripsData.put("filtered-trips", filterTrips);
+
+                    controllerListener.onCompletion(filteredTripsData, null);
+
+                } else {
+                    controllerListener.onCompletion(null, new Error("Could not find trips"));
+                }
+            }
+        });
     }
+
+    public static void selectTrip(String uid, Trip selectedTrip, EventCompletionListener controllerListener) {
+        App.getDbManager().updateTrip(uid, selectedTrip, controllerListener, true);
+    }
+
+    public static void deleteRiderCurrentTrip(String uid, EventCompletionListener controllerListener) {
+        App.getDbManager().deleteTrip(uid, controllerListener);
+    }
+
     public static void updateUser(User updateSessionUser, EventCompletionListener listener) {
         String uID = App.getAuthDBManager().getCurrentUserID();
         Driver tmpDriver = new Driver(updateSessionUser.getUsername(),updateSessionUser.getAccount());
@@ -130,20 +165,17 @@ public class ApplicationService {
             tmpRider.setRiderLoggedOn(false);
         }
         else{  //logging out
-            Log.d("DBMANAGER","Logging out");
             tmpDriver.setLoggedOn(false);
             tmpRider.setRiderLoggedOn(false);
         }
         App.getDbManager().updateRider(uID, tmpRider, (resultData, err) -> {
             if (err == null) {
-                Log.d("DBMANAGER","TRYING TO UPDATE DRIVER");
                 App.getDbManager().updateDriver(uID,tmpDriver, (resultData1, err1) -> {
                     if (err1 == null) {
                         listener.onCompletion(null, null);
                     }
                 });
             }
-                Log.d("DBMANAGER","Reached here");
         });
         App.getDbManager().updateDriver(uID,tmpDriver, (resultData1, err1) -> {
             if (err1 == null) {

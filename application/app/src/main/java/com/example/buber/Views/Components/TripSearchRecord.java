@@ -5,6 +5,9 @@ import com.example.buber.Model.UserLocation;
 
 import java.io.Serializable;
 
+/**
+ * Formatted Trip used for displaying trip information in the trip selection modal.
+ */
 public class TripSearchRecord implements Serializable {
     private String riderName;
     private String startLatitude;
@@ -15,7 +18,7 @@ public class TripSearchRecord implements Serializable {
     private String distanceFromDriver;
 
     public TripSearchRecord(Trip t, UserLocation driverLocation){
-        this.riderName = riderName = t.getRiderUserName();
+        this.riderName = t.getRiderUserName();
         this.startLatitude = ((Double) t.getStartUserLocation().getLatitude()).toString();
         this.startLongitude = ((Double) t.getStartUserLocation().getLongitude()).toString();
         this.endLatitude = ((Double) t.getEndUserLocation().getLatitude()).toString();
