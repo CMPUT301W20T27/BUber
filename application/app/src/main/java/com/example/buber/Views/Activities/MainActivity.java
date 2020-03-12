@@ -6,6 +6,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.buber.App;
+import com.example.buber.Controllers.ApplicationController;
 import com.example.buber.Model.ApplicationModel;
 import com.example.buber.Model.Driver;
 import com.example.buber.Model.User;
@@ -25,7 +26,6 @@ import static com.example.buber.Model.User.TYPE.RIDER;
 public class MainActivity extends AppCompatActivity implements Observer, UIErrorHandler {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        //TODO:database connections, model, etc..
         super.onCreate(savedInstanceState);
         ApplicationModel m = App.getModel();
         m.addObserver(this);
@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity implements Observer, UIError
                     Driver driver = (Driver) resultData.get("user");
                     tmpUser.setType(driver.getDriverLoggedOn() ? DRIVER : RIDER);
 
-                    determineTripStatus();
+                    determineTripStatus();  // now determine trip status
                     startActivity(new Intent(MainActivity.this, MapActivity.class));
                     this.finish();
                 }
@@ -71,7 +71,9 @@ public class MainActivity extends AppCompatActivity implements Observer, UIError
     }
 
     private void determineTripStatus() {
-
+        if (App.getModel().getSessionUser().getType() == RIDER) {
+            ApplicationController.getRiderCurrentTrip(this);
+        }
     }
 
     @Override

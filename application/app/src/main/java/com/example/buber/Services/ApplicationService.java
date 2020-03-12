@@ -40,6 +40,7 @@ public class ApplicationService {
                         }, true);
     }
 
+
     public static void createNewUser(
             String username,
             String password,
@@ -146,6 +147,11 @@ public class ApplicationService {
     public static void selectTrip(String uid, Trip selectedTrip, EventCompletionListener controllerListener) {
         App.getDbManager().updateTrip(uid, selectedTrip, controllerListener, true);
     }
+
+    public static void deleteRiderCurrentTrip(String uid, EventCompletionListener controllerListener) {
+        App.getDbManager().deleteTrip(uid, controllerListener);
+    }
+
     public static void updateUser(User updateSessionUser, EventCompletionListener listener) {
         String uID = App.getAuthDBManager().getCurrentUserID();
         Driver tmpDriver = new Driver(updateSessionUser.getUsername(),updateSessionUser.getAccount());

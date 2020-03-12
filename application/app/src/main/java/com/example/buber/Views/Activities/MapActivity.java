@@ -1,6 +1,7 @@
 package com.example.buber.Views.Activities;
 
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -11,11 +12,13 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.buber.App;
+import com.example.buber.Controllers.ApplicationController;
 import com.example.buber.Model.ApplicationModel;
 import com.example.buber.Model.Trip;
 import com.example.buber.Model.User;
@@ -53,7 +56,6 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
     private GoogleMap mMap;
     private boolean mLocationPermissionGranted = false;
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1234;
-    private FusedLocationProviderClient mFusedLocationProviderClient;
     private Location mLastKnownUserLocation;
     private static final float DEFAULT_ZOOM = 15;
 
@@ -70,7 +72,6 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
     // SIDEBAR STATE
     private boolean showSideBar;
     private Button settingsButton;
-    private Button accountButton;
     private View sideBarView;
 
 
@@ -90,7 +91,6 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
 
         // INSTANTIATE SIDEBAR BUTTONS
         settingsButton = findViewById(R.id.settings_button);
-        accountButton = findViewById(R.id.account_button);
         sideBarView = findViewById(R.id.sidebar);
 
 
@@ -111,12 +111,14 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
     @Override
     public void update(Observable o, Object arg) {
         Trip sessionTrip = App.getModel().getSessionTrip();
-        if (sessionTrip != null && sessionTrip.getStatus() != currentTripStatus) {
-            setCurrentTripStatus(sessionTrip.getStatus());
-            showActiveMainActionButton();
-            Toast.makeText(this, "New Trip Status " + sessionTrip.getStatus().toString(), Toast.LENGTH_LONG).show();
+        if (sessionTrip == null) {
+            this.setCurrentTripStatus(null);
+        } else if (sessionTrip.getStatus() != currentTripStatus) {
+            this.setCurrentTripStatus(sessionTrip.getStatus());
         }
+        showActiveMainActionButton();
     }
+
 
     /***** MAIN ACTION BUTTON HANDLERS ******/
     public void handleRiderRequestBtn(View v) {
@@ -128,7 +130,21 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
     }
 
     public void handleRiderCancelBtn(View v) {
-        Toast.makeText(this, "Cancelling trip...", Toast.LENGTH_LONG).show();
+        DialogInterface.OnClickListener dialogClickListener = ((DialogInterface dialog, int choice) -> {
+            switch (choice) {
+                case DialogInterface.BUTTON_POSITIVE:
+                    Toast.makeText(MapActivity.this, "Cancelling trip...", Toast.LENGTH_SHORT).show();
+                    ApplicationController.deleteRiderCurrentTrip(MapActivity.this);
+                    break;
+                case DialogInterface.BUTTON_NEGATIVE:
+                    break;
+            }
+        });
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Cancel request?")
+                .setPositiveButton("Yes", dialogClickListener)
+                .setNegativeButton("No", dialogClickListener).show();
     }
 
     public void handleDriverShowRequestsBtn(View v) {
@@ -172,10 +188,8 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
     /***** HANDLING SETTINGS PANEL BUTTONS ******/
     public void handleScreenClick(View v) {
         if (showSideBar) {
-            showSideBar = false;
-            sideBarView.setVisibility(View.INVISIBLE);
-            settingsButton.setVisibility(View.VISIBLE);
-            riderRequestMainBtn.setVisibility(View.VISIBLE);
+            hideSettingsPanel();
+            showActiveMainActionButton();
         } else {
             // TODO: Handle Everything else
         }
@@ -217,7 +231,17 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
     }
 
 
-    /***** DECLARING LIFECYCLE METHODS ******/
+    /***** GETTING/SETTING LOCAL TRIP STATUS W.R.T. FB UPDATES *****/
+    public Trip.STATUS getCurrentTripStatus() {
+        return currentTripStatus;
+    }
+
+    public void setCurrentTripStatus(Trip.STATUS currentTripStatus) {
+        this.currentTripStatus = currentTripStatus;
+    }
+
+
+    /***** DECLARING REST OF LIFECYCLE METHODS ******/
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -229,14 +253,6 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
     @Override
     public void onError(Error e) {
         // TODO: Handle UI Errors
-    }
-
-    public Trip.STATUS getCurrentTripStatus() {
-        return currentTripStatus;
-    }
-
-    public void setCurrentTripStatus(Trip.STATUS currentTripStatus) {
-        this.currentTripStatus = currentTripStatus;
     }
 
 
@@ -270,6 +286,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
          * Get the best and most recent location of the device, which may be null in rare
          * cases when a location is not available.
          */
+        FusedLocationProviderClient mFusedLocationProviderClient;
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         try {
             if (mLocationPermissionGranted) {
@@ -308,6 +325,38 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         }
     }
 
+    boolean googleConnectionSuccessful() {
+        int connection = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(MapActivity.this);
+        if (connection == ConnectionResult.SUCCESS) {
+            Log.d("MAPCONNECTIONSUCCESS", "Map connection Successful");
+            return true;
+        } else if (GoogleApiAvailability.getInstance().isUserResolvableError(connection)) {
+            //for debugging. if an error occurs, print the error
+            Log.e("MAPERROR", "an error occurred loading map");
+            Dialog dialog = GoogleApiAvailability.getInstance().getErrorDialog(MapActivity.this, connection, ERROR_DIALOG_REQUEST);
+            dialog.show();
+        } else {
+            Log.e("MAPCONNECTIONFAILURE", "Map failed to connect");
+        }
+        return false;
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+        if (mLocationPermissionGranted) {
+            Log.d("GETTING LOCATION", "Trying to get current location");
+            getDeviceLocation();
+        }
+
+        mMap.setOnMapClickListener(latLng -> {
+            if (showSideBar) {
+                hideSettingsPanel();
+                showActiveMainActionButton();
+            }
+        });
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         //this code is copied from google map api documentation
@@ -325,38 +374,5 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
                 }
             }
         }
-    }
-
-    boolean googleConnectionSuccessful() {
-        int connection = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(MapActivity.this);
-        if (connection == ConnectionResult.SUCCESS) {
-            Log.d("MAPCONNECTIONSUCCESS", "Map connection Successful");
-            return true;
-        } else if (GoogleApiAvailability.getInstance().isUserResolvableError(connection)) {
-            //for debugging. if an error occurs, print the error
-            Log.d("MAPERROR", "an error occurred loading map");
-            Dialog dialog = GoogleApiAvailability.getInstance().getErrorDialog(MapActivity.this, connection, ERROR_DIALOG_REQUEST);
-            dialog.show();
-        } else {
-            Log.d("MAPCONNECTIONFAILURE", "Map failed to connect");
-        }
-        return false;
-    }
-
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
-        if (mLocationPermissionGranted) {
-            Log.d("GETTING LOCATION", "Trying to get current location");
-            getDeviceLocation();
-        }
-
-        mMap.setOnMapClickListener(latLng -> {
-            if (showSideBar) {
-                sideBarView.setVisibility(View.INVISIBLE);
-                riderRequestMainBtn.setVisibility(View.VISIBLE);
-                settingsButton.setVisibility(View.VISIBLE);
-            }
-        });
     }
 }
