@@ -37,52 +37,17 @@ public class EditAccountTest {
         //Create mockAccount and mockUser -> setSessionUser(mockUser)
         // Note: this logs a mockUser into the app
         Account mockAccount = new Account("Test", "User", "testUser@test.test", "0001112222");
-        //User mockUser = new Rider("mockUser", mockAccount);
         Rider rider = new Rider("mockUser", mockAccount);
         rider.setRiderLoggedOn(true);
         User mockUser = rider;
         App.getModel().setSessionUser(mockUser);
         EventCompletionListener listener = (resultData, err) -> {};
         App.getAuthDBManager().signIn("testUser@test.test","password", listener);
-
     }
-
-    //TODO: Delete below rule if not testing from loginscreen
-    //@Rule
-    //public ActivityTestRule<MainActivity> rule = new ActivityTestRule<>(MainActivity.class, true, true);
-
+    
     @Rule
     public ActivityTestRule<EditAccountActivity> rule = new ActivityTestRule<>(EditAccountActivity.class, true, true);
 
-
-    /*
-    //TODO: Delete below setUp() function if not testing from login screen
-    //Note: app requires an account to be logged in to interact with map screen activities
-    @Before
-    public void setUp() throws Exception{
-        solo = new Solo(InstrumentationRegistry.getInstrumentation(),rule.getActivity());
-        solo.enterText((EditText) solo.getView(R.id.loginEmailEditText), "testUser@test.test");
-        solo.enterText((EditText) solo.getView(R.id.loginPasswordEditText), "password");
-        solo.clickOnButton("Login as Rider");
-        solo.waitForText("You are NOW logged in.", 1, 2000);
-        solo.waitForActivity(MapActivity.class);
-
-
-        //solo.clickOnView(solo.getView(R.id.settings_button));
-        //solo = new Solo(InstrumentationRegistry.getInstrumentation(),rule2.getActivity());
-        //solo.clickOnButton(0);
-        solo.sleep(2000);
-        solo.assertCurrentActivity("Wrong Activity", MapActivity.class);
-
-        //FIXME: Issues clicking on the settings_button and opening hamburger menu
-        // note, tests work with out this
-        //solo.clickOnButton(R.id.settings_button);
-        //solo.clickOnButton("|||");
-        solo.clickOnScreen(50,460);
-        //solo.setNavigationDrawer(solo.OPENED);
-        //solo.clickOnButton("Account");
-    }
-    */
     @Before
     public void setUp(){
         solo = new Solo(InstrumentationRegistry.getInstrumentation(),rule.getActivity());
@@ -108,11 +73,6 @@ public class EditAccountTest {
 
         solo.clickOnButton("Save Changes");
 
-        //TODO: Delete below commented lines if not testing from login screen
-        //solo.clickOnView(solo.getView(R.id.buttonEditAccountSave));   //Note: this is just another way to click the same "Save Changes" button as above
-        //Assert that user returned to MapActivity
-        //solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
-        //assertTrue(solo.waitForActivity(MainActivity.class));
     }
 
     //Tests a incorrect input in EditAccount Activity
@@ -148,9 +108,6 @@ public class EditAccountTest {
         solo.enterText((EditText) solo.getView(R.id.createAccountPhoneNumber), "0001111235");
         solo.clickOnButton("Save Changes");
 
-        //TODO: Delete below commented lines if not testing from login screen
-        //Assert that user returned to MapActivity
-        //assertTrue(solo.waitForActivity(MapActivity.class));
     }
 
     /**
