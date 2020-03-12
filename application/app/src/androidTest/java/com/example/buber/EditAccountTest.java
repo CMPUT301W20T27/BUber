@@ -47,13 +47,16 @@ public class EditAccountTest {
 
     }
 
-    @Rule
-    public ActivityTestRule<MainActivity> rule = new ActivityTestRule<>(MainActivity.class, true, true);
-
+    //TODO: Delete below rule if not testing from loginscreen
     //@Rule
-    //public ActivityTestRule<EditAccountActivity> rule = new ActivityTestRule<>(EditAccountActivity.class, true, true);
+    //public ActivityTestRule<MainActivity> rule = new ActivityTestRule<>(MainActivity.class, true, true);
+
+    @Rule
+    public ActivityTestRule<EditAccountActivity> rule = new ActivityTestRule<>(EditAccountActivity.class, true, true);
 
 
+    /*
+    //TODO: Delete below setUp() function if not testing from login screen
     //Note: app requires an account to be logged in to interact with map screen activities
     @Before
     public void setUp() throws Exception{
@@ -79,12 +82,12 @@ public class EditAccountTest {
         //solo.setNavigationDrawer(solo.OPENED);
         //solo.clickOnButton("Account");
     }
-    /*
+    */
     @Before
     public void setUp(){
         solo = new Solo(InstrumentationRegistry.getInstrumentation(),rule.getActivity());
     }
-    */
+
     //Tests a correct change to the User's EditAccount
     @Test
     public void testCorrectEditAccount(){
@@ -104,11 +107,11 @@ public class EditAccountTest {
         solo.enterText((EditText) solo.getView(R.id.createAccountPhoneNumber), "0001111235");
 
         solo.clickOnButton("Save Changes");
-        //solo.clickOnView(solo.getView(R.id.buttonEditAccountSave));   //Note: this is just another way to click the same "Save Changes" button as above
 
+        //TODO: Delete below commented lines if not testing from login screen
+        //solo.clickOnView(solo.getView(R.id.buttonEditAccountSave));   //Note: this is just another way to click the same "Save Changes" button as above
         //Assert that user returned to MapActivity
         //solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
-
         //assertTrue(solo.waitForActivity(MainActivity.class));
     }
 
@@ -145,6 +148,7 @@ public class EditAccountTest {
         solo.enterText((EditText) solo.getView(R.id.createAccountPhoneNumber), "0001111235");
         solo.clickOnButton("Save Changes");
 
+        //TODO: Delete below commented lines if not testing from login screen
         //Assert that user returned to MapActivity
         //assertTrue(solo.waitForActivity(MapActivity.class));
     }
