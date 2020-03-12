@@ -3,6 +3,11 @@ import androidx.annotation.NonNull;
 
 import com.google.firebase.firestore.DocumentId;
 
+/**
+ * Represents a trip a rider is wishing to take. Stores two locations, one for the start and end.
+ * Status represents the current status of the trip (pending is before a driver accepts, then
+ * driveraccept, then inprogress, and cancelled if a user chooses to do so).
+ */
 public class Trip {
 
     @DocumentId
@@ -12,10 +17,11 @@ public class Trip {
     private String riderID;
 
     public enum STATUS {
-            PENDING,
-            DRIVERACCEPT,
-            INPROGRESS,
-            CANCELED
+        PENDING,
+        DRIVER_ACCEPT,
+        DRIVER_PICKING_UP,
+        EN_ROUTE,
+        COMPLETED
     }
 
     private STATUS status;
@@ -23,6 +29,18 @@ public class Trip {
     private UserLocation endUserLocation;
     private double fareOffering;
     private String riderUserName;
+
+    public Trip(){}
+
+    public Trip(String riderID, double fareOffering, UserLocation startUserLocation, UserLocation endUserLocation, String riderUserName) {
+        this.driverID = null;
+        this.riderID = riderID;
+        this.status = STATUS.PENDING;
+        this.fareOffering = fareOffering;
+        this.startUserLocation = startUserLocation;
+        this.endUserLocation = endUserLocation;
+        this.riderUserName = riderUserName;
+    }
 
     public void setRiderID(String riderID) {
         this.riderID = riderID;
@@ -42,18 +60,6 @@ public class Trip {
 
     public void setStartUserLocation(UserLocation startUserLocation) {
         this.startUserLocation = startUserLocation;
-    }
-
-    public Trip(){}
-
-    public Trip(String riderID, double fareOffering, UserLocation startUserLocation, UserLocation endUserLocation, String riderUserName) {
-        this.driverID = null;
-        this.riderID = riderID;
-        this.status = STATUS.PENDING;
-        this.fareOffering = fareOffering;
-        this.startUserLocation = startUserLocation;
-        this.endUserLocation = endUserLocation;
-        this.riderUserName = riderUserName;
     }
 
     public double getFareOffering() {
@@ -91,6 +97,29 @@ public class Trip {
 
     public void setRiderUserName(String riderUserName) {
         this.riderUserName = riderUserName;
+    }
+
+    public boolean nextStatusValid(Trip.STATUS newStatus) {
+        if (this.getStatus() == Trip.STATUS.PENDING) {
+            if (newStatus == Trip.STATUS.DRIVER_ACCEPT) {
+                return true;
+            }
+        } else if (this.getStatus() == Trip.STATUS.DRIVER_ACCEPT) {
+            if (newStatus == Trip.STATUS.DRIVER_PICKING_UP || newStatus == Trip.STATUS.PENDING) {
+                return true;
+            }
+        } else if (this.getStatus() == Trip.STATUS.DRIVER_PICKING_UP) {
+            if (newStatus == Trip.STATUS.EN_ROUTE || newStatus == STATUS.PENDING) {
+                return true;
+            }
+        }else if (this.getStatus() == STATUS.EN_ROUTE) {
+            if (newStatus == STATUS.COMPLETED || newStatus == STATUS.PENDING) {
+                return true;
+            }
+        } else if (this.getStatus() == newStatus) {
+            return true;
+        }
+        return false;
     }
 
     @NonNull

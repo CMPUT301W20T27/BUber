@@ -16,6 +16,10 @@ import androidx.fragment.app.DialogFragment;
 import com.example.buber.R;
 import com.example.buber.Views.Components.TripSearchRecord;
 
+/**
+ * Fragment used to accept a trip. Generates a modal that shows trip details and allows a user to
+ * accept a trip.
+ */
 public class AcceptTripRequestFragment extends DialogFragment {
     private TextView estimatedCost;
     private TextView startLat;
