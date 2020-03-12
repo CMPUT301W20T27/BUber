@@ -2,17 +2,21 @@ package com.example.buber.Views.Activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.buber.App;
 import com.example.buber.Controllers.ApplicationController;
 import com.example.buber.DB.DBManager;
+import com.example.buber.Model.Account;
 import com.example.buber.Model.ApplicationModel;
+import com.example.buber.Model.Driver;
 import com.example.buber.Model.Trip;
 import com.example.buber.Model.User;
 import com.example.buber.R;
@@ -24,6 +28,7 @@ import java.util.Locale;
 import java.util.Observable;
 import java.util.Observer;
 
+import static com.example.buber.Model.User.TYPE.DRIVER;
 import static com.example.buber.Model.User.TYPE.RIDER;
 
 /**
@@ -35,6 +40,13 @@ public class RequestStatusActivity extends AppCompatActivity implements Observer
     private TextView statusTextView;
     private TextView startTextView;
     private TextView endTextView;
+    private TextView usernameTextTextView;
+    private TextView usernameTextView;
+    private TextView driverPhoneTextTextView;
+    private TextView driverPhoneTextView;
+    private TextView driverEmailTextTextView;
+    private TextView driverEmailTextView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,9 +58,33 @@ public class RequestStatusActivity extends AppCompatActivity implements Observer
         startTextView = findViewById(R.id.txtStartLocation);
         endTextView = findViewById(R.id.txtEndLocation);
 
-        //This method grabs ride request info. Once data received, proceed to update
-        //ApplicationController.getRiderCurrentTrip(this);
+        usernameTextTextView = findViewById(R.id.txtRideStatusCurDriverTextTextView);
+        usernameTextView = findViewById(R.id.txtRideStatusCurDriverUserName);
+        driverPhoneTextTextView = findViewById(R.id.txtRideStatusPhoneTextTextView);
+        driverPhoneTextView = findViewById(R.id.txtRideStatusDriverPhoneNumber);
+        driverEmailTextTextView = findViewById(R.id.txtRideStatusEmailTextTextView);
+        driverEmailTextView = findViewById(R.id.txtRideStatusDriverEmail);
+
+
+        //initial form fill
         fillStatusForm();
+    }
+
+    public void getDriverInfo(String docID){
+        App.getDbManager().getDriver(docID, (resultData, err) -> {
+            if (resultData != null) {
+
+                //this fetched driver is from the db
+                Driver tmpDriver = (Driver) resultData.get("user");
+                Account tmpAccount = tmpDriver.getAccount();
+                usernameTextView.setText(tmpDriver.getUsername());
+                driverPhoneTextView.setText(tmpAccount.getPhoneNumber());
+                driverEmailTextView.setText(tmpAccount.getEmail());
+            }
+            else {
+                Toast.makeText(this, err.getMessage(), Toast.LENGTH_LONG);
+            }
+        });
     }
 
     public void fillStatusForm(){
@@ -60,18 +96,39 @@ public class RequestStatusActivity extends AppCompatActivity implements Observer
             this.finish();
         }
 
-        if(curUser.getType()==RIDER){
+        if(curUser.getType()==RIDER){  //rider opening the view
             statusTextView.setText(trip.getStatus().toString());
-
             startTextView.setText(trip.getStartUserLocation().getAddress());
             endTextView.setText(trip.getEndUserLocation().getAddress());
+            if(trip.getDriverID()!= null){
+                getDriverInfo(trip.getDriverID());
+                usernameTextTextView.setVisibility(View.VISIBLE);
+                driverEmailTextTextView.setVisibility(View.VISIBLE);
+                driverPhoneTextTextView.setVisibility(View.VISIBLE);
+                usernameTextView.setVisibility(View.VISIBLE);
+                driverEmailTextView.setVisibility(View.VISIBLE);
+                driverPhoneTextView.setVisibility(View.VISIBLE);
+            }
+            else{  //no driver accepted yet
+                usernameTextTextView.setVisibility(View.INVISIBLE);
+                driverEmailTextTextView.setVisibility(View.INVISIBLE);
+                driverPhoneTextTextView.setVisibility(View.INVISIBLE);
+                usernameTextView.setVisibility(View.INVISIBLE);
+                driverEmailTextView.setVisibility(View.INVISIBLE);
+                driverPhoneTextView.setVisibility(View.INVISIBLE);
+            }
         }
 
-        else{
+        else{  //driver opening the view
             statusTextView.setText(trip.getStatus().toString());
-
             startTextView.setText(trip.getStartUserLocation().getAddress());
             endTextView.setText(trip.getEndUserLocation().getAddress());
+            usernameTextTextView.setVisibility(View.INVISIBLE);
+            driverEmailTextTextView.setVisibility(View.INVISIBLE);
+            driverPhoneTextTextView.setVisibility(View.INVISIBLE);
+            usernameTextView.setVisibility(View.INVISIBLE);
+            driverEmailTextView.setVisibility(View.INVISIBLE);
+            driverPhoneTextView.setVisibility(View.INVISIBLE);
 
         }
     }
