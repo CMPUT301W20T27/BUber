@@ -104,28 +104,21 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         // HIDE SIDEBAR
         hideSettingsPanel();
 
-//        App.getModel().addObserver(this);
-//        User sessionUser = App.getModel().getSessionUser();
-//        riderRequestMainBtn.setText(sessionUser.getType() == RIDER ? MAIN_ACTION_BUTTON_RIDER_TEXT : MAIN_ACTION_BUTTON_DRIVER_TEXT);
-//        setCurrentTripStatus(null);
+        App.getModel().addObserver(this);
     }
 
-    /* OBSERVING OBSERVABLES */
+    /***** OBSERVING OBSERVABLES ******/
     @Override
     public void update(Observable o, Object arg) {
-        // TODO: Update Map View
-//        Trip sessionTrip = App.getModel().getSessionTrip();
-//        if (sessionTrip != null && sessionTrip.getStatus() != currentTripStatus) {
-//            setCurrentTripStatus(sessionTrip.getStatus());
-//            switch (sessionTrip.getStatus()) {
-//                case PENDING:
-//                    riderRequestMainBtn.setText(MAIN_ACTION_BUTTON_REQ_CANCEL_TEXT);
-//            }
-//            Toast.makeText(this, "New Trip Status " + sessionTrip.getStatus().toString(), Toast.LENGTH_LONG).show();
-//        }
+        Trip sessionTrip = App.getModel().getSessionTrip();
+        if (sessionTrip != null && sessionTrip.getStatus() != currentTripStatus) {
+            setCurrentTripStatus(sessionTrip.getStatus());
+            showActiveMainActionButton();
+            Toast.makeText(this, "New Trip Status " + sessionTrip.getStatus().toString(), Toast.LENGTH_LONG).show();
+        }
     }
 
-    /* MAIN ACTION BUTTON HANDLERS */
+    /***** MAIN ACTION BUTTON HANDLERS ******/
     public void handleRiderRequestBtn(View v) {
         Intent intent = new Intent(getBaseContext(), TripBuilderActivity.class);
         intent.putExtra(
@@ -143,21 +136,29 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
     }
 
     public void showActiveMainActionButton() {
-        hideMainActionButtons();  // CLEAR ALL
-        switch (this.currentTripStatus) {
-            case PENDING:
-                riderRequestCancelMainBtn.setVisibility(View.VISIBLE);
-                break;
-            case DRIVER_ACCEPT:
-                break;
-            case DRIVER_PICKING_UP:
-                break;
-            case EN_ROUTE:
-                break;
-            case COMPLETED:
-                break;
-            default:
+        hideMainActionButtons();
+
+        if (this.currentTripStatus == null) {
+            User sessionUser = App.getModel().getSessionUser();
+            if (sessionUser.getType() == RIDER) {
                 riderRequestMainBtn.setVisibility(View.VISIBLE);
+            } else {
+                driverShowRequestsMainBtn.setVisibility(View.VISIBLE);
+            }
+        } else {
+            switch (this.currentTripStatus) {
+                case PENDING:
+                    riderRequestCancelMainBtn.setVisibility(View.VISIBLE);
+                    break;
+                case DRIVER_ACCEPT:
+                    break;
+                case DRIVER_PICKING_UP:
+                    break;
+                case EN_ROUTE:
+                    break;
+                case COMPLETED:
+                    break;
+            }
         }
     }
 
@@ -168,7 +169,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
     }
 
 
-    /* HANDLING SETTINGS PANEL BUTTONS */
+    /***** HANDLING SETTINGS PANEL BUTTONS ******/
     public void handleScreenClick(View v) {
         if (showSideBar) {
             showSideBar = false;
@@ -216,7 +217,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
     }
 
 
-    /* DECLARING LIFECYCLE METHODS */
+    /***** DECLARING LIFECYCLE METHODS ******/
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -239,7 +240,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
     }
 
 
-    /* BUILDING CUSTOM GOOGLE MAP (CODE REFERENCED FROM GOOGLE API DOCS) */
+    /***** BUILDING CUSTOM GOOGLE MAP (CODE REFERENCED FROM GOOGLE API DOCS) ******/
     public void initializeMap() {
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(MapActivity.this);  //calls onMapReady

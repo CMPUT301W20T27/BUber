@@ -206,7 +206,7 @@ public class TripBuilderActivity extends AppCompatActivity implements UIErrorHan
                 // Remind user of minimum cost
                 recalculateFareOffering();
                 fareOfferingEditText.setError(
-                        "Please enter an amount higher than" + minimumFareOffering);
+                        "Please enter an amount higher than or equal to: \n" + minimumFareOffering);
             }
         });
     }
