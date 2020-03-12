@@ -101,6 +101,7 @@ public class RequestStatusActivity extends AppCompatActivity implements Observer
             startTextView.setText(trip.getStartUserLocation().getAddress());
             endTextView.setText(trip.getEndUserLocation().getAddress());
             if(trip.getDriverID()!= null){
+                //TODO:: Error handling
                 getDriverInfo(trip.getDriverID());
                 usernameTextTextView.setVisibility(View.VISIBLE);
                 driverEmailTextTextView.setVisibility(View.VISIBLE);
