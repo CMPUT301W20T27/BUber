@@ -129,7 +129,7 @@ public class ApplicationController {
         ApplicationService.deleteRiderCurrentTrip(m.getSessionTrip().getRiderID(), (resultData, err) -> {
             if (err != null) view.onError(err);
             else {
-                m.getTripListener().remove();
+                m.detachTripListener();
                 m.setSessionTrip(null);
             }
         });
