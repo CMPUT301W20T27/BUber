@@ -7,6 +7,7 @@ import androidx.test.rule.ActivityTestRule;
 
 import com.example.buber.Views.Activities.MainActivity;
 import com.example.buber.Views.Activities.MapActivity;
+import com.example.buber.Views.Activities.RequestStatusActivity;
 import com.example.buber.Views.Activities.TripBuilderActivity;
 import com.robotium.solo.Solo;
 
@@ -48,6 +49,15 @@ public class RiderUITests {
         assertTrue(solo.waitForText("Submit Trip Request"));
         solo.clickOnText("Submit Trip Request");
         assertTrue(solo.waitForActivity(MapActivity.class));
+    }
+
+    @Test
+    public void testRideStatus(){
+        solo.assertCurrentActivity("Wrong Activity",MapActivity.class);
+        solo.clickOnButton("TESTSTATUS");
+        solo.assertCurrentActivity("Wrong Activity", RequestStatusActivity.class);
+        assertTrue(solo.waitForText("Ride Status:     "));
+        assertTrue(solo.waitForText(""));
     }
 
     @Test
