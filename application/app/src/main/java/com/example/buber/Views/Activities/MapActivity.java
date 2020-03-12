@@ -121,7 +121,6 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         }
     }
 
-
     /***** MAIN ACTION BUTTON HANDLERS ******/
     public void handleRiderRequestBtn(View v) {
         Intent intent = new Intent(getBaseContext(), TripBuilderActivity.class);

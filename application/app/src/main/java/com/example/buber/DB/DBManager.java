@@ -217,10 +217,12 @@ public class DBManager {
                 .addOnSuccessListener(aVoid -> {
                     if (listenForUpdates) {
                         ListenerRegistration lr = collectionTrip.document(updatedTrip.getRiderID()).addSnapshotListener((documentSnapshot1, e) -> {
-                            Trip newTrip = documentSnapshot1.toObject(Trip.class);
-                            Trip.STATUS newStatus = newTrip.getStatus();
-                            if (updatedTrip.nextStatusValid(newStatus)) {
-                                App.getModel().getSessionTrip().setStatus(newStatus);
+                            Trip trip = documentSnapshot1.toObject(Trip.class);
+                            if (trip != null && updatedTrip != null) {
+                                Trip.STATUS newStatus = trip.getStatus();
+                                if (updatedTrip.nextStatusValid(newStatus)) {
+                                    App.getModel().getSessionTrip().setStatus(newStatus);
+                                }
                             }
                         });
                         App.getModel().setTripListener(lr);
