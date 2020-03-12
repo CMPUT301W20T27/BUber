@@ -27,9 +27,7 @@
         android:layout_marginTop="32dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        android:layout_marginBottom="32dp"
         android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/RiderStatusText">
@@ -63,7 +61,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="66dp"
+            android:layout_height="99dp"
 
             android:orientation="horizontal">
 
@@ -72,7 +70,8 @@
                 android:layout_height="match_parent"
                 android:layout_weight="0"
                 android:ellipsize="end"
-                android:maxLines="1"
+                android:lines="3"
+                android:maxLines="3"
                 android:text="Start Location     "
                 android:textSize="24sp" />
 
@@ -82,9 +81,37 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:ellipsize="end"
-                android:lines="2"
-                android:maxLines="1"
+                android:lines="3"
+                android:maxLines="3"
                 android:text="start location info"
+                android:textSize="24sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="99dp"
+
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="0"
+                android:ellipsize="end"
+                android:lines="3"
+                android:maxLines="3"
+                android:text="End Location:     "
+                android:textSize="24sp" />
+
+            <TextView
+                android:id="@+id/txtEndLocation"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:lines="3"
+                android:maxLines="3"
+                android:text="endLocationInfo"
                 android:textSize="24sp" />
         </LinearLayout>
 
@@ -95,23 +122,80 @@
             android:orientation="horizontal">
 
             <TextView
+                android:id="@+id/txtRideStatusCurDriverTextTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="0"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:text="End Location:     "
+                android:text="Current Driver:    "
                 android:textSize="24sp" />
 
             <TextView
-                android:id="@+id/txtEndLocation"
+                android:id="@+id/txtRideStatusCurDriverUserName"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:ellipsize="end"
-                android:lines="2"
+                android:lines="3"
                 android:maxLines="1"
-                android:text="textStatusInfo"
+                android:text="driver info"
+                android:textSize="24sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="66dp"
+
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/txtRideStatusPhoneTextTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="0"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="Driver Phone Number:    "
+                android:textSize="24sp" />
+
+            <TextView
+                android:id="@+id/txtRideStatusDriverPhoneNumber"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:lines="3"
+                android:maxLines="1"
+                android:text="driver phone"
+                android:textSize="24sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="66dp"
+
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/txtRideStatusEmailTextTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="0"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="Driver Email:    "
+                android:textSize="24sp" />
+
+            <TextView
+                android:id="@+id/txtRideStatusDriverEmail"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:lines="1"
+                android:maxLines="1"
+                android:text="driver email"
                 android:textSize="24sp" />
         </LinearLayout>
     </LinearLayout>

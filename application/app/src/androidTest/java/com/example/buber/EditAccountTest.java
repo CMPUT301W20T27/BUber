@@ -44,7 +44,7 @@ public class EditAccountTest {
         EventCompletionListener listener = (resultData, err) -> {};
         App.getAuthDBManager().signIn("testUser@test.test","password", listener);
     }
-    
+
     @Rule
     public ActivityTestRule<EditAccountActivity> rule = new ActivityTestRule<>(EditAccountActivity.class, true, true);
 
