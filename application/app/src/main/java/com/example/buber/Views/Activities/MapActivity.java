@@ -116,7 +116,9 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
             Toast.makeText(this, "Trip status changed to: " + sessionTrip.getStatus(), Toast.LENGTH_SHORT).show();
             this.setCurrentTripStatus(sessionTrip.getStatus());
         }
-        showActiveMainActionButton();
+        if (sessionTrip != null && App.getModel().getSessionUser() != null) {
+            showActiveMainActionButton();
+        }
     }
 
 
