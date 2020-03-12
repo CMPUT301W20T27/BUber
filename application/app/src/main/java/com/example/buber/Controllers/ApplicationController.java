@@ -123,6 +123,19 @@ public class ApplicationController {
         });
     }
 
+
+    public static void deleteRiderCurrentTrip(UIErrorHandler view){
+        ApplicationModel m = App.getModel();
+        ApplicationService.deleteRiderCurrentTrip(m.getSessionTrip().getRiderID(), (resultData, err) -> {
+            if (err != null) view.onError(err);
+            else {
+                m.detachTripListener();
+                m.setSessionTrip(null);
+            }
+        });
+    }
+
+
     public static void handleDriverTripSelect(Trip selectedTrip) {
         ApplicationModel m = App.getModel();
         selectedTrip.setStatus(Trip.STATUS.DRIVER_ACCEPT);
@@ -140,6 +153,7 @@ public class ApplicationController {
             }
         }));
     }
+
 
     public static void updateNonCriticalUserFields(User updatedSessionUser, UIErrorHandler view) {
         ApplicationService.updateUser(updatedSessionUser,((resultData, err) -> {

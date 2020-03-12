@@ -93,8 +93,12 @@ public class DBManager {
                     toReturn.put("trip", tripRequest);
                     listener.onCompletion(toReturn, null);
                     if (listenForUpdates) {
-                       ListenerRegistration lr = collectionTrip.document(tripRequest.getRiderID()).addSnapshotListener((documentSnapshot, e) -> {
+                        ListenerRegistration lr = collectionTrip.document(tripRequest.getRiderID()).addSnapshotListener((documentSnapshot, e) -> {
                             Trip newTrip = documentSnapshot.toObject(Trip.class);
+
+                            if (newTrip == null) {
+                                return;
+                            }
                             Trip.STATUS newStatus = newTrip.getStatus();
 
                             if (tripRequest.nextStatusValid(newStatus)) {
@@ -265,7 +269,7 @@ public class DBManager {
                 })
                 .addOnFailureListener((@NonNull Exception e) -> {
                     Log.d(TAG, e.getMessage());
-                    Error err = new Error("Failed to update trip");
+                    Error err = new Error("Failed to delete trip");
                     listener.onCompletion(null, err);
                 });
     }

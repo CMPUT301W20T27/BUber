@@ -79,4 +79,12 @@ public class ApplicationModel extends Observable {
     public void setTripListener(ListenerRegistration tripListener) {
         this.tripListener = tripListener;
     }
+
+    public void detachTripListener() {
+        ListenerRegistration lr = this.getTripListener();
+        if (lr != null) {
+            lr.remove();
+            this.setTripListener(null);
+        }
+    }
 }
