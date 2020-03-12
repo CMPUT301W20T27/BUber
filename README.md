@@ -1,5 +1,5 @@
 # BUber   
- A more accessible and efficient solution to the existing taxi system.
+ A more accessible and efficient solution to the existing cab system.
 
 <!-- ### Clarifying Instructions -->
 
