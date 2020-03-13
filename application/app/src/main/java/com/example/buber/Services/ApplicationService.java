@@ -107,7 +107,7 @@ public class ApplicationService {
                 if (tripData != null && tripData.size() > 0) {
                     for (Trip t : tripData) {
                         double distance = driverLocation.distanceTo(t.getStartUserLocation());
-                        if (distance <= RADIUS && t.getStatus() == Trip.STATUS.PENDING && t.getRiderID() != currentUid) {
+                        if (distance <= RADIUS && t.getStatus() == Trip.STATUS.PENDING && !t.getRiderID().equals(currentUid)) {
                             filterTrips.add(t);
                             filterTripIds.add(t.getRiderID());
                         }
