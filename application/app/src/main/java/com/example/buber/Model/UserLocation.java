@@ -11,6 +11,7 @@ public class UserLocation {
     private double longitude;
     private String address;
 
+    /**UserLocation(...) is the for the UserLocation class*/
     // Important for db stuff
     public UserLocation() {}
 
@@ -43,12 +44,14 @@ public class UserLocation {
         this.longitude = longitude;
     }
 
+    /**Calculates price estimate based on the distance of the trip*/
     public double distancePriceEstimate(UserLocation end) {
         // Based on UberX's Price Constant From Edmonton, AB To Calgary, AB @ March 7, 2020
         // Rounding to two decimal places using the math round
         return Math.round(1.1823 * distanceTo(end) * 100.0) / 100.0;
     }
-    
+
+    /**Calculates the distance between two points*/
     public double distanceTo(UserLocation other) {
         double lat1 = this.getLatitude();
         double lon1 = this.getLongitude();
@@ -67,10 +70,12 @@ public class UserLocation {
         return (dist);
     }
 
+    /**converts degrees to radians*/
     private double deg2rad(double deg) {
         return (deg * Math.PI / 180.0);
     }
 
+    /**converts radians to degrees*/
     private double rad2deg(double rad) {
         return (rad * 180.0 / Math.PI);
     }

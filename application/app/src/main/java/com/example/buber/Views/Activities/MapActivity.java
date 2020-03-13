@@ -135,6 +135,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         startActivity(intent);
     }
 
+    /**Handles user interaction with rider cancel button*/
     public void handleRiderCancelBtn(View v) {
         DialogInterface.OnClickListener dialogClickListener = ((DialogInterface dialog, int choice) -> {
             switch (choice) {
@@ -154,10 +155,12 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
                 .setNegativeButton("No", dialogClickListener).show();
     }
 
+    /**Handles interaction with driver show requests button*/
     public void handleDriverShowRequestsBtn(View v) {
         startActivity(new Intent(getBaseContext(), TripSearchActivity.class));
     }
 
+    /**Shows active main action button when necessary*/
     public void showActiveMainActionButton() {
         hideMainActionButtons();
 
@@ -187,6 +190,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         }
     }
 
+    /**Hides main action buttons when necessaru*/
     public void hideMainActionButtons() {
         riderRequestMainBtn.setVisibility(View.INVISIBLE);
         riderRequestCancelMainBtn.setVisibility(View.INVISIBLE);
@@ -208,10 +212,12 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         startActivity(new Intent(MapActivity.this, RequestStatusActivity.class));
     }
 
+    /**Changes activity to EditAccountActivity when Account button is clicked*/
     public void handleAccountButtonClick(View v) {
         startActivity(new Intent(MapActivity.this, EditAccountActivity.class));
     }
 
+    /**Logs user out of app when log out button is clicked*/
     public void handleLogoutButtonClick(View v) {
         User curUser = App.getModel().getSessionUser();
         curUser.setType(null);
@@ -223,6 +229,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         this.finish();
     }
 
+    /**Shows settings sidebar panel when necessary*/
     public void showSettingsPanel(View v) {
         sideBarView.setVisibility(View.VISIBLE);
         settingsButton.setVisibility(View.INVISIBLE);
@@ -231,6 +238,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         hideMainActionButtons();
     }
 
+    /**Hides settings sidebar panel when necessary*/
     public void hideSettingsPanel() {
         sideBarView.setVisibility(View.INVISIBLE);
         settingsButton.setVisibility(View.VISIBLE);
@@ -290,6 +298,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         }
     }
 
+    /**Gets the location of the users device*/
     private void getDeviceLocation() {
         /*
          * Get the best and most recent location of the device, which may be null in rare
@@ -334,6 +343,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         }
     }
 
+    /**Returns true if connection to google api is successful*/
     boolean googleConnectionSuccessful() {
         int connection = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(MapActivity.this);
         if (connection == ConnectionResult.SUCCESS) {
