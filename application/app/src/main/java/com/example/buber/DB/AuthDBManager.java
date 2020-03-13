@@ -74,6 +74,7 @@ public class AuthDBManager {
                 });
     }
 
+    /**Returns true if a user is currently logged in*/
     public boolean isLoggedIn() {
         return mAuth.getCurrentUser() != null;
     }

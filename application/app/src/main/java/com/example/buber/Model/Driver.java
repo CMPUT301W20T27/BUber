@@ -20,6 +20,7 @@ public class Driver extends User {
     @ServerTimestamp
     public Date timestamp;
 
+    /**Driver(...) methods are constructors for Driver class. It */
     public Driver() { setType(TYPE.DRIVER); driverLoggedOn=false;}
 
     public Driver(String username, Account account) {

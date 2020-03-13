@@ -46,6 +46,7 @@ public class LoginActivity extends AppCompatActivity implements Observer, UIErro
         driverLoginBtnID = R.id.loginDriverButton;
     }
 
+    /**Handles user interaction with login button (as either driver or rider - chosen by user)*/
     public void handleLoginClick(View view) {
         driverLoginBtn.setEnabled(false);
         riderLoginBtn.setEnabled(false);
@@ -61,6 +62,8 @@ public class LoginActivity extends AppCompatActivity implements Observer, UIErro
         }
     }
 
+    /**Handles user interaction when create account button is clicked.
+     * moves user to CreateAccountActivity*/
     public void handleAccountCreationClick(View view) {
         startActivity(new Intent(LoginActivity.this, CreateAccountActivity.class));
     }

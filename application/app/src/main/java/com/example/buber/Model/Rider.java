@@ -17,6 +17,9 @@ public class Rider extends User {
     public Date timestamp;
 
     private boolean riderLoggedOn;
+
+    /**Rider(...) are constructors for the Rider class. One does not require parameters, the other
+     * takes @param username and @param account*/
     public Rider() {
         setType(TYPE.RIDER);
         riderLoggedOn=false;

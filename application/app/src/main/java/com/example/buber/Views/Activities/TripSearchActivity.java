@@ -64,7 +64,7 @@ public class TripSearchActivity extends AppCompatActivity implements UIErrorHand
 
     @Override
     public void onError(Error e) {
-        // TODO MIKE: Handle Incoming UI Errors
+        // TODO: Handle Incoming UI Errors
     }
 
     @Override

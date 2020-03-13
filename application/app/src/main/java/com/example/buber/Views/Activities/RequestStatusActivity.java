@@ -32,9 +32,10 @@ import static com.example.buber.Model.User.TYPE.DRIVER;
 import static com.example.buber.Model.User.TYPE.RIDER;
 
 /**
- *
- * If u need too, call ApplicationController.getRiderCurrentTrip(this)
- *
+ * Note: If You need too, call ApplicationController.getRiderCurrentTrip(this)
+ */
+
+ /** ReequestStatusActivity is used to show status of trip requests, as well as driver's info
  */
 public class RequestStatusActivity extends AppCompatActivity implements Observer, UIErrorHandler {
     private TextView statusTextView;
@@ -70,6 +71,7 @@ public class RequestStatusActivity extends AppCompatActivity implements Observer
         fillStatusForm();
     }
 
+    /**Gets drivers info to be displayed*/
     public void getDriverInfo(String docID){
         App.getDbManager().getDriver(docID, (resultData, err) -> {
             if (resultData != null) {
@@ -87,6 +89,7 @@ public class RequestStatusActivity extends AppCompatActivity implements Observer
         });
     }
 
+    /**Fills ride status form with correct user and trip data depending on which user is signed in*/
     public void fillStatusForm(){
         User curUser = App.getModel().getSessionUser();
         Trip trip = App.getModel().getSessionTrip();
