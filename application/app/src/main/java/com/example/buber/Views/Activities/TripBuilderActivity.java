@@ -56,6 +56,8 @@ public class TripBuilderActivity extends AppCompatActivity implements UIErrorHan
     PlacesClient placesClient;
     String apiKey = "AIzaSyDFEIMmFpPoMijm_0YraJn4S33UvtlnqF8";
 
+    /**onCreate method will create TripBuilderActivity when it is run
+     * @param savedInstanceState will get a previous saved state if available*/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -230,11 +232,13 @@ public class TripBuilderActivity extends AppCompatActivity implements UIErrorHan
         submitTripBtn.setVisibility(View.GONE);
     }
 
-
+    /**update function updates the activity
+     * @param o,arg are the observable and the object*/
     @Override
     public void update(Observable o, Object arg) {
     }
 
+    /**onDestroy closes the activity when it needs to be closed*/
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -243,6 +247,8 @@ public class TripBuilderActivity extends AppCompatActivity implements UIErrorHan
         m.deleteObserver(this);
     }
 
+    /**onError handles errors in the TripBuilderActivity
+     * @param e is the error called*/
     @Override
     public void onError(Error e) {
         Toast.makeText(getBaseContext(), e.getMessage(), Toast.LENGTH_SHORT).show();

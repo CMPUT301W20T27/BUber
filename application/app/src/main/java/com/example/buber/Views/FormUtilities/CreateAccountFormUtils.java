@@ -9,7 +9,10 @@ public class CreateAccountFormUtils {
     /**
      * This function is used to validate that user input when an account is created.
      * It checks that Username, password, first/last name, email, and phone number is correct
-     * and non-empty*/
+     * and non-empty
+     * @param editUserName,editPassword,editFirstName,editLastName,editEmail,editPhoneNumber are the
+     *      EditText view elements containing their corresponding user input (Username, First/Last name,
+     *      Password, email, and phonenumber*/
     public static boolean validateForm(EditText editUserName,
                                        EditText editPassword,
                                        EditText editFirstName,
@@ -110,7 +113,9 @@ public class CreateAccountFormUtils {
     }
     /**
      * Function is use to validate user info when a form is edited. It checks to ensure edited
-     * fields are non-empty and formatted correctly*/
+     * fields are non-empty and formatted correctly
+     * @param editUserName,editFirstName,editLastName,editPhoneNumber are the EditText view elements
+     *      containing user information (Username, First/Last name, Phone Number*/
     public static boolean validateEditForm(EditText editUserName,
         EditText editFirstName,
         EditText editLastName,

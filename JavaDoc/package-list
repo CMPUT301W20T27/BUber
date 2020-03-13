@@ -1,0 +1,10 @@
+com.example.buber
+com.example.buber.Controllers
+com.example.buber.DB
+com.example.buber.Model
+com.example.buber.Services
+com.example.buber.Views
+com.example.buber.Views.Activities
+com.example.buber.Views.Components
+com.example.buber.Views.FormUtilities
+com.example.buber.Views.Fragments

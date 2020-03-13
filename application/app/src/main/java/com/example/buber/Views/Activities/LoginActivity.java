@@ -30,6 +30,8 @@ public class LoginActivity extends AppCompatActivity implements Observer, UIErro
     private Button riderLoginBtn;
     private int driverLoginBtnID;
 
+    /**onCreate method creates the LoginActivity view when called
+     * @param savedInstanceState is a previous saved state instance if applicable*/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -45,7 +47,8 @@ public class LoginActivity extends AppCompatActivity implements Observer, UIErro
         driverLoginBtnID = R.id.loginDriverButton;
     }
 
-    /**Handles user interaction with login button (as either driver or rider - chosen by user)*/
+    /**Handles user interaction with login button (as either driver or rider - chosen by user)
+     * @param view is an instance of the view*/
     public void handleLoginClick(View view) {
         driverLoginBtn.setEnabled(false);
         riderLoginBtn.setEnabled(false);
@@ -62,18 +65,21 @@ public class LoginActivity extends AppCompatActivity implements Observer, UIErro
     }
 
     /**Handles user interaction when create account button is clicked.
-     * moves user to CreateAccountActivity*/
+     * moves user to CreateAccountActivity
+     * @param view is an instance of the view*/
     public void handleAccountCreationClick(View view) {
         startActivity(new Intent(LoginActivity.this, CreateAccountActivity.class));
         this.finish();
     }
 
-
+    /**update method updates the activity
+     * @param o,arg are the Observable and Object to be updated*/
     @Override
     public void update(Observable o, Object arg) {
 
     }
 
+    /**onDestroy method destructs LoginActivity when activity is shut down*/
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -81,12 +87,14 @@ public class LoginActivity extends AppCompatActivity implements Observer, UIErro
         m.deleteObserver(this);
     }
 
+    /**onStart starts activity on app startup if applicable*/
     @Override
     protected void onStart() {
         super.onStart();
     }
 
-
+    /**onError handles UI errors when they come in
+     * @param e is the incoming error*/
     @Override
     public void onError(Error e) {
         String msg = e.getMessage();

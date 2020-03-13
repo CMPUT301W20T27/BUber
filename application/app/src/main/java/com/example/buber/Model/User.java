@@ -10,14 +10,19 @@ public abstract class User {
         RIDER,
     }
 
-    /**User(...) are the constructors for the User class. One requires no parameters, the other
-     * requires @param username and @param account*/
+    /**
+     * Empty constructor used for Firebase
+     */
+    public User() { }
+
+    /**
+     * User constructor
+     * @param username,account the account and username
+     */
     public User(String username, Account account) {
         this.username = username;
         this.account = account;
     }
-
-    public User() { }
 
     private UserLocation currentUserLocation;
     private Account account;
