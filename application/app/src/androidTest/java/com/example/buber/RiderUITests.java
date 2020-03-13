@@ -66,7 +66,7 @@ public class RiderUITests {
     @Test
     public void testRideStatus(){
         solo.assertCurrentActivity("Wrong Activity",MapActivity.class);
-        solo.clickOnButton("TESTSTATUS");
+        solo.clickOnButton("Ride Status");
         solo.assertCurrentActivity("Wrong Activity", RequestStatusActivity.class);
         assertTrue(solo.waitForText("Ride Status:     "));
         assertTrue(solo.waitForText(""));
