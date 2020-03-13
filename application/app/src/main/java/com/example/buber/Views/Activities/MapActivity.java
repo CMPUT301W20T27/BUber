@@ -182,12 +182,11 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
     /**Shows active main action button when necessary*/
     public void showActiveMainActionButton() {
         hideMainActionButtons();
-
         if (this.currentTripStatus == null) {
             User sessionUser = App.getModel().getSessionUser();
             if (sessionUser.getType() == RIDER) {
                 riderRequestMainBtn.setVisibility(View.VISIBLE);
-            } else {
+            } else if(sessionUser.getType() == DRIVER){
                 driverShowRequestsMainBtn.setVisibility(View.VISIBLE);
             }
         } else {
