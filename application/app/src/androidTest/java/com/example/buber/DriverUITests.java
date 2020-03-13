@@ -14,9 +14,19 @@ import com.robotium.solo.Solo;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
 
 import static junit.framework.TestCase.assertTrue;
 
+/**
+ * Testing Driver logging on, rendering the correct views, and accepting a ride
+ * NOTE: make sure there is the following ride before running this test:
+ * Use Start location google plex, 1600 Amphitheatre Pkwy, Mountain View, CA 94043, USA
+ * Use End location google new york, 111 8th Ave, New York, NY 10011, USA
+ * You can run all these tests at once
+ */
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class DriverUITests {
 
     private Solo solo;
@@ -30,20 +40,11 @@ public class DriverUITests {
         //driverLogin();
     }
 
-    public void cleanUp() {
-        // Remove trip from firebase
-        if (solo.waitForText("Cancel Your Current Ride Request")) {
-            solo.clickOnText("Cancel Your Current Ride Request");
-            solo.clickOnText("Yes");
-            assertTrue(solo.waitForText("Request a Ride"));
-        }
-
-    }
     @Test
     public void driverLogin(){
 
         App.getAuthDBManager().signOut(); // Ensure any user is already signed out
-        String email = "nickagain3@gmail.com";
+        String email = "nickagain2@gmail.com";
         String password = "password";
         solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
         solo.enterText((EditText) solo.getView(R.id.loginEmailEditText), email);
@@ -56,26 +57,23 @@ public class DriverUITests {
 
     @Test
     public void testDriverFindRide(){
-        solo.assertCurrentActivity("Wrong Activity", MapActivity.class);
         solo.clickOnButton("Show Active Ride Requests Near You");
         solo.assertCurrentActivity("Wrong activity", TripSearchActivity.class);
-        solo.clickLongInList(1);
+        solo.clickOnText("1600 Amphitheatre Pkwy");
         solo.clickOnText("Accept");
         solo.sleep(1000);
         solo.assertCurrentActivity("Wrong activity", MapActivity.class);
         assertTrue(solo.waitForText("Trip status changed to: DRIVER_ACCEPT"));
-        solo.clickOnButton("Cancel Your Current Ride Request");  //cancel button
     }
 
     @Test
     public void testStatusRideDriver(){
         //sign in as driver first
-        solo.assertCurrentActivity("Wrong Activity",MapActivity.class);
         solo.clickOnButton("Ride Status");
         solo.assertCurrentActivity("Wrong Activity", RequestStatusActivity.class);
         assertTrue(solo.waitForText("Ride Status:"));
         assertTrue(solo.waitForText("DRIVER_ACCEPT"));  //expected output
-        assertTrue(solo.waitForText("Amphitheatre Pkwy, Mountain"));
-        assertTrue(solo.waitForText("10800 Torre Ave, Cupertino, CA 95014, USA"));
+        assertTrue(solo.waitForText("Amphitheatre"));
+        assertTrue(solo.waitForText("New York"));
     }
 }

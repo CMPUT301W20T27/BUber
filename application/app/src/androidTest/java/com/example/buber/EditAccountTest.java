@@ -26,6 +26,12 @@ import java.util.HashMap;
 import static java.lang.System.err;
 import static junit.framework.TestCase.assertTrue;
 
+/**
+ * Tests to verrify functuality of edit account screen
+ * tests involve edit contact info, and verifying the
+ * changes stay.
+ *
+ */
 public class EditAccountTest {
     private Solo solo;
 
