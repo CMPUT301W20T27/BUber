@@ -39,6 +39,8 @@ public class EditAccountActivity extends AppCompatActivity implements Observer, 
 
     private TextWatcher txtWatcher;
 
+    /**onCreate method creates the EditAccountActivity when it is called
+     * @param savedInstanceState is a previous saved state if applicable*/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,7 +87,8 @@ public class EditAccountActivity extends AppCompatActivity implements Observer, 
 
     }
 
-    /**Handles user interaction when save changes button is clicked in EditAccountActivity*/
+    /**Handles user interaction when save changes button is clicked in EditAccountActivity
+     * @param v is the view instance*/
     public void handleEditAccountSaveClick(View v) {
         if (CreateAccountFormUtils.validateEditForm(
                 editUserName,
@@ -106,7 +109,11 @@ public class EditAccountActivity extends AppCompatActivity implements Observer, 
         }
     }
 
-    /**Updates username, first name, last name, and phone number fields*/
+    /**Updates username, first name, last name, and phone number fields
+     * @param newUserName is the new username input
+     * @param newFirstName is the new first name input
+     * @param newLastName is the new last name input
+     * @param newPhoneNumber is the new phone number input*/
     public void updateNonCriticalUserFields(String newUserName, String newFirstName,
                            String newLastName,String newPhoneNumber){
         User sessionUser = App.getModel().getSessionUser();
@@ -121,9 +128,12 @@ public class EditAccountActivity extends AppCompatActivity implements Observer, 
         }
     }
 
+    /**update updates the EditAccountActivity when called
+     * @param o,arg are the Observable and Object used in the update*/
     @Override
     public void update(Observable o, Object arg) { }
 
+    /**onDestroy handles destruction of EditAccountActivity when activity is shut down*/
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -132,6 +142,7 @@ public class EditAccountActivity extends AppCompatActivity implements Observer, 
         m.deleteObserver(this);
     }
 
+    /**onError handles incoming errors if applicable*/
     @Override
     public void onError(Error e) {
 

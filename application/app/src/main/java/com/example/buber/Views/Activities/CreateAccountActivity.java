@@ -35,7 +35,8 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
     private EditText editEmail;
     private EditText editphoneNumber;
 
-
+    /**onCreate method creates the CreateAccountActivity when called
+     * @param savedInstanceState is a previous saved state if applicable */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -55,6 +56,8 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
 
     }
 
+    /**onClick method handles user clicking create account button
+     * @param v is the view instance*/
     @Override
     public void onClick(View v) {
         if(CreateAccountFormUtils.validateForm(
@@ -86,6 +89,7 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
         }
     }
 
+    /**onDestroy destructs the CreateAccountActivity when it is shut down*/
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -93,6 +97,8 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
         m.deleteObserver(this);
     }
 
+    /**update updates the CreateAccountActivity when called
+     * @param o,arg are the Observable and Object used in the update*/
     @Override
     public void update(Observable o, Object arg) {
         ApplicationModel m = (ApplicationModel) o;
@@ -107,6 +113,7 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
         }
     }
 
+    /**onBackPressed handles user interaction with the back button*/
     @Override
     public void onBackPressed() {
         // we need to start LoginActivity because it was finished to get here
@@ -114,6 +121,8 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
         this.finish();
     }
 
+    /**onError handles incoming errors to CreateAccountActivity
+     * @param e is the incoming error*/
     @Override
     public void onError(Error e) {
         String msg = e.getMessage();

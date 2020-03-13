@@ -31,6 +31,9 @@ public class AcceptTripRequestFragment extends DialogFragment {
     private TripSearchRecord tripSearchRecord;
     private int position;
 
+    /**
+     * Constructor for AcceptTripRequestFragment
+     * @param tripSearchRecord,position the tripSearchRecord and its position in the tripSearch list*/
     public AcceptTripRequestFragment(TripSearchRecord tripSearchRecord, int position){
         this.tripSearchRecord = tripSearchRecord;
         this.position = position;

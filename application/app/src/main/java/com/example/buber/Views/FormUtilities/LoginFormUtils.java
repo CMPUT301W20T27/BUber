@@ -15,7 +15,8 @@ public class LoginFormUtils {
     public static final String FirebaseAuthPassWordExceptionCode = "ERROR_WRONG_PASSWORD";
 
     /**Function is used to validate lofin info. It checks to ensure that email and password
-     * entries are correct and non-empty*/
+     * entries are correct and non-empty
+     * @param editEmail,ediitpassword are the email and password EditText view containing user information*/
     public static boolean validateForm(EditText editEmail, EditText editPassword) {
 
         String email = editEmail.getText().toString().trim();

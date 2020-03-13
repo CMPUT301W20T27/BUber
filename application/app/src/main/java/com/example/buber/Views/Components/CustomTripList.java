@@ -22,6 +22,9 @@ public class CustomTripList extends ArrayAdapter<TripSearchRecord> {
     public Context context;
 
     //constructor
+    /**Constructor for the CustomTripList() class
+     * @param context is the context to the application
+     * @param  tripRecords is a list of TripSearchRecords (a view containing trip information)*/
     public CustomTripList(Context context, ArrayList<TripSearchRecord> tripRecords) {
         super(context, 0, tripRecords);
         this.tripRecords = tripRecords;
@@ -29,7 +32,8 @@ public class CustomTripList extends ArrayAdapter<TripSearchRecord> {
     }
 
     /**The getView function gets the correct assigns and sets text to the correct view elements
-     * in for the Triplist used to show Driver trips as a part of the Trip view activity*/
+     * in for the Triplist used to show Driver trips as a part of the Trip view activity
+     * @param position,convertView,parent uses the position, view and viewGroup to get particular view*/
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {

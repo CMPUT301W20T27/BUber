@@ -75,6 +75,8 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
     private View sideBarView;
     private Button statusButton;
 
+    /**onCreate method creates MapActivity when it is called
+     * @param savedInstanceState is a previous saved state if applicable*/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -120,6 +122,8 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
     }
 
     /***** OBSERVING OBSERVABLES ******/
+    /**update method updates the activity when necessary
+     * @param o,arg are instances of the observable and object*/
     @Override
     public void update(Observable o, Object arg) {
         Trip sessionTrip = App.getModel().getSessionTrip();
@@ -153,6 +157,8 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
     }
 
     /***** MAIN ACTION BUTTON HANDLERS ******/
+    /**handleRiderRequestBtn handles user interaction with the rider request button
+     * @param v is an instance of the view*/
     public void handleRiderRequestBtn(View v) {
         Intent intent = new Intent(getBaseContext(), TripBuilderActivity.class);
         intent.putExtra(
@@ -180,7 +186,8 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
                 .setNegativeButton("No", dialogClickListener).show();
     }
 
-    /**Handles interaction with driver show requests button*/
+    /**Handles interaction with driver show requests button
+     * @param v is the view instance*/
     public void handleDriverShowRequestsBtn(View v) {
         startActivity(new Intent(getBaseContext(), TripSearchActivity.class));
     }
@@ -224,6 +231,8 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
     }
 
     /***** HANDLING SETTINGS PANEL BUTTONS ******/
+    /**handleScreenClick handles what happens when user clicks on the screen
+     * @param v is the view instance*/
     public void handleScreenClick(View v) {
         if (showSideBar) {
             hideSettingsPanel();
@@ -233,6 +242,8 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         }
     }
 
+    /**Handles click on test
+     * @param v is the view instance*/
     public void handleTestClick(View v) {
         startActivity(new Intent(MapActivity.this, RequestStatusActivity.class));
     }
@@ -278,12 +289,15 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         return currentTripStatus;
     }
 
+    /**setCurrentTripStatus will set the trip status depending on whether it has been taken or not
+     * @param currentTripStatus is the status of current trip*/
     public void setCurrentTripStatus(Trip.STATUS currentTripStatus) {
         this.currentTripStatus = currentTripStatus;
     }
 
 
     /***** DECLARING REST OF LIFECYCLE METHODS ******/
+    /**onDestroy method destructs activity if it is closed down*/
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -292,6 +306,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         m.deleteObserver(this);
     }
 
+    /**onError handles UI Errors if there are any*/
     @Override
     public void onError(Error e) {
         // TODO: Handle UI Errors
@@ -304,6 +319,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         mapFragment.getMapAsync(MapActivity.this);  //calls onMapReady
     }
 
+    /**getLocationPermission gets location permission from the user*/
     private void getLocationPermission() {
         /*
          * Request location permission, so that we can get the location of the
@@ -385,6 +401,8 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         return false;
     }
 
+    /**onMapReady lets the user know that the location is being gotten if permissions are granted
+     * @param googleMap is the map instance of GoogleMap*/
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
@@ -401,6 +419,10 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         });
     }
 
+    /**onRequestPermissionsResult gives the result of of the user permissions request
+     * @param requestCode is the result of the request
+     * @param permissions is a list of the permissions
+     * @param grantResults is a list of results granted*/
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         //this code is copied from google map api documentation

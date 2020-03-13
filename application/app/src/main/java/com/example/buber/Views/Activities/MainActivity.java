@@ -20,6 +20,9 @@ import java.util.Observer;
  * TODO: MVC Updating and Error Handling.
  */
 public class MainActivity extends AppCompatActivity implements Observer, UIErrorHandler {
+
+    /**onCreate method creates the MainActivity when called
+     * @param savedInstanceState is an previous saved state if applicable*/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,6 +32,7 @@ public class MainActivity extends AppCompatActivity implements Observer, UIError
         determineLoginStatus();
     }
 
+    /**onDestroy method destructs activity when MainActivity is shut down*/
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -41,6 +45,8 @@ public class MainActivity extends AppCompatActivity implements Observer, UIError
         ApplicationModel m = (ApplicationModel) o;
     }
 
+    /**determineLoginStatus is used to determine the login status of the user - it checks if the
+     * user is logged in */
     private void determineLoginStatus() {
         if(App.getAuthDBManager().isLoggedIn()) {
             App.getAuthDBManager().getCurrentSessionUser((resultData, err) -> {
@@ -60,6 +66,8 @@ public class MainActivity extends AppCompatActivity implements Observer, UIError
         }
     }
 
+    /**onError method handles errors if applicable
+     * @param e is the error called*/
     @Override
     public void onError(Error e) {
 

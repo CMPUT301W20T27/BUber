@@ -36,6 +36,8 @@ public class TripSearchActivity extends AppCompatActivity implements UIErrorHand
 
     private static final String TAG = "TripSearchActivity";
 
+    /**onCreate method creates the view. It is used to populate TripSearchActivity
+     * @param savedInstanceState calls the previous saved state if there is one*/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -58,15 +60,20 @@ public class TripSearchActivity extends AppCompatActivity implements UIErrorHand
         updateTripList();
     }
 
+    /**updateTripList updates the trips but getting trips for the User*/
     public void updateTripList() {
         ApplicationController.getTripsForUser(this);
     }
 
+    /**onError function is used to handle incoming UI errors in tripSearchActivity
+     * @param e is the error called*/
     @Override
     public void onError(Error e) {
         // TODO: Handle Incoming UI Errors
     }
 
+    /**Update function updates the view whenever changes are made
+     * @param o,arg are used to ensure the correct updates are made*/
     @Override
     public void update(Observable o, Object arg) {
         ApplicationModel m = (ApplicationModel) o;
@@ -81,6 +88,9 @@ public class TripSearchActivity extends AppCompatActivity implements UIErrorHand
         }
     }
 
+    /**onAcceptPressed handles user interaction when the accept button is pressed
+     * @param tripSearchRecord,position uses the position and trip search record to ensure the correct
+     *      trip is accepted*/
     public void onAcceptPressed(TripSearchRecord tripSearchRecord, int position){
         // TODO: Backend code for selecting trip
         Trip selectedTrip = App.getModel().getSessionTripList().get(position);
@@ -89,6 +99,8 @@ public class TripSearchActivity extends AppCompatActivity implements UIErrorHand
         this.finish();
     }
 
+    /**
+     * OnDestroy handles activity when application is closed down*/
     @Override
     public void onDestroy() {
         super.onDestroy();
