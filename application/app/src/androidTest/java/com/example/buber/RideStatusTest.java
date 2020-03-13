@@ -6,15 +6,10 @@ import android.widget.EditText;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.ActivityTestRule;
 
-import com.example.buber.Views.Activities.CreateAccountActivity;
 import com.example.buber.Views.Activities.MainActivity;
 import com.example.buber.Views.Activities.MapActivity;
 import com.example.buber.Views.Activities.RequestStatusActivity;
 import com.example.buber.Views.Activities.TripBuilderActivity;
-<<<<<<< HEAD
-=======
-import com.example.buber.Views.Activities.TripSearchActivity;
->>>>>>> b31765f5062865baa28cda75187f02e611b01a38
 import com.robotium.solo.Solo;
 
 import org.junit.After;
@@ -22,7 +17,6 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import static junit.framework.TestCase.assertFalse;
 import static junit.framework.TestCase.assertTrue;
 
 public class RideStatusTest {
@@ -65,7 +59,6 @@ public class RideStatusTest {
         assertTrue(solo.waitForActivity(MapActivity.class));
     }
 
-<<<<<<< HEAD
     public void driverLogin(){
 
         App.getAuthDBManager().signOut(); // Ensure any user is already signed out
@@ -80,8 +73,6 @@ public class RideStatusTest {
     }
 
 
-=======
->>>>>>> b31765f5062865baa28cda75187f02e611b01a38
     @Test
     public void testCreateRide() {
         solo.clickOnButton("Request a Ride");
@@ -111,7 +102,6 @@ public class RideStatusTest {
         assertTrue(solo.waitForText("10800 Torre Ave, Cupertino, CA 95014, USA"));
     }
 
-<<<<<<< HEAD
     @Test
     public void testDriverFindRide(){
 
@@ -128,9 +118,6 @@ public class RideStatusTest {
         assertTrue(solo.waitForText("Amphitheatre Pkwy, Mountain"));
         assertTrue(solo.waitForText("10800 Torre Ave, Cupertino, CA 95014, USA"));
     }
-
-=======
->>>>>>> b31765f5062865baa28cda75187f02e611b01a38
 
     /**
      * Closes the activity after each test
