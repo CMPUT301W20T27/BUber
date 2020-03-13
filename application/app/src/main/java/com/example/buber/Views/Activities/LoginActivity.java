@@ -26,7 +26,6 @@ public class LoginActivity extends AppCompatActivity implements Observer, UIErro
     private String TAG = "LoginActivity";
     private EditText editEmail;
     private EditText editPassword;
-    private Button logoutButton;
     private Button driverLoginBtn;
     private Button riderLoginBtn;
     private int driverLoginBtnID;
@@ -66,6 +65,7 @@ public class LoginActivity extends AppCompatActivity implements Observer, UIErro
      * moves user to CreateAccountActivity*/
     public void handleAccountCreationClick(View view) {
         startActivity(new Intent(LoginActivity.this, CreateAccountActivity.class));
+        this.finish();
     }
 
 

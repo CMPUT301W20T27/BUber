@@ -1,5 +1,6 @@
 package com.example.buber.Views.Activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -96,10 +97,20 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
     public void update(Observable o, Object arg) {
         ApplicationModel m = (ApplicationModel) o;
         if (m.getSessionUser() != null) {
-            // TODO: Start MapActivity, Remove loginActivity from view stack
+
+            Intent i = new Intent(CreateAccountActivity.this, MapActivity.class);
+            // LoginActivity has already been finished before going to Map
+            startActivity(i);
+            this.finish();
             Toast.makeText(this, "Account Created Successfully!", Toast.LENGTH_LONG)
                     .show();
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        // we need to start LoginActivity because it was finished to get here
+        startActivity(new Intent(CreateAccountActivity.this, LoginActivity.class));
     }
 
     @Override
