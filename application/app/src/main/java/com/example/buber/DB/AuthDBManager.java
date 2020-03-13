@@ -28,10 +28,11 @@ public class AuthDBManager {
     }
 
     /**
-     * This method queries for a user's email/password match already in Fb
-     *
-     * @param email
+     * Queries for a user's email/password match already in Fb. On success the listener returns the
+     * document id of the user that logged in. On failure the listener returns the exception
+     * @param email that the user enters
      * @param password Current User's entered email and password
+     * @returns listener on successful/failed document query.
      */
     public void signIn(String email, String password, EventCompletionListener listener) {
         mAuth.signInWithEmailAndPassword(email, password)
@@ -48,17 +49,19 @@ public class AuthDBManager {
     }
 
     /**
-     * This method signs out the user
+     * Signs out the user
      */
     public void signOut() {
         mAuth.signOut();
     }
 
     /**
-     * This method creates a new user with the entered email, password
-     * @param String email
+     * Creates a new user with the entered email and password. On success the listener returns the
+     * document id of the user that logged in. On failure the listener returns the exception
+     * @param email that the user enters
      * @param password New User's entered email and password
-     * @param EventCompletionListener listener
+     * @param listener the listener that waits for the asynchronous Firebase call to finish
+     * @returns listener on successful/failed document creation in Firebase.
      */
     public void createFirebaseUser(String email, String password, EventCompletionListener listener) {
         mAuth.createUserWithEmailAndPassword(email, password)
@@ -74,11 +77,20 @@ public class AuthDBManager {
                 });
     }
 
-    /**Returns true if a user is currently logged in*/
+    /**
+    *@Returns true if a user is currently logged in
+    */
     public boolean isLoggedIn() {
+
         return mAuth.getCurrentUser() != null;
     }
 
+    /**
+     * Retrieves the session user object from the Firebase collection if the user is currently logged in
+     * On success the lister returns a driver object or a rider object. On failure the listener returns the exception
+     * @param listener the listener that waits for the asynchronous Firebase call to finish
+     * @returns listener on successful/failed document creation in Firebase.
+     */
     public void getCurrentSessionUser(EventCompletionListener listener) {
         if (isLoggedIn()) {
             String uid = App.getAuthDBManager().getCurrentUserID();
@@ -106,7 +118,11 @@ public class AuthDBManager {
         }
     }
 
+    /**
+     * @returns the current users Firebase document id
+     */
     public String getCurrentUserID() {
+
         return mAuth.getUid();
     }
 

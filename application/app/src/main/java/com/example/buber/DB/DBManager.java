@@ -65,8 +65,7 @@ public class DBManager {
      * @param docID the doc id of the user
      * @param rider an object of type rider
      * @param listener the listener that waits for the asynchronous Firebase call to finish
-     * @return listener on successful rider document creation in Firebase
-     * @return listener on failed rider document creation in Firebase
+     * @return listener on successful/failed rider document creation in Firebase
      */
     public void createRider(String docID, Rider rider, EventCompletionListener listener) {
         collectionRider.document(docID).set(rider)
@@ -88,8 +87,7 @@ public class DBManager {
      * @param docID the doc id of the user
      * @param driver an object of type driver
      * @param listener the listener that waits for the asynchronous Firebase call to finish
-     * @return listener on successful driver document creation in Firebase
-     * @return listener on failed driver document creation in Firebase
+     * @return listener on successful/ failed driver document creation in Firebase
      */
     public void createDriver(String docID, Driver driver, EventCompletionListener listener) {
         collectionDriver.document(docID).set(driver)
@@ -110,8 +108,7 @@ public class DBManager {
      * @param tripRequest the Trip object
      * @param listener  the listener that waits for the asynchronous Firebase call to finish
      * @param listenForUpdates ???????????????????????????????????????????????????????????????????????????????????????????????????????????????
-     * @return listener on successful trip document creation in Firebase
-     * @return listener on failed trip document creation in Firebase
+     * @return listener on successful/failed  trip document creation in Firebase
      */
     public void createTrip(Trip tripRequest, EventCompletionListener listener, boolean listenForUpdates) {
         collectionTrip
@@ -159,8 +156,7 @@ public class DBManager {
      * NOTE: The docID passed in is the same as the one used when a Firebase Authentication account was created
      * @param docID the doc id of the user
      * @param listener the listener that waits for the asynchronous Firebase call to finish
-     * @return listener on successful rider document retried from Firebase
-     * @return listener on failed rider document  retried from  Firebase
+     * @return listener on successful/failed  rider document retried from Firebase
      */
     public void getRider(String docID, EventCompletionListener listener) {
         try {
@@ -185,8 +181,7 @@ public class DBManager {
      * NOTE: The docID passed in is the same as the one used when a Firebase Authentication account was created
      * @param docID the doc id of the user
      * @param listener the listener that waits for the asynchronous Firebase call to finish
-     * @return listener on successful driver document retried from Firebase
-     * @return listener on failed driver document retried from  Firebase
+     * @return listener on successful/failed driver document retried from Firebase
      */
     public void getDriver(String docID, EventCompletionListener listener) {
         collectionDriver.document(docID)
@@ -206,8 +201,7 @@ public class DBManager {
      * NOTE: The docID passed in is ??????????????????????????????????????????????????????????????????????????????????
      * @param docID the doc id of the user
      * @param listener the listener that waits for the asynchronous Firebase call to finish
-     * @return listener on successful trip document retried from Firebase
-     * @return listener on failed trip document retried from Firebase
+     * @return listener on successful/failed trip document retried from Firebase
      */
     public void getTrip(String docID, EventCompletionListener listener, boolean listenForUpdates) {
         collectionTrip.document(docID)
@@ -240,8 +234,7 @@ public class DBManager {
      * Get all trip objects from Firebase. If it was not successful the listener passed in will handel the exception.
      * If it was successful, the listener passed in will pass all the objects from Firebase to the listener in the form of a list.
      * @param listener the listener that waits for the asynchronous Firebase call to finish
-     * @return listener on successful documents retried from Firebase
-     * @return listener on failed documents retried from  Firebase
+     * @return listener on successful/failed  documents retried from Firebase
      */
     public void getTrips(EventCompletionListener listener) {
         collectionTrip.get().addOnSuccessListener(queryDocumentSnapshots -> {
@@ -265,8 +258,7 @@ public class DBManager {
      * @param docID the document id of the rider object that is being updated
      * @param updatedRider the rider object that will update the existing rider object in Firebase
      * @param listener the listener that waits for the asynchronous Firebase call to finish
-     * @return listener on successful document update in Firebase
-     * @return listener on failed document update in  Firebase
+     * @return listener on successful/failed  document update in Firebase
      */
     public void updateRider(String docID, Rider updatedRider, EventCompletionListener listener) {
         Log.d("DBMANAGER","Updating Rider");
@@ -287,8 +279,7 @@ public class DBManager {
      * @param docID the document id of the driver object that is being updated
      * @param updatedDriver driver object that will update the existing driver object in Firebase
      * @param listener the listener that waits for the asynchronous Firebase call to finish
-     * @return listener on successful document update in Firebase
-     * @return listener on failed document update in  Firebase
+     * @return listener on successful/failed  document update in Firebase
      */
     public void updateDriver(String docID, Driver updatedDriver, EventCompletionListener listener) {
         Log.d("DBMANAGER","Updating driver");
@@ -310,8 +301,7 @@ public class DBManager {
      * @param updatedTrip object that will update the existing trip object in Firebase
      * @param listener the listener that waits for the asynchronous Firebase call to finish
      * @param listenForUpdates ??????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????
-     * @return listener on successful document update in Firebase
-     * @return listener on failed document update in Firebase
+     * @return listener on successful/failed document update in Firebase
      */
     public void updateTrip(String docID, Trip updatedTrip, EventCompletionListener listener, boolean listenForUpdates) {
         collectionTrip.document(docID)
@@ -346,8 +336,7 @@ public class DBManager {
      * If it was successful, the listener passed in will return null once Firebase call ends
      * @param docID the document id of the rider object that is being deleted
      * @param listener the listener that waits for the asynchronous Firebase call to finish
-     * @return listener on successful document deletion in Firebase
-     * @return listener on failed document deletion Firebase
+     * @return listener on successful/failed  document deletion in Firebase
      */
     public void deleteRider(String docID, EventCompletionListener listener) {
         collectionRider.document(docID)
@@ -366,8 +355,7 @@ public class DBManager {
      * If it was successful, the listener passed in will return null once Firebase call ends
      * @param docID the document id of the driver object that is being deleted
      * @param listener the listener that waits for the asynchronous Firebase call to finish
-     * @return listener on successful document deletion in Firebase
-     * @return listener on failed document deletion Firebase
+     * @return listener on successful/failed  document deletion in Firebase
      */
     public void deleteDriver(String docID, EventCompletionListener listener) {
         collectionDriver.document(docID)
@@ -386,8 +374,7 @@ public class DBManager {
      * If it was successful, the listener passed in will return null once Firebase call ends
      * @param docID the document id of the trip object that is being deleted
      * @param listener the listener that waits for the asynchronous Firebase call to finish
-     * @return listener on successful document deletion in Firebase
-     * @return listener on failed document deletion Firebase
+     * @return listener on successful/failed document deletion in Firebase
      */
     public void deleteTrip(String docID, EventCompletionListener listener) {
         collectionTrip.document(docID)
