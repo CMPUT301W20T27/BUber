@@ -111,6 +111,7 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
     public void onBackPressed() {
         // we need to start LoginActivity because it was finished to get here
         startActivity(new Intent(CreateAccountActivity.this, LoginActivity.class));
+        this.finish();
     }
 
     @Override

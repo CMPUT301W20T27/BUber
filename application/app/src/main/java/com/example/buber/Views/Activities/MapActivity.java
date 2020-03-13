@@ -123,26 +123,33 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
     @Override
     public void update(Observable o, Object arg) {
         Trip sessionTrip = App.getModel().getSessionTrip();
-        User sesssionUser = App.getModel().getSessionUser();
+        User sessionUser = App.getModel().getSessionUser();
         if (sessionTrip == null) {
             this.setCurrentTripStatus(null);
-            riderRequestMainBtn.setVisibility(View.VISIBLE);
-            riderRequestCancelMainBtn.setVisibility(View.INVISIBLE);
-
         } else if (sessionTrip.getStatus() != currentTripStatus) {
             Toast.makeText(this, "Trip status changed to: " + sessionTrip.getStatus(), Toast.LENGTH_SHORT).show();
             this.setCurrentTripStatus(sessionTrip.getStatus());
         }
         if (sessionTrip != null && App.getModel().getSessionUser() != null) {
-            showActiveMainActionButton();
             if (sessionTrip.getStatus() == Trip.STATUS.DRIVER_ACCEPT
                     && sessionTrip.getStatus() != currentTripStatus
-                    && sesssionUser.getType() == DRIVER) {
+                    && sessionUser.getType() == DRIVER) {
                 Toast.makeText(this, "Rider has canceled", Toast.LENGTH_SHORT).show();
             }
+
+            // FOR DEMO PURPOSES ONLY (will be removed on project completion)
+            if (sessionTrip.getStatus() == Trip.STATUS.DRIVER_ACCEPT) {
+                ApplicationController.deleteRiderCurrentTrip(MapActivity.this);
+                // TODO: part 3 cuts off here
+                Toast
+                        .makeText(
+                                this,
+                                "Driver has accepted! \n Cancelling trip and resetting \n...functionality to completed",
+                                Toast.LENGTH_LONG)
+                        .show();
+            }
         }
-
-
+        showActiveMainActionButton();
     }
 
     /***** MAIN ACTION BUTTON HANDLERS ******/
@@ -161,7 +168,6 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
                 case DialogInterface.BUTTON_POSITIVE:
                     Toast.makeText(MapActivity.this, "Cancelling trip...", Toast.LENGTH_SHORT).show();
                     ApplicationController.deleteRiderCurrentTrip(MapActivity.this);
-                    statusButton.setEnabled(false);
                     break;
                 case DialogInterface.BUTTON_NEGATIVE:
                     break;
@@ -187,6 +193,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
             User sessionUser = App.getModel().getSessionUser();
             if (sessionUser.getType() == RIDER) {
                 riderRequestMainBtn.setVisibility(View.VISIBLE);
+                statusButton.setEnabled(false);
             } else {
                 driverShowRequestsMainBtn.setVisibility(View.VISIBLE);
             }
@@ -197,9 +204,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
                     statusButton.setEnabled(true);
                     break;
                 case DRIVER_ACCEPT:
-                    if (App.getModel().getSessionUser().getType() == RIDER) {
-                        riderRequestCancelMainBtn.setVisibility(View.VISIBLE);
-                    }
+                    // TODO: part 3 cuts off here
                     break;
                 case DRIVER_PICKING_UP:
                     break;
