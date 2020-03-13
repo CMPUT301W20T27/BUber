@@ -47,6 +47,7 @@ public class DBManager {
         return collectionTrip;
     }
 
+    /**constructs DBManager*/
     public DBManager(String driverCollectionName,
                      String riderCollectionName,
                      String tripCollectionName) {

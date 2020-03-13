@@ -211,18 +211,20 @@ public class TripBuilderActivity extends AppCompatActivity implements UIErrorHan
         });
     }
 
-
+    /**Used to recalculate ride fare*/
     private void recalculateFareOffering() {
         minimumFareOffering = startLoc.distancePriceEstimate(endLoc);
         riderFareOffering = minimumFareOffering;
         fareOfferingEditText.setText(Double.toString(riderFareOffering));
     }
 
+    /**Allows fareOfferingLayout and submitTripBtn to be shown when necessary*/
     private void engageSubmissionUI() {
         fareOfferingLayout.setVisibility(View.VISIBLE);
         submitTripBtn.setVisibility(View.VISIBLE);
     }
 
+    /**Allows fareOfferingLayout and submitTripBtn to be hidden when necessary*/
     private void disEngageSubmissionUI() {
         fareOfferingLayout.setVisibility(View.GONE);
         submitTripBtn.setVisibility(View.GONE);

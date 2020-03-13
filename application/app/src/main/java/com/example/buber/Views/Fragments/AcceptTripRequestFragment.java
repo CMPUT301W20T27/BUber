@@ -36,6 +36,9 @@ public class AcceptTripRequestFragment extends DialogFragment {
         this.position = position;
     }
 
+    /**
+     * OnAcceptPressed allows the driver to accept trips by pressing the accept button
+     * */
     public interface OnFragmentInteractionListener{
         void onAcceptPressed(TripSearchRecord tripSearchRecord, int position);
     }
@@ -50,7 +53,10 @@ public class AcceptTripRequestFragment extends DialogFragment {
                     "must implement onFragmentInteractionListener");
         }
     }
-
+    /**
+     * OnCreateDialog is builds the TripRequest Fragment and fills the views with correct
+     * information from database
+     * */
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {

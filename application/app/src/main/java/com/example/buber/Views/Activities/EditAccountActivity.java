@@ -64,6 +64,7 @@ public class EditAccountActivity extends AppCompatActivity implements Observer, 
         fillData();
     }
 
+    /**Fills edit text views with current user information (username, first/last name, phone number)*/
     public void fillData(){
         User curUser = App.getModel().getSessionUser();
 
@@ -84,6 +85,7 @@ public class EditAccountActivity extends AppCompatActivity implements Observer, 
 
     }
 
+    /**Handles user interaction when save changes button is clicked in EditAccountActivity*/
     public void handleEditAccountSaveClick(View v) {
         if (CreateAccountFormUtils.validateEditForm(
                 editUserName,
@@ -103,6 +105,8 @@ public class EditAccountActivity extends AppCompatActivity implements Observer, 
             btnSave.setEnabled(false);
         }
     }
+
+    /**Updates username, first name, last name, and phone number fields*/
     public void updateNonCriticalUserFields(String newUserName, String newFirstName,
                            String newLastName,String newPhoneNumber){
         User sessionUser = App.getModel().getSessionUser();

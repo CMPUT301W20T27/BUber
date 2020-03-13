@@ -10,6 +10,8 @@ public abstract class User {
         RIDER,
     }
 
+    /**User(...) are the constructors for the User class. One requires no parameters, the other
+     * requires @param username and @param account*/
     public User(String username, Account account) {
         this.username = username;
         this.account = account;
