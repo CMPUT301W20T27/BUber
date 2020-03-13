@@ -30,6 +30,13 @@ public class ApplicationController {
         this.model = model;
     }
 
+    /**
+     * Calls the  ApplicationService class to create a trip. On success the listener gets
+     * the trip object. On failure the  error listener returns the exception. And updates the model
+     * @param tripRequest The created trips object
+     * @param view the UI Error Handler interface callback.
+     */
+
     public void createNewTrip(Trip tripRequest,
                               UIErrorHandler view) {
         ApplicationService.createNewTrip(tripRequest,
@@ -42,7 +49,12 @@ public class ApplicationController {
                 }
         );
     }
-
+    /**
+     * Calls the  ApplicationService class to create a user. On success the listener gets
+     * the user object. On failure the  error listener returns the exception. And updates the model
+     * @param username,password,firstName,lastName,email,phoneNumber,type The users information
+     * @param view the UI Error Handler interface callback.
+     */
     public void createNewUser(String username,
                               String password,
                               String firstName,
@@ -68,8 +80,14 @@ public class ApplicationController {
                 }
         );
     }
-
-    public void login(String email, String password, User.TYPE type, LoginActivity view, Intent i) {
+    /**
+     * Calls the  ApplicationService class to login a user. On success the listener gets
+     * the user object. On failure the  error listener returns the exception. And updates the model
+     * @param email,password,type The users information
+     * @param view the UI Error Handler interface callback.
+     * @param intent the activity that will open on successful login
+     */
+    public void login(String email, String password, User.TYPE type, LoginActivity view, Intent intent) {
         ApplicationService.loginUser(email, password, type, (resultData, err) -> {
             if (err != null) view.onError(err);
             else {
@@ -77,24 +95,32 @@ public class ApplicationController {
                 updateNonCriticalUserFields(u,view);
                 Toast.makeText(view.getApplicationContext(), "You are NOW logged in.", Toast.LENGTH_SHORT).show();
                 model.setSessionUser(u);
-                ApplicationController.loadSessionTrip(i, view);
+                ApplicationController.loadSessionTrip(intent, view);
             }
         });
     }
-
+    /**
+     * Calls the  ApplicationService class to logout a user. And updates the model
+     */
     public void logout() {
         ApplicationService.logoutUser();
         model.clearModelForLogout();
     }
-
-    public void updateUserLocation(UserLocation l) {
+    /**
+     *  Updates the users location in the model and calls notifyObservers() in the ApplicationModel
+     *  @param location the users new location
+     */
+    public void updateUserLocation(UserLocation location) {
         ApplicationModel m = App.getModel();
         if (m.getSessionUser() !=  null) {
-            m.getSessionUser().setCurrentUserLocation(l);
+            m.getSessionUser().setCurrentUserLocation(location);
             m.notifyObservers();
         }
     }
-
+    /**
+     *  Gets the all the trips for the user. And updates the model with the trip list.
+     *   @param view the UI Error Handler interface callback.
+     */
     public static void getTripsForUser(UIErrorHandler view) {
         ApplicationModel m = App.getModel();
         UserLocation sessionUserLocation = m.getSessionUser().getCurrentUserLocation();
@@ -108,9 +134,9 @@ public class ApplicationController {
     }
 
     /**
-     * Updates the model to allow riders to find their ride requests
-     * stored in the db
-     * @param view
+     * Updates the model to hold the riders current trip request. On success start the new activity. On failure send exception to MainActivity
+     * @param completionIntent Start the MapActivity  after successful retrieval of session trip
+     * @param view the MainActivity view
      */
     public static void loadSessionTrip(Intent completionIntent, MainActivity view){
         ApplicationModel m = App.getModel();
@@ -127,6 +153,11 @@ public class ApplicationController {
         });
     }
 
+    /**
+     * Updates the model to hold the riders current trip request. On success start the new activity. On failure send exception to LoginActivity
+     * @param completionIntent Start the MapActivity  after successful retrieval of session trip
+     * @param view the LoginActivity view
+     */
     public static void loadSessionTrip(Intent completionIntent, LoginActivity view){
         ApplicationModel m = App.getModel();
         ApplicationService.getSessionTripForUser((resultData, err) -> {
@@ -142,7 +173,10 @@ public class ApplicationController {
         });
     }
 
-    /**Deletes the current trip for rider*/
+    /**
+     * Updates the model session trip to null and deletes the current trip request and trip listeners.
+     * @param view the UI Error Handler interface callback.
+     */
     public static void deleteRiderCurrentTrip(UIErrorHandler view){
         ApplicationModel m = App.getModel();
         ApplicationService.deleteRiderCurrentTrip(m.getSessionTrip().getRiderID(), (resultData, err) -> {
@@ -153,8 +187,10 @@ public class ApplicationController {
             }
         });
     }
-
-    /**Handles Driver selecting a trip*/
+    /**
+     * Gets the driver user's selected trip and changes the Trip status in Firebase
+     * @param selectedTrip the drivers selected trip
+    */
     public static void handleDriverTripSelect(Trip selectedTrip) {
         ApplicationModel m = App.getModel();
         selectedTrip.setStatus(Trip.STATUS.DRIVER_ACCEPT);
@@ -172,9 +208,12 @@ public class ApplicationController {
             }
         }));
     }
-
-    /**Used to update non critical user fields (ie. username, first/last name, phone number) when
-     * they are edited by user*/
+    /**
+     * Updates non critical user fields when they are edited by user. On success set the new session user.
+     * @param updatedSessionUser the updated user object
+     * @param view the UI Error Handler interface callback.
+     */
+    /**/
     public static void updateNonCriticalUserFields(User updatedSessionUser, UIErrorHandler view) {
         ApplicationService.updateUser(updatedSessionUser,((resultData, err) -> {
             if (err == null) {
