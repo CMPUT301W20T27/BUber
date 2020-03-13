@@ -1,13 +1,16 @@
 package com.example.buber.DB;
+
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 
 import com.example.buber.App;
 import com.example.buber.Controllers.EventCompletionListener;
+import com.example.buber.Model.Driver;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+
 import java.util.HashMap;
 
 /**
@@ -78,15 +81,26 @@ public class AuthDBManager {
 
     public void getCurrentSessionUser(EventCompletionListener listener) {
         if (isLoggedIn()) {
-            String uid = mAuth.getUid();  //looks like rider + driver have same uid
+            String uid = App.getAuthDBManager().getCurrentUserID();
             Log.d("UID",uid);
 
-            // TODO: Differentiate between Rider/Driver
             App.getDbManager().getDriver(uid, ((resultData, err) -> {
-                if (resultData != null) {
-                    listener.onCompletion(resultData, null);
-                } else if (err != null){
-                    listener.onCompletion(null, new Error("Failed to get current session user"));
+                if (err != null) {
+                    listener.onCompletion(null, err);
+                } else {
+                    Driver driverProfile = (Driver) resultData.get("user");
+                    if (driverProfile.getDriverLoggedOn()) {
+                        listener.onCompletion(resultData, null);
+                    } else {
+                        // Get the rider
+                        App.getDbManager().getRider(uid, (resultData1, err1) -> {
+                            if (err != null) listener.onCompletion(null, err);
+                            else {
+                                listener.onCompletion(resultData1, null);
+                            }
+                        });
+
+                    }
                 }
             }));
         }

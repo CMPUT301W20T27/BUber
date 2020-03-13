@@ -8,15 +8,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.buber.App;
 import com.example.buber.Controllers.ApplicationController;
 import com.example.buber.Model.ApplicationModel;
-import com.example.buber.Model.Driver;
 import com.example.buber.Model.User;
 import com.example.buber.Views.UIErrorHandler;
 
 import java.util.Observable;
 import java.util.Observer;
-
-import static com.example.buber.Model.User.TYPE.DRIVER;
-import static com.example.buber.Model.User.TYPE.RIDER;
 
 /**
  * MainActivity. Used mostly as a router to check the current users login state and redirect
@@ -45,21 +41,14 @@ public class MainActivity extends AppCompatActivity implements Observer, UIError
         ApplicationModel m = (ApplicationModel) o;
     }
 
-    /**Determines login status of user*/
     private void determineLoginStatus() {
         if(App.getAuthDBManager().isLoggedIn()) {
             App.getAuthDBManager().getCurrentSessionUser((resultData, err) -> {
                 if (resultData != null) {
                     User tmpUser = (User) resultData.get("user");
                     App.getModel().setSessionUser(tmpUser);
-
-                    //this fetched driver is from the db
-                    Driver driver = (Driver) resultData.get("user");
-                    tmpUser.setType(driver.getDriverLoggedOn() ? DRIVER : RIDER);
-
-                    determineTripStatus();  // now determine trip status
-                    startActivity(new Intent(MainActivity.this, MapActivity.class));
-                    this.finish();
+                    Intent i = new Intent(MainActivity.this, MapActivity.class);
+                    ApplicationController.loadSessionTrip(i, this);  // now determine trip status
                 }
                 else {
                     Toast.makeText(this, err.getMessage(), Toast.LENGTH_LONG);
@@ -68,13 +57,6 @@ public class MainActivity extends AppCompatActivity implements Observer, UIError
         } else {
             startActivity(new Intent(MainActivity.this, LoginActivity.class));
             this.finish();
-        }
-    }
-
-    /**Determines status of current trip if available*/
-    private void determineTripStatus() {
-        if (App.getModel().getSessionUser().getType() == RIDER) {
-            ApplicationController.getRiderCurrentTrip(this);
         }
     }
 

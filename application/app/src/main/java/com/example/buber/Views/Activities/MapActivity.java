@@ -39,6 +39,7 @@ import com.google.android.gms.tasks.Task;
 import java.util.Observable;
 import java.util.Observer;
 
+import static com.example.buber.Model.User.TYPE.DRIVER;
 import static com.example.buber.Model.User.TYPE.RIDER;
 
 /**
@@ -108,14 +109,25 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         hideSettingsPanel();
 
         App.getModel().addObserver(this);
+
+
+        Trip sessionTrip = App.getModel().getSessionTrip();
+        if (sessionTrip != null) {
+            currentTripStatus = sessionTrip.getStatus();
+            showActiveMainActionButton();
+            statusButton.setEnabled(true);
+        }
     }
 
     /***** OBSERVING OBSERVABLES ******/
     @Override
     public void update(Observable o, Object arg) {
         Trip sessionTrip = App.getModel().getSessionTrip();
+        User sesssionUser = App.getModel().getSessionUser();
         if (sessionTrip == null) {
             this.setCurrentTripStatus(null);
+            riderRequestMainBtn.setVisibility(View.VISIBLE);
+            riderRequestCancelMainBtn.setVisibility(View.INVISIBLE);
 
         } else if (sessionTrip.getStatus() != currentTripStatus) {
             Toast.makeText(this, "Trip status changed to: " + sessionTrip.getStatus(), Toast.LENGTH_SHORT).show();
@@ -123,7 +135,14 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         }
         if (sessionTrip != null && App.getModel().getSessionUser() != null) {
             showActiveMainActionButton();
+            if (sessionTrip.getStatus() == Trip.STATUS.DRIVER_ACCEPT
+                    && sessionTrip.getStatus() != currentTripStatus
+                    && sesssionUser.getType() == DRIVER) {
+                Toast.makeText(this, "Rider has canceled", Toast.LENGTH_SHORT).show();
+            }
         }
+
+
     }
 
     /***** MAIN ACTION BUTTON HANDLERS ******/
@@ -178,7 +197,9 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
                     statusButton.setEnabled(true);
                     break;
                 case DRIVER_ACCEPT:
-                    riderRequestCancelMainBtn.setVisibility(View.VISIBLE);
+                    if (App.getModel().getSessionUser().getType() == RIDER) {
+                        riderRequestCancelMainBtn.setVisibility(View.VISIBLE);
+                    }
                     break;
                 case DRIVER_PICKING_UP:
                     break;
@@ -196,7 +217,6 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         riderRequestCancelMainBtn.setVisibility(View.INVISIBLE);
         driverShowRequestsMainBtn.setVisibility(View.INVISIBLE);
     }
-
 
     /***** HANDLING SETTINGS PANEL BUTTONS ******/
     public void handleScreenClick(View v) {

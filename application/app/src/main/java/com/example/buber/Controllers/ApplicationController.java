@@ -10,6 +10,7 @@ import com.example.buber.Model.User;
 import com.example.buber.Model.UserLocation;
 import com.example.buber.Services.ApplicationService;
 import com.example.buber.Views.Activities.LoginActivity;
+import com.example.buber.Views.Activities.MainActivity;
 import com.example.buber.Views.Activities.MapActivity;
 import com.example.buber.Views.UIErrorHandler;
 
@@ -74,17 +75,16 @@ public class ApplicationController {
             else {
                 User u = (User) resultData.get("user");
                 updateNonCriticalUserFields(u,view);
-                view.startActivity(i);
                 Toast.makeText(view.getApplicationContext(), "You are NOW logged in.", Toast.LENGTH_SHORT).show();
-                view.finish();
                 model.setSessionUser(u);
+                ApplicationController.loadSessionTrip(i, view);
             }
         });
     }
 
     public void logout() {
         ApplicationService.logoutUser();
-        model.setSessionUser(null);
+        model.clearModelForLogout();
     }
 
     public void updateUserLocation(UserLocation l) {
@@ -112,13 +112,32 @@ public class ApplicationController {
      * stored in the db
      * @param view
      */
-    public static void getRiderCurrentTrip(UIErrorHandler view){
+    public static void loadSessionTrip(Intent completionIntent, MainActivity view){
         ApplicationModel m = App.getModel();
-        ApplicationService.riderCurrentTripUserLocation((resultData, err) -> {
+        ApplicationService.getSessionTripForUser((resultData, err) -> {
             if (err != null) view.onError(err);
             else {
-                Trip sessionTrip = (Trip) resultData.get("filtered-trips");
-                m.setSessionTrip(sessionTrip);
+                if (resultData != null && resultData.containsKey("trip")) {
+                    Trip sessionTrip = (Trip) resultData.get("trip");
+                    m.setSessionTrip(sessionTrip);
+                }
+                view.startActivity(completionIntent);
+                view.finish();
+            }
+        });
+    }
+
+    public static void loadSessionTrip(Intent completionIntent, LoginActivity view){
+        ApplicationModel m = App.getModel();
+        ApplicationService.getSessionTripForUser((resultData, err) -> {
+            if (err != null) view.onError(err);
+            else {
+                if (resultData != null && resultData.containsKey("trip")) {
+                    Trip sessionTrip = (Trip) resultData.get("trip");
+                    m.setSessionTrip(sessionTrip);
+                }
+                view.startActivity(completionIntent);
+                view.finish();
             }
         });
     }
@@ -141,7 +160,7 @@ public class ApplicationController {
         selectedTrip.setStatus(Trip.STATUS.DRIVER_ACCEPT);
         String userId = App.getAuthDBManager().getCurrentUserID();
         selectedTrip.setDriverID(userId);
-        ApplicationService.selectTrip(userId, selectedTrip, ((resultData, err) -> {
+        ApplicationService.selectTrip(selectedTrip.getRiderID(), selectedTrip, ((resultData, err) -> {
             if (err != null) {
                 List<Observer> mapObservers = m.getObserversMatchingClass(MapActivity.class);
                 for (Observer map : mapObservers) {
@@ -165,4 +184,5 @@ public class ApplicationController {
             }
         }));
     }
+
 }
