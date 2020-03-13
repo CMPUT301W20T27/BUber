@@ -48,7 +48,8 @@ public class RequestStatusActivity extends AppCompatActivity implements Observer
     private TextView driverEmailTextTextView;
     private TextView driverEmailTextView;
 
-
+    /**onCreate method will create the activity when called
+     * @param savedInstanceState is a previous saved state for activity if available*/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -138,11 +139,14 @@ public class RequestStatusActivity extends AppCompatActivity implements Observer
         }
     }
 
+    /**update will update the activity
+     * @param o,arg are the observable and object used for update respectively*/
     @Override
     public void update(Observable o, Object arg) {
         fillStatusForm();
     }
 
+    /**onDestroy handles destruction of activity when it is closed down*/
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -151,6 +155,8 @@ public class RequestStatusActivity extends AppCompatActivity implements Observer
         m.deleteObserver(this);
     }
 
+    /**onError handles incoming errors
+     * @param e is the incoming error*/
     @Override
     public void onError(Error e) {
         //TODO:: hand ui errors
