@@ -18,13 +18,17 @@ public class Rider extends User {
 
     private boolean riderLoggedOn;
 
-    /**Rider(...) are constructors for the Rider class. One does not require parameters, the other
-     * takes @param username and @param account*/
+    /**
+     * Empty constructor used for Firebase
+     */
     public Rider() {
         setType(TYPE.RIDER);
         riderLoggedOn=false;
     }
-
+    /**
+     * Rider constructor
+     * @param username,account the drivers account and username
+     */
     public Rider(String username, Account account) {
         super(username, account);
         setType(TYPE.RIDER);

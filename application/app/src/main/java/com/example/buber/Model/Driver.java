@@ -20,9 +20,17 @@ public class Driver extends User {
     @ServerTimestamp
     public Date timestamp;
 
-    /**Driver(...) methods are constructors for Driver class. It */
-    public Driver() { setType(TYPE.DRIVER); driverLoggedOn=false;}
-
+    /**
+     * Empty constructor used for Firebase
+     */
+    public Driver() {
+        setType(TYPE.DRIVER);
+        driverLoggedOn=false;
+    }
+    /**
+     * Driver constructor
+     * @param username,account the drivers account and username
+     */
     public Driver(String username, Account account) {
         super(username, account);
         setType(TYPE.DRIVER);

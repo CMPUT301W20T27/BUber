@@ -9,9 +9,15 @@ public class Account {
     private String email;
     private String phoneNumber;
 
-    /**Account(...) are constructors for Account class*/
+    /**
+     * Empty constructor used for Firebase
+     */
     public Account() {}
 
+    /**
+     *Account constructor
+     * @param firstName,lastName,email,phoneNumber the users Account information
+     */
     public Account(String firstName, String lastName, String email, String phoneNumber) {
         this.firstName = firstName;
         this.lastName = lastName;

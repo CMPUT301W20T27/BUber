@@ -11,10 +11,15 @@ public class UserLocation {
     private double longitude;
     private String address;
 
-    /**UserLocation(...) is the for the UserLocation class*/
-    // Important for db stuff
+    /**
+     * Empty constructor used for Firebase
+     */
     public UserLocation() {}
 
+    /**
+     * UserLocation constructor
+     * @param latitude,longitude the location of a user
+     */
     public UserLocation(double latitude, double longitude) {
         this.latitude = latitude;
         this.longitude = longitude;
@@ -44,14 +49,21 @@ public class UserLocation {
         this.longitude = longitude;
     }
 
-    /**Calculates price estimate based on the distance of the trip*/
+    /**
+     * Calculates price estimate based on the distance of the trip from a trip
+     * @param end the end location of a trip
+     */
     public double distancePriceEstimate(UserLocation end) {
         // Based on UberX's Price Constant From Edmonton, AB To Calgary, AB @ March 7, 2020
         // Rounding to two decimal places using the math round
         return Math.round(1.1823 * distanceTo(end) * 100.0) / 100.0;
     }
 
-    /**Calculates the distance between two points*/
+    /**
+     * Calculates distance based on the distance of a location from a another location
+     * @param other the distance to the other trip
+     * @return dist the distance to the other location from a location
+     * */
     public double distanceTo(UserLocation other) {
         double lat1 = this.getLatitude();
         double lon1 = this.getLongitude();
@@ -70,12 +82,16 @@ public class UserLocation {
         return (dist);
     }
 
-    /**converts degrees to radians*/
+    /**
+     * converts degrees to radians
+     * */
     private double deg2rad(double deg) {
         return (deg * Math.PI / 180.0);
     }
 
-    /**converts radians to degrees*/
+    /**
+     * converts radians to degrees
+     * */
     private double rad2deg(double rad) {
         return (rad * 180.0 / Math.PI);
     }
