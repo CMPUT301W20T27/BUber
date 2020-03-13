@@ -17,6 +17,7 @@ public class TripSearchRecord implements Serializable {
     private String estimatedCost;
     private String distanceFromDriver;
 
+    /**The following function is used assign user info for use in TripSearch views*/
     public TripSearchRecord(Trip t, UserLocation driverLocation){
         this.riderName = t.getRiderUserName();
         this.startLatitude = ((Double) t.getStartUserLocation().getLatitude()).toString();

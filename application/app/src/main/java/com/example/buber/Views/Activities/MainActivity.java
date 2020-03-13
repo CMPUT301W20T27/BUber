@@ -45,6 +45,7 @@ public class MainActivity extends AppCompatActivity implements Observer, UIError
         ApplicationModel m = (ApplicationModel) o;
     }
 
+    /**Determines login status of user*/
     private void determineLoginStatus() {
         if(App.getAuthDBManager().isLoggedIn()) {
             App.getAuthDBManager().getCurrentSessionUser((resultData, err) -> {
@@ -70,6 +71,7 @@ public class MainActivity extends AppCompatActivity implements Observer, UIError
         }
     }
 
+    /**Determines status of current trip if available*/
     private void determineTripStatus() {
         if (App.getModel().getSessionUser().getType() == RIDER) {
             ApplicationController.getRiderCurrentTrip(this);

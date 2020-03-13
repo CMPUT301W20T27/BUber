@@ -6,6 +6,10 @@ import java.util.regex.Pattern;
 
 public class CreateAccountFormUtils {
 
+    /**
+     * This function is used to validate that user input when an account is created.
+     * It checks that Username, password, first/last name, email, and phone number is correct
+     * and non-empty*/
     public static boolean validateForm(EditText editUserName,
                                        EditText editPassword,
                                        EditText editFirstName,
@@ -104,6 +108,9 @@ public class CreateAccountFormUtils {
 
         return true;
     }
+    /**
+     * Function is use to validate user info when a form is edited. It checks to ensure edited
+     * fields are non-empty and formatted correctly*/
     public static boolean validateEditForm(EditText editUserName,
         EditText editFirstName,
         EditText editLastName,

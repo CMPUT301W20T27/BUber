@@ -123,7 +123,7 @@ public class ApplicationController {
         });
     }
 
-
+    /**Deletes the current trip for rider*/
     public static void deleteRiderCurrentTrip(UIErrorHandler view){
         ApplicationModel m = App.getModel();
         ApplicationService.deleteRiderCurrentTrip(m.getSessionTrip().getRiderID(), (resultData, err) -> {
@@ -135,7 +135,7 @@ public class ApplicationController {
         });
     }
 
-
+    /**Handles Driver selecting a trip*/
     public static void handleDriverTripSelect(Trip selectedTrip) {
         ApplicationModel m = App.getModel();
         selectedTrip.setStatus(Trip.STATUS.DRIVER_ACCEPT);
@@ -154,7 +154,8 @@ public class ApplicationController {
         }));
     }
 
-
+    /**Used to update non critical user fields (ie. username, first/last name, phone number) when
+     * they are edited by user*/
     public static void updateNonCriticalUserFields(User updatedSessionUser, UIErrorHandler view) {
         ApplicationService.updateUser(updatedSessionUser,((resultData, err) -> {
             if (err == null) {

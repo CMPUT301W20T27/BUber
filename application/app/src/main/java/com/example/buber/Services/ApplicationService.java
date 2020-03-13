@@ -26,6 +26,7 @@ import static com.example.buber.Model.User.TYPE.RIDER;
 public class ApplicationService {
     private static final String TAG = "ApplicationService";
 
+    /**Creates a new trip when called*/
     public static void createNewTrip(Trip tripRequest, EventCompletionListener controllerListener) {
         App
                 .getDbManager()
@@ -40,7 +41,7 @@ public class ApplicationService {
                         }, true);
     }
 
-
+    /**Creates a new user when called*/
     public static void createNewUser(
             String username,
             String password,
@@ -67,6 +68,7 @@ public class ApplicationService {
 
     }
 
+    /**Logs user into app when called*/
     public static void loginUser(String email,
                                  String password,
                                  User.TYPE type,
@@ -85,10 +87,12 @@ public class ApplicationService {
        });
     }
 
+    /**Logs user out of app when called*/
     public static void logoutUser() {
         App.getAuthDBManager().signOut();
     }
 
+    /**Gets trips that are within a certain radius of the user*/
     public static void getFilteredTrips(UserLocation driverLocation, EventCompletionListener controllerListener) {
         Double RADIUS = 6.0; // TODO: Make this dynamic based on map bounds
         App.getDbManager().getTrips((resultData, err) -> {
@@ -118,6 +122,7 @@ public class ApplicationService {
         });
     }
 
+    /**Gets rider users current trip location*/
     public static void riderCurrentTripUserLocation(EventCompletionListener controllerListener) {
         App.getDbManager().getTrips((resultData, err) -> {
             if (err != null) controllerListener.onCompletion(null, err);
@@ -145,14 +150,17 @@ public class ApplicationService {
         });
     }
 
+    /**Selects a trip when called*/
     public static void selectTrip(String uid, Trip selectedTrip, EventCompletionListener controllerListener) {
         App.getDbManager().updateTrip(uid, selectedTrip, controllerListener, true);
     }
 
+    /**deletes current trip for rider when called*/
     public static void deleteRiderCurrentTrip(String uid, EventCompletionListener controllerListener) {
         App.getDbManager().deleteTrip(uid, controllerListener);
     }
 
+    /**Updates session user of the app as rider or driver depending on new user*/
     public static void updateUser(User updateSessionUser, EventCompletionListener listener) {
         String uID = App.getAuthDBManager().getCurrentUserID();
         Driver tmpDriver = new Driver(updateSessionUser.getUsername(),updateSessionUser.getAccount());

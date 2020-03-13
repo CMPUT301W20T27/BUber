@@ -30,6 +30,9 @@ public class Trip {
     private double fareOffering;
     private String riderUserName;
 
+    /**Trip(...) are the constructors for the Trip() class. One can be called without parameters,
+     * the other requires @param RiderID, @param fareOffering, @param UserLocation (start and end),
+     * and @param riderUserName*/
     public Trip(){}
 
     public Trip(String riderID, double fareOffering, UserLocation startUserLocation, UserLocation endUserLocation, String riderUserName) {
