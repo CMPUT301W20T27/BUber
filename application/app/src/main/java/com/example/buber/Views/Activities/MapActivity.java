@@ -114,6 +114,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         if (sessionTrip != null) {
             currentTripStatus = sessionTrip.getStatus();
             showActiveMainActionButton();
+            statusButton.setEnabled(true);
         }
     }
 
