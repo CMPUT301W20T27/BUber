@@ -205,13 +205,16 @@ public class DBManager {
 
             if (listenForUpdates && t != null) {
                 ListenerRegistration lr = collectionTrip.document(t.getRiderID()).addSnapshotListener((documentSnapshot1, e) -> {
-                    Trip trip = documentSnapshot1.toObject(Trip.class);
-                    if (trip != null) {
-                        Trip.STATUS newStatus = trip.getStatus();
-                        if (trip.nextStatusValid(newStatus)) {
-                            App.getModel().getSessionTrip().setStatus(newStatus);
+                    if (documentSnapshot1 != null) {
+                        Trip trip = documentSnapshot1.toObject(Trip.class);
+                        if (trip != null) {
+                            Trip.STATUS newStatus = trip.getStatus();
+                            if (trip.nextStatusValid(newStatus)) {
+                                App.getModel().getSessionTrip().setStatus(newStatus);
+                            }
                         }
                     }
+
                 });
                 App.getModel().setTripListener(lr);
             }

@@ -55,25 +55,25 @@ public class DriverUITests {
         solo.assertCurrentActivity("Wrong Activity",MapActivity.class);
     }
 
-    @Test
-    public void testDriverFindRide(){
-        solo.clickOnButton("Show Active Ride Requests Near You");
-        solo.assertCurrentActivity("Wrong activity", TripSearchActivity.class);
-        solo.clickOnText("1600 Amphitheatre Pkwy");
-        solo.clickOnText("Accept");
-        solo.sleep(1000);
-        solo.assertCurrentActivity("Wrong activity", MapActivity.class);
-        assertTrue(solo.waitForText("Trip status changed to: DRIVER_ACCEPT"));
-    }
-
-    @Test
-    public void testStatusRideDriver(){
-        //sign in as driver first
-        solo.clickOnButton("Ride Status");
-        solo.assertCurrentActivity("Wrong Activity", RequestStatusActivity.class);
-        assertTrue(solo.waitForText("Ride Status:"));
-        assertTrue(solo.waitForText("DRIVER_ACCEPT"));  //expected output
-        assertTrue(solo.waitForText("Amphitheatre"));
-        assertTrue(solo.waitForText("New York"));
-    }
+//    @Test
+//    public void testDriverFindRide(){
+//        solo.clickOnButton("Show Active Ride Requests Near You");
+//        solo.assertCurrentActivity("Wrong activity", TripSearchActivity.class);
+//        solo.clickOnText("1600 Amphitheatre Pkwy");
+//        solo.clickOnText("Accept");
+//        solo.sleep(1000);
+//        solo.assertCurrentActivity("Wrong activity", MapActivity.class);
+//        assertTrue(solo.waitForText("Trip status changed to: DRIVER_ACCEPT"));
+//    }
+//
+//    @Test
+//    public void testStatusRideDriver(){
+//        //sign in as driver first
+//        solo.clickOnButton("Ride Status");
+//        solo.assertCurrentActivity("Wrong Activity", RequestStatusActivity.class);
+//        assertTrue(solo.waitForText("Ride Status:"));
+//        assertTrue(solo.waitForText("DRIVER_ACCEPT"));  //expected output
+//        assertTrue(solo.waitForText("Amphitheatre"));
+//        assertTrue(solo.waitForText("New York"));
+//    }
 }

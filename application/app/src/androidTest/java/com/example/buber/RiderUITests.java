@@ -1,6 +1,7 @@
 package com.example.buber;
 
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 
 import androidx.appcompat.widget.AppCompatTextView;
@@ -49,7 +50,7 @@ public class RiderUITests {
     public void runLogin() {
         solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
         if (!solo.waitForActivity(MapActivity.class, 1000)) {
-            String email = "evan@buber.ca";
+            String email = "tester@tester.tester";
             String password = "123456";
             solo.enterText((EditText) solo.getView(R.id.loginEmailEditText), email);
             solo.enterText((EditText) solo.getView(R.id.loginPasswordEditText), password);
@@ -85,11 +86,24 @@ public class RiderUITests {
 
     @Test
     public void testRideStatus(){
+        solo.clickOnButton("Request a Ride");
+        assertTrue(solo.waitForActivity(TripBuilderActivity.class, 1000));
+        solo.clickOnView(solo.getView(R.id.to_autocomplete_fragment));
+        solo.sleep(1000);
+        solo.clickOnText("Search");
+        solo.enterText(2, "Cupertino");
+        solo.sleep(1000);
+        solo.clickOnText("Cupertino Library");
+        assertTrue(solo.waitForText("Submit Trip Request"));
+        solo.clickOnText("Submit Trip Request");
+        assertTrue(solo.waitForActivity(MapActivity.class));
         solo.assertCurrentActivity("Wrong Activity",MapActivity.class);
         solo.clickOnButton("Ride Status");
         solo.assertCurrentActivity("Wrong Activity", RequestStatusActivity.class);
         assertTrue(solo.waitForText("Ride Status:     "));
         assertTrue(solo.waitForText(""));
+        solo.goBack();
+        this.cleanUp();
     }
 
     @Test
@@ -129,8 +143,8 @@ public class RiderUITests {
             sessionTrip.setStatus(Trip.STATUS.DRIVER_ACCEPT);
             App.getDbManager().updateTrip(sessionTrip.getRiderID(), sessionTrip, ((resultData, err) -> {}), false);
         }
-        assertTrue(solo.waitForText("Trip status changed to: DRIVER_ACCEPT"));
-        this.cleanUp();
+        assertTrue(solo.waitForView(R.id.rider_request_cancel_btn));
+        App.getDbManager().deleteTrip(sessionTrip.getRiderID(), ((resultData, err) -> {}));
     }
 
     @Test
