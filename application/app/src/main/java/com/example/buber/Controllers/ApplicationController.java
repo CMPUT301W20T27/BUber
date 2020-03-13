@@ -99,7 +99,7 @@ public class ApplicationController {
         ApplicationModel m = App.getModel();
         UserLocation sessionUserLocation = m.getSessionUser().getCurrentUserLocation();
         ApplicationService.getFilteredTrips(sessionUserLocation, (resultData, err) -> {
-            if (err != null) view.onError(err);
+            if (err != null && view != null) view.onError(err);
             else {
                 List<Trip> sessionTripList = (List<Trip>) resultData.get("filtered-trips");
                 m.setSessionTripList(sessionTripList);
