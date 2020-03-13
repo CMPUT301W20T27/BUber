@@ -30,11 +30,19 @@ public class Trip {
     private double fareOffering;
     private String riderUserName;
 
-    /**Trip(...) are the constructors for the Trip() class. One can be called without parameters,
-     * the other requires @param RiderID, @param fareOffering, @param UserLocation (start and end),
-     * and @param riderUserName*/
+    /**
+     * Empty constructor used for Firebase
+     */
     public Trip(){}
 
+    /**
+     * Rider constructor
+     * @param riderID the documentid of the rider user who makes the trip request
+     * @param fareOffering the offering that the rider user makes on the trip request
+     * @param startUserLocation the location the rider user wants to start the ride
+     * @param endUserLocation the location the rider user wants to end the ride
+     * @param riderUserName the username of the rider making the trip request
+     */
     public Trip(String riderID, double fareOffering, UserLocation startUserLocation, UserLocation endUserLocation, String riderUserName) {
         this.driverID = null;
         this.riderID = riderID;
@@ -101,7 +109,10 @@ public class Trip {
     public void setRiderUserName(String riderUserName) {
         this.riderUserName = riderUserName;
     }
-
+    /**
+     * Logic that handel's if the next trip state is valid
+     * @param newStatus the new status of a trip request
+     */
     public boolean nextStatusValid(Trip.STATUS newStatus) {
         if (this.getStatus() == Trip.STATUS.PENDING) {
             if (newStatus == Trip.STATUS.DRIVER_ACCEPT) {
