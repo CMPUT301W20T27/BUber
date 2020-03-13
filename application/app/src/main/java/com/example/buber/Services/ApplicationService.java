@@ -177,21 +177,25 @@ public class ApplicationService {
             tmpDriver.setLoggedOn(false);
             tmpRider.setRiderLoggedOn(false);
         }
-        App.getDbManager().updateRider(uID, tmpRider, (resultData, err) -> {
-            if (err == null) {
-                App.getDbManager().updateDriver(uID,tmpDriver, (resultData1, err1) -> {
-                    if (err1 == null) {
-                        listener.onCompletion(null, null);
-                    }
-                });
-            }
-        });
-        App.getDbManager().updateDriver(uID,tmpDriver, (resultData1, err1) -> {
-            if (err1 == null) {
-                listener.onCompletion(null, null);
-            }
-        });
 
+        if (tmpRider != null && uID != null) {
+            App.getDbManager().updateRider(uID, tmpRider, (resultData, err) -> {
+                if (err == null) {
+                    App.getDbManager().updateDriver(uID,tmpDriver, (resultData1, err1) -> {
+                        if (err1 == null) {
+                            listener.onCompletion(null, null);
+                        }
+                    });
+                }
+            });
+            App.getDbManager().updateDriver(uID,tmpDriver, (resultData1, err1) -> {
+                if (err1 == null) {
+                    listener.onCompletion(null, null);
+                }
+            });
+        } else {
+            listener.onCompletion(null, new Error("Current session user does not exist"));
+        }
     }
 
 }

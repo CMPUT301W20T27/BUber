@@ -11,7 +11,10 @@ import com.example.buber.Views.Activities.MainActivity;
 import com.example.buber.Views.Activities.MapActivity;
 import com.example.buber.Views.Activities.RequestStatusActivity;
 import com.example.buber.Views.Activities.TripBuilderActivity;
+<<<<<<< HEAD
+=======
 import com.example.buber.Views.Activities.TripSearchActivity;
+>>>>>>> b31765f5062865baa28cda75187f02e611b01a38
 import com.robotium.solo.Solo;
 
 import org.junit.After;
@@ -62,6 +65,23 @@ public class RideStatusTest {
         assertTrue(solo.waitForActivity(MapActivity.class));
     }
 
+<<<<<<< HEAD
+    public void driverLogin(){
+
+        App.getAuthDBManager().signOut(); // Ensure any user is already signed out
+        String email = "nickagain2@gmail.com";
+        String password = "password";
+        solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
+        solo.enterText((EditText) solo.getView(R.id.loginEmailEditText), email);
+        solo.enterText((EditText) solo.getView(R.id.loginPasswordEditText), password);
+        solo.clickOnButton("Login as Rider");
+        assertTrue(solo.waitForText("You are NOW logged in.", 1, 5000));
+        assertTrue(solo.waitForActivity(MapActivity.class));
+    }
+
+
+=======
+>>>>>>> b31765f5062865baa28cda75187f02e611b01a38
     @Test
     public void testCreateRide() {
         solo.clickOnButton("Request a Ride");
@@ -91,6 +111,26 @@ public class RideStatusTest {
         assertTrue(solo.waitForText("10800 Torre Ave, Cupertino, CA 95014, USA"));
     }
 
+<<<<<<< HEAD
+    @Test
+    public void testDriverFindRide(){
+
+    }
+
+    @Test
+    public void testStatusRideDriver(){
+        //sign in as driver first
+        solo.assertCurrentActivity("Wrong Activity",MapActivity.class);
+        solo.clickOnButton("testStatus");
+        solo.assertCurrentActivity("Wrong Activity",RequestStatusActivity.class);
+        assertTrue(solo.waitForText("Ride Status:"));
+        assertTrue(solo.waitForText("PENDING"));  //expected output
+        assertTrue(solo.waitForText("Amphitheatre Pkwy, Mountain"));
+        assertTrue(solo.waitForText("10800 Torre Ave, Cupertino, CA 95014, USA"));
+    }
+
+=======
+>>>>>>> b31765f5062865baa28cda75187f02e611b01a38
 
     /**
      * Closes the activity after each test

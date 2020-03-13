@@ -89,6 +89,7 @@ public class RequestStatusActivity extends AppCompatActivity implements Observer
         });
     }
 
+
     /**Fills ride status form with correct user and trip data depending on which user is signed in*/
     public void fillStatusForm(){
         User curUser = App.getModel().getSessionUser();

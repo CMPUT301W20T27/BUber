@@ -45,7 +45,7 @@ public class App extends Application {
             model.getTripListener().remove();
         }
     }
-
+    /**/
     public static ApplicationModel getModel() {
         if (model == null) {
             model = new ApplicationModel();

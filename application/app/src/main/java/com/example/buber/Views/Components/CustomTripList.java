@@ -44,19 +44,15 @@ public class CustomTripList extends ArrayAdapter<TripSearchRecord> {
 
         //trip_search_content.xml views are found and assigned here
         TextView riderName = view.findViewById(R.id.trip_search_rider);
-        TextView startLat = view.findViewById(R.id.trip_search_startlatitude);
-        TextView startLong = view.findViewById(R.id.trip_search_startlongitude);
-        TextView endLat = view.findViewById(R.id.trip_search_endlatitude);
-        TextView endLong = view.findViewById(R.id.trip_search_endlongitude);
+        TextView startAdd = view.findViewById(R.id.trip_search_startaddress);
+        TextView endAdd = view.findViewById(R.id.trip_search_endaddress);
         TextView estCost = view.findViewById(R.id.trip_search_est_cost);
         TextView driverDist = view.findViewById(R.id.trip_search_driver_distance);
 
         //Sets text in TextViews
         riderName.setText(tripSearchRecord.getRiderName());
-        startLat.setText(tripSearchRecord.getStartLatitude());
-        startLong.setText(tripSearchRecord.getStartLongitude());
-        endLat.setText(tripSearchRecord.getEndLatitude());
-        endLong.setText(tripSearchRecord.getEndLongitude());
+        startAdd.setText(tripSearchRecord.getStartAddress());
+        endAdd.setText(tripSearchRecord.getEndAddress());
         estCost.setText(tripSearchRecord.getEstimatedCost());
         driverDist.setText(tripSearchRecord.getDistanceFromDriver());
 

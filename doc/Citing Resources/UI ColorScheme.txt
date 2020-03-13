@@ -1,0 +1,15 @@
+Trip Search Content:
+ - Start Address: android:background="#46003c"
+ - End Address: android:background="#5a0028"
+ - Trip Cost (View): android:background="#500032"
+	- Alt Trip Cost (Fragment): 
+		- Amount (digits): android:textColor="#FF7597"
+        	- Text (words): android:textColor="#FF0266"
+ - Distance: android:background="#3c0046"
+ - Background/RiderName: android:background="#c0c0c0"
+        
+            
+        	
+            
+              
+                

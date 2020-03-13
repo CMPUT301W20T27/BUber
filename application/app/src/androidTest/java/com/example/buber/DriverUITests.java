@@ -1,5 +1,8 @@
 package com.example.buber;
 
+<<<<<<< HEAD
+public class DriverUITests {
+=======
 import android.widget.EditText;
 
 import androidx.test.platform.app.InstrumentationRegistry;
@@ -78,4 +81,5 @@ public class DriverUITests {
         assertTrue(solo.waitForText("Amphitheatre Pkwy, Mountain"));
         assertTrue(solo.waitForText("10800 Torre Ave, Cupertino, CA 95014, USA"));
     }
+>>>>>>> b31765f5062865baa28cda75187f02e611b01a38
 }

@@ -22,10 +22,8 @@ import com.example.buber.Views.Components.TripSearchRecord;
  */
 public class AcceptTripRequestFragment extends DialogFragment {
     private TextView estimatedCost;
-    private TextView startLat;
-    private TextView startLong;
-    private TextView endLat;
-    private TextView endLong;
+    private TextView startAdd;
+    private TextView endAdd;
     private TextView rider;
     private TextView driverDistance;
 
@@ -66,19 +64,15 @@ public class AcceptTripRequestFragment extends DialogFragment {
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.accept_trip_request_fragment, null);
 
         estimatedCost = view.findViewById(R.id.fragment_estimated_cost);
-        startLat = view.findViewById(R.id.fragment_startLat);
-        startLong = view.findViewById(R.id.fragment_startLong);
-        endLat = view.findViewById(R.id.fragment_endLat);
-        endLong = view.findViewById(R.id.fragment_endLong);
+        startAdd = view.findViewById(R.id.fragment_startAdd);
+        endAdd = view.findViewById(R.id.fragment_endAdd);
         rider = view.findViewById(R.id.fragment_riderName);
         driverDistance = view.findViewById(R.id.fragment_distance);
 
         if (tripSearchRecord != null){
             estimatedCost.setText(tripSearchRecord.getEstimatedCost());
-            startLat.setText(tripSearchRecord.getStartLatitude());
-            startLong.setText(tripSearchRecord.getStartLongitude());
-            endLat.setText(tripSearchRecord.getEndLatitude());
-            endLong.setText(tripSearchRecord.getEndLongitude());
+            startAdd.setText(tripSearchRecord.getStartAddress());
+            endAdd.setText(tripSearchRecord.getEndAddress());
             rider.setText(tripSearchRecord.getRiderName());
             driverDistance.setText(tripSearchRecord.getDistanceFromDriver());
 
