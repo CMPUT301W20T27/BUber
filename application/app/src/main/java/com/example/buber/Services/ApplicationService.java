@@ -26,9 +26,16 @@ import static com.example.buber.Model.User.TYPE.RIDER;
  * TODO: Better error handling and refactoring to improve cohesion.
  */
 public class ApplicationService {
+
     private static final String TAG = "ApplicationService";
 
-    /**Creates a new trip when called*/
+    /**
+     * Calls the DBManger class to create a trip in Firebase. On success the listener returns
+     * the trip object. On failure the listener returns the exception
+     * @param tripRequest the trip object created
+     * @param controllerListener the listener that gets results from the Firebase call.
+     * @returns listener on successful/failed trip creation.
+     */
     public static void createNewTrip(Trip tripRequest, EventCompletionListener controllerListener) {
         App
                 .getDbManager()
@@ -43,7 +50,12 @@ public class ApplicationService {
                         }, true);
     }
 
-    /**Creates a new user when called*/
+    /**
+     * Calls the DBManger class to create a user in Firebase. On success the listener gets
+     * the trip object. On failure the listener returns the exception
+     * @param username,password,firstName,lastName,email,phoneNumber,type The users information
+     * @param controllerListener the listener that gets results from the Firebase call.
+     */
     public static void createNewUser(
             String username,
             String password,
@@ -70,7 +82,13 @@ public class ApplicationService {
 
     }
 
-    /**Logs user into app when called*/
+    /**
+     * Calls the AuthDBManager class to login a user. On success the listener returns
+     * the driver or rider object. On failure the listener returns the exception
+     * @param email,password,type The users information
+     * @param controllerListener the listener that gets results from the Firebase call.
+
+     */
     public static void loginUser(String email,
                                  String password,
                                  User.TYPE type,
@@ -89,12 +107,19 @@ public class ApplicationService {
        });
     }
 
-    /**Logs user out of app when called*/
+    /**
+     * Calls the AuthDBManager class to logout the user.
+     */
     public static void logoutUser() {
         App.getAuthDBManager().signOut();
     }
 
-    /**Gets trips that are within a certain radius of the user*/
+    /**
+     * Calls the DBManager class to get the trips filtered by geolocation. On success the listener returns
+     * a list of filteredTripsData. On failure the listener returns the exception.
+     * @param driverLocation the center location for the geosearch
+     * @param controllerListener the listener that gets results from the Firebase call.
+     */
     public static void getFilteredTrips(UserLocation driverLocation, EventCompletionListener controllerListener) {
         Double RADIUS = 6.0; // TODO: Make this dynamic based on map bounds
         App.getDbManager().getTrips((resultData, err) -> {
@@ -124,7 +149,11 @@ public class ApplicationService {
         });
     }
 
-    /**Gets rider users current trip location*/
+    /**
+     * Calls the DBManager class to get the Users current trip session. On success the listener returns
+     * the trip. On failure the listener returns the exception.
+     * @param controllerListener the listener that gets results from the Firebase call.
+     */
     public static void getSessionTripForUser(EventCompletionListener controllerListener) {
         String userUID = App.getAuthDBManager().getCurrentUserID();
         User sessionUser = App.getModel().getSessionUser();
@@ -164,17 +193,32 @@ public class ApplicationService {
         }
     }
 
-    /**Selects a trip when called*/
+
+    /**
+     * Calls the DBManager class to update the trip selected. On success the listener returns
+     * the trip updates. On failure the listener returns the exception.
+     * @param uid The document id of the trip
+     * @param selectedTrip the trip object selected
+     * @param controllerListener the listener that gets results from the Firebase call.
+     */
     public static void selectTrip(String uid, Trip selectedTrip, EventCompletionListener controllerListener) {
         App.getDbManager().updateTrip(uid, selectedTrip, controllerListener, true);
     }
 
-    /**deletes current trip for rider when called*/
+    /**
+     * Calls the DBManager class to deletes current trip for rider. On success the listener returns.
+     *  @param uid The document id of the trip to delete
+     *  @param controllerListener the listener that gets results from the Firebase call.
+     */
     public static void deleteRiderCurrentTrip(String uid, EventCompletionListener controllerListener) {
         App.getDbManager().deleteTrip(uid, controllerListener);
     }
 
-    /**Updates session user of the app as rider or driver depending on new user*/
+    /**
+     * Calls the DBManager class to fetch the correct last lodged in user from the correct collection. On success the listener returns the update.
+     *  @param updateSessionUser The current logged in user
+     *  @param listener the listener that gets results from the Firebase call.
+     */
     public static void updateUser(User updateSessionUser, EventCompletionListener listener) {
         String uID = App.getAuthDBManager().getCurrentUserID();
         Driver tmpDriver = new Driver(updateSessionUser.getUsername(),updateSessionUser.getAccount());

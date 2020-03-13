@@ -32,7 +32,6 @@ public class AuthDBManager {
      * document id of the user that logged in. On failure the listener returns the exception
      * @param email that the user enters
      * @param password Current User's entered email and password
-     * @returns listener on successful/failed document query.
      */
     public void signIn(String email, String password, EventCompletionListener listener) {
         mAuth.signInWithEmailAndPassword(email, password)
@@ -61,7 +60,6 @@ public class AuthDBManager {
      * @param email that the user enters
      * @param password New User's entered email and password
      * @param listener the listener that waits for the asynchronous Firebase call to finish
-     * @returns listener on successful/failed document creation in Firebase.
      */
     public void createFirebaseUser(String email, String password, EventCompletionListener listener) {
         mAuth.createUserWithEmailAndPassword(email, password)
@@ -88,8 +86,7 @@ public class AuthDBManager {
     /**
      * Retrieves the session user object from the Firebase collection if the user is currently logged in
      * On success the lister returns a driver object or a rider object. On failure the listener returns the exception
-     * @param listener the listener that waits for the asynchronous Firebase call to finish
-     * @returns listener on successful/failed document creation in Firebase.
+     * @param listener the listener that waits for the asynchronous Firebase call to finish.
      */
     public void getCurrentSessionUser(EventCompletionListener listener) {
         if (isLoggedIn()) {
