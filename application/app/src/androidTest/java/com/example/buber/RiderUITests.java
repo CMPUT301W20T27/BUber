@@ -1,6 +1,7 @@
 package com.example.buber;
 
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 
 import androidx.appcompat.widget.AppCompatTextView;
@@ -15,12 +16,21 @@ import com.example.buber.Views.Activities.TripBuilderActivity;
 import com.robotium.solo.Solo;
 
 import org.junit.Before;
+import org.junit.FixMethodOrder;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
 
 import static junit.framework.TestCase.assertFalse;
 import static junit.framework.TestCase.assertTrue;
 
+/**
+ * Rider tests for testing login, ride creation, correct views, ride cancellation, and
+ * notification popups
+ * Run these tests one at a time
+ *
+ */
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class RiderUITests {
     private Solo solo;
 
@@ -35,6 +45,17 @@ public class RiderUITests {
     public void setUp() throws Exception {
         solo = new Solo(InstrumentationRegistry.getInstrumentation(),rule.getActivity());
         runLogin();
+    }
+
+    public void runLogin() {
+        solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
+        if (!solo.waitForActivity(MapActivity.class, 1000)) {
+            String email = "tester@tester.tester";
+            String password = "123456";
+            solo.enterText((EditText) solo.getView(R.id.loginEmailEditText), email);
+            solo.enterText((EditText) solo.getView(R.id.loginPasswordEditText), password);
+            solo.clickOnButton("Login as Rider");
+        }
     }
 
     public void cleanUp() {
@@ -65,12 +86,24 @@ public class RiderUITests {
 
     @Test
     public void testRideStatus(){
+        solo.clickOnButton("Request a Ride");
+        assertTrue(solo.waitForActivity(TripBuilderActivity.class, 1000));
+        solo.clickOnView(solo.getView(R.id.to_autocomplete_fragment));
+        solo.sleep(1000);
+        solo.clickOnText("Search");
+        solo.enterText(2, "Cupertino");
+        solo.sleep(1000);
+        solo.clickOnText("Cupertino Library");
+        assertTrue(solo.waitForText("Submit Trip Request"));
+        solo.clickOnText("Submit Trip Request");
+        assertTrue(solo.waitForActivity(MapActivity.class));
         solo.assertCurrentActivity("Wrong Activity",MapActivity.class);
-        solo.clickOnButton("TESTSTATUS");
         solo.clickOnButton("Ride Status");
         solo.assertCurrentActivity("Wrong Activity", RequestStatusActivity.class);
         assertTrue(solo.waitForText("Ride Status:     "));
         assertTrue(solo.waitForText(""));
+        solo.goBack();
+        this.cleanUp();
     }
 
     @Test
@@ -110,8 +143,8 @@ public class RiderUITests {
             sessionTrip.setStatus(Trip.STATUS.DRIVER_ACCEPT);
             App.getDbManager().updateTrip(sessionTrip.getRiderID(), sessionTrip, ((resultData, err) -> {}), false);
         }
-        assertTrue(solo.waitForText("Trip status changed to: DRIVER_ACCEPT"));
-        this.cleanUp();
+        assertTrue(solo.waitForView(R.id.rider_request_cancel_btn));
+        App.getDbManager().deleteTrip(sessionTrip.getRiderID(), ((resultData, err) -> {}));
     }
 
     @Test
@@ -152,20 +185,10 @@ public class RiderUITests {
 
     @Test
     public void testInvalidTripEntry() {
+        solo.assertCurrentActivity("Wrong activity",MapActivity.class);
         solo.clickOnButton("Request a Ride");
         assertTrue(solo.waitForActivity(TripBuilderActivity.class, 1000));
         assertFalse(solo.getView(R.id.submitTripBtn).getVisibility() == View.INVISIBLE);
-    }
-
-    public void runLogin() {
-        solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
-        if (!solo.waitForActivity(MapActivity.class, 1000)) {
-            String email = "evan@buber.ca";
-            String password = "123456";
-            solo.enterText((EditText) solo.getView(R.id.loginEmailEditText), email);
-            solo.enterText((EditText) solo.getView(R.id.loginPasswordEditText), password);
-            solo.clickOnButton("Login as Rider");
-        }
     }
 
 }
