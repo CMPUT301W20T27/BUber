@@ -32,6 +32,9 @@ public class App extends Application {
         getDbManager();
     }
 
+    /**
+     * When the app closes remove trip listeners, and terminate classes
+     */
     @Override
     public void onTerminate() {
         super.onTerminate();
@@ -46,6 +49,9 @@ public class App extends Application {
         }
     }
     /**/
+    /**
+     * Create a single Model
+     */
     public static ApplicationModel getModel() {
         if (model == null) {
             model = new ApplicationModel();
@@ -53,7 +59,9 @@ public class App extends Application {
 
         return model;
     }
-
+    /**
+     * Create a single Controller
+     */
     public static ApplicationController getController() {
         if (controller == null) {
             controller = new ApplicationController(getModel());
@@ -61,6 +69,9 @@ public class App extends Application {
 
         return controller;
     }
+    /**
+     *  Create a single Firebase authorization class
+     */
 
     public static AuthDBManager getAuthDBManager() {
         if (authDBManager == null) {
@@ -70,6 +81,9 @@ public class App extends Application {
         return authDBManager;
     }
 
+    /**
+     * Create a single Firebase database manager class
+     */
     public static DBManager getDbManager() {
         if (dbManager== null) {
             dbManager = new DBManager(DRIVERS_COLLECTION_NAME, RIDERS_COLLECTION_NAME, TRIPS_COLLECTION_NAME);
