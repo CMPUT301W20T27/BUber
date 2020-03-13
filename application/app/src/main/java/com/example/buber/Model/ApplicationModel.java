@@ -87,4 +87,10 @@ public class ApplicationModel extends Observable {
             this.setTripListener(null);
         }
     }
+
+    public void clearModelForLogout() {
+        this.sessionUser = null;
+        this.tripListener = null;
+        this.sessionTrip = null;
+    }
 }

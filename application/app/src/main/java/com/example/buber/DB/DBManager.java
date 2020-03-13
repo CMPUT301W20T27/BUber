@@ -153,12 +153,26 @@ public class DBManager {
         });
     }
 
-    public void getTrip(String docID, EventCompletionListener listener) {
+    public void getTrip(String docID, EventCompletionListener listener, boolean listenForUpdates) {
         collectionTrip.document(docID)
                 .get().addOnSuccessListener(documentSnapshot -> {
             HashMap<String, Trip> toReturn = new HashMap<>();
             Trip t = documentSnapshot.toObject(Trip.class);
             toReturn.put("trip", t);
+
+            if (listenForUpdates && t != null) {
+                ListenerRegistration lr = collectionTrip.document(t.getRiderID()).addSnapshotListener((documentSnapshot1, e) -> {
+                    Trip trip = documentSnapshot1.toObject(Trip.class);
+                    if (trip != null) {
+                        Trip.STATUS newStatus = trip.getStatus();
+                        if (trip.nextStatusValid(newStatus)) {
+                            App.getModel().getSessionTrip().setStatus(newStatus);
+                        }
+                    }
+                });
+                App.getModel().setTripListener(lr);
+            }
+
             listener.onCompletion(toReturn, null);
         }).addOnFailureListener((@NonNull Exception e) -> {
             Log.d(TAG, e.getMessage());

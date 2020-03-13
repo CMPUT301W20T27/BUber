@@ -55,6 +55,9 @@ public class LoginActivity extends AppCompatActivity implements Observer, UIErro
             User.TYPE loginType = view.getId() == driverLoginBtnID ? User.TYPE.DRIVER : User.TYPE.RIDER;
             Intent i = new Intent(LoginActivity.this, MapActivity.class);
             App.getController().login(email, password, loginType, this, i);
+        } else {
+            driverLoginBtn.setEnabled(true);
+            riderLoginBtn.setEnabled(true);
         }
     }
 

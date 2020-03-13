@@ -108,6 +108,13 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         hideSettingsPanel();
 
         App.getModel().addObserver(this);
+
+
+        Trip sessionTrip = App.getModel().getSessionTrip();
+        if (sessionTrip != null) {
+            currentTripStatus = sessionTrip.getStatus();
+            showActiveMainActionButton();
+        }
     }
 
     /***** OBSERVING OBSERVABLES ******/
@@ -116,6 +123,8 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         Trip sessionTrip = App.getModel().getSessionTrip();
         if (sessionTrip == null) {
             this.setCurrentTripStatus(null);
+            riderRequestMainBtn.setVisibility(View.VISIBLE);
+            riderRequestCancelMainBtn.setVisibility(View.INVISIBLE);
 
         } else if (sessionTrip.getStatus() != currentTripStatus) {
             Toast.makeText(this, "Trip status changed to: " + sessionTrip.getStatus(), Toast.LENGTH_SHORT).show();
@@ -192,7 +201,6 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         riderRequestCancelMainBtn.setVisibility(View.INVISIBLE);
         driverShowRequestsMainBtn.setVisibility(View.INVISIBLE);
     }
-
 
     /***** HANDLING SETTINGS PANEL BUTTONS ******/
     public void handleScreenClick(View v) {

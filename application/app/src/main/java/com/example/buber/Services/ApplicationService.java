@@ -8,6 +8,8 @@ import com.example.buber.Model.Rider;
 import com.example.buber.Model.Trip;
 import com.example.buber.Model.User;
 import com.example.buber.Model.UserLocation;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -118,31 +120,43 @@ public class ApplicationService {
         });
     }
 
-    public static void riderCurrentTripUserLocation(EventCompletionListener controllerListener) {
-        App.getDbManager().getTrips((resultData, err) -> {
-            if (err != null) controllerListener.onCompletion(null, err);
-            else {
-                Trip filterTrips = new Trip();
-                List<String> filterTripUserNames = new LinkedList<>();
-                List<Trip> tripData = (List<Trip>) resultData.get("all-trips");
-                if (tripData != null && tripData.size() > 0) {
-                    for (Trip t : tripData) {
-                        if (t.getRiderID().equals(App.getAuthDBManager().getCurrentUserID())) {
-                            filterTrips = t;
-                            break;
-                        }
+    public static void getSessionTripForUser(EventCompletionListener controllerListener) {
+        String userUID = App.getAuthDBManager().getCurrentUserID();
+        User sessionUser = App.getModel().getSessionUser();
+        CollectionReference tripsReference = App.getDbManager().getCollectionTrip();
+        if (sessionUser != null) {
+            if (sessionUser.getType() == RIDER) {
+                // Get the trip by directly query the document
+                App.getDbManager().getTrip(userUID, ((resultData, err) -> {
+                    if (resultData.containsKey("trip") && err == null) {
+                        controllerListener.onCompletion(resultData, null);
+                    } else if (!resultData.containsKey("trip") && err == null) {
+                        controllerListener.onCompletion(null, null);
+                    } else {
+                        controllerListener.onCompletion(null, null);
                     }
-
-                    HashMap<String, Trip> filteredTripsData = new HashMap<>();
-                    filteredTripsData.put("filtered-trips", filterTrips);
-
-                    controllerListener.onCompletion(filteredTripsData, null);
-
-                } else {
-                    controllerListener.onCompletion(null, new Error("Could not find trips"));
-                }
+                }), true);
+            } else {
+                // Query trips db based on driverId
+                tripsReference.whereEqualTo("driverID", userUID).get().addOnSuccessListener(queryDocumentSnapshots -> {
+                    List<DocumentSnapshot> docs = queryDocumentSnapshots.getDocuments();
+                    if (docs.size() == 1) {
+                        Trip sessionTrip = docs.get(0).toObject(Trip.class);
+                        HashMap<String, Trip> res = new HashMap<>();
+                        res.put("trip", sessionTrip);
+                        controllerListener.onCompletion(res, null);
+                    } else if (docs.size() == 0) {
+                        // No current Trip
+                        controllerListener.onCompletion(null, null);
+                    } else {
+                        // Throw an error, we got issues
+                        controllerListener.onCompletion(null, new Error("Driver has more than 1 trip assigned"));
+                    }
+                }).addOnFailureListener(e -> {
+                    controllerListener.onCompletion(null, new Error(e.getMessage()));
+                });
             }
-        });
+        }
     }
 
     public static void selectTrip(String uid, Trip selectedTrip, EventCompletionListener controllerListener) {
