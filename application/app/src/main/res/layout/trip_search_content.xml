@@ -10,105 +10,72 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingTop="2dp"
+        android:paddingBottom="2dp"
+        android:background="#c0c0c0"
         >
 
         <TextView
             android:id="@+id/trip_search_rider"
             android:layout_width="80dp"
             android:layout_height="match_parent"
-            android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp"
-            android:layout_gravity="center_vertical"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:textColor="#000000"
             android:text="Rider Name"
             />
 
         <LinearLayout
             android:id="@+id/linearLayout2"
-            android:layout_width="80dp"
+            android:layout_width="160dp"
             android:layout_height="match_parent"
             android:orientation="vertical">
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="#46003c"
                 android:orientation="horizontal">
 
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="LAT: " />
+                    android:layout_width="38dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="Start: " />
 
                 <TextView
-                    android:id="@+id/trip_search_startlatitude"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/trip_search_startaddress"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:text="Lat" />
+                    android:textSize="12sp"
+                    android:paddingTop="4dp"
+                    android:paddingBottom="4dp"
+                    android:text="Start Address" />
 
             </LinearLayout>
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="#5a0028"
                 android:orientation="horizontal">
 
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="LNG: " />
+                    android:layout_width="38dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="End: " />
 
                 <TextView
-                    android:id="@+id/trip_search_startlongitude"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/trip_search_endaddress"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Long" />
+                    android:textSize="12dp"
+                    android:paddingTop="4dp"
+                    android:paddingBottom="4dp"
+                    android:text="End Address" />
             </LinearLayout>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/linearLayout"
-            android:layout_width="80dp"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="LAT: " />
-
-                <TextView
-                    android:id="@+id/trip_search_endlatitude"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="Lat" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="LNG: " />
-
-                <TextView
-                    android:id="@+id/trip_search_endlongitude"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Long" />
-
-            </LinearLayout>
-
 
         </LinearLayout>
 
@@ -117,14 +84,19 @@
             android:layout_width="80dp"
             android:layout_height="match_parent"
             android:layout_gravity="center_vertical"
+            android:gravity="center"
+            android:background="#500032"
             android:text="$XX.XX"
             />
 
         <TextView
             android:id="@+id/trip_search_driver_distance"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center_vertical"
+            android:gravity="center"
+            android:maxLength="8"
+            android:background="#3c0046"
             android:text="XX KM"
             />
 

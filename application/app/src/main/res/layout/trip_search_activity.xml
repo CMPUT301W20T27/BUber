@@ -9,7 +9,8 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:background="#000000"
+        android:layout_height="40dp">
 
 
         <TextView
@@ -20,24 +21,18 @@
             android:text="Rider Name" />
 
         <TextView
-            android:layout_width="80dp"
+            android:layout_width="160dp"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="Start"
+            android:text="Start/End Address"
              />
 
-        <TextView
-            android:layout_width="80dp"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:text="End"
-            />
 
         <TextView
             android:layout_width="80dp"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="Trip Cost"
+            android:text="Trip Cost ($)"
             />
 
         <TextView
@@ -45,7 +40,7 @@
             android:layout_height="match_parent"
             android:layout_gravity="end"
             android:gravity="center"
-            android:text="Distance"
+            android:text="Distance (KM)"
             />
 
     </LinearLayout>
