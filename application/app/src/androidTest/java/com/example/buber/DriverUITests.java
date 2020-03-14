@@ -82,20 +82,4 @@ public class DriverUITests {
         solo = new Solo(InstrumentationRegistry.getInstrumentation(),rule.getActivity());
 
     }
-
-
-    @Test
-    public void testDriverAcceptRequest() {
-
-        solo.clickOnButton("Show Active Ride Requests Near You");
-        solo.assertCurrentActivity("Wrong activity", TripSearchActivity.class);
-        solo.clickOnText("Cupertino");
-        solo.clickOnText("Accept");
-        solo.sleep(1000);
-        solo.assertCurrentActivity("Wrong activity", MapActivity.class);
-        assertTrue(solo.waitForText("Driver has accepted! \n Cancelling trip and resetting" +
-                " \n...functionality to completed"));
-    }
-
-
 }
