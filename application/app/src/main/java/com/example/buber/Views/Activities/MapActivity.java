@@ -200,10 +200,10 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
             User sessionUser = App.getModel().getSessionUser();
             if (sessionUser.getType() == RIDER) {
                 riderRequestMainBtn.setVisibility(View.VISIBLE);
-                statusButton.setEnabled(false);
-            } else {
+            } else if(sessionUser.getType() == DRIVER){
                 driverShowRequestsMainBtn.setVisibility(View.VISIBLE);
             }
+            statusButton.setEnabled(false);
         } else {
             switch (this.currentTripStatus) {
                 case PENDING:
