@@ -26,8 +26,8 @@ import static junit.framework.TestCase.assertTrue;
 
 /**
  * Rider tests for testing login, ride creation, correct views, ride cancellation, and
- * notification popups
- * Run these tests one at a time
+ * notification popups. Also veryfying correctness of ride status page.
+ * Press run all to run tests
  *
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
