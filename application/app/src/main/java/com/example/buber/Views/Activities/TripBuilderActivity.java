@@ -37,6 +37,8 @@ import java.util.Locale;
 import java.util.Observable;
 import java.util.Observer;
 
+import br.com.simplepass.loadingbutton.customViews.CircularProgressButton;
+
 /**
  * Main Rider activity for building and creating a trip. Activity generates a form that uses the
  * Google search api to gather user locations. When form is submitted, new Trip instance is created
@@ -57,6 +59,7 @@ public class TripBuilderActivity extends AppCompatActivity implements UIErrorHan
     TextView startPointTextView;
     TextView endPointTextView;
     EditText fareOfferingEditText;
+    public CircularProgressButton submitTripBtn;
 
     // AutoComplete Places API
     String apiKey = "AIzaSyDFEIMmFpPoMijm_0YraJn4S33UvtlnqF8";
@@ -94,6 +97,9 @@ public class TripBuilderActivity extends AppCompatActivity implements UIErrorHan
         fareOfferingEditText = findViewById(R.id.fareOfferingEditText);
         endPointTextView = findViewById(R.id.endPointTextView);
         endPointTextView.setText("Where to?");
+
+        // Instantiate submit button
+        submitTripBtn = findViewById(R.id.submitTripBtn);
 
         // Disengage submission UI elements
         tripSubmissionLayout = findViewById(R.id.tripSubmissionLayout);
@@ -189,6 +195,7 @@ public class TripBuilderActivity extends AppCompatActivity implements UIErrorHan
 
 
     public void handleTripSubmitBtn(View v) {
+        submitTripBtn.startAnimation();
         String username = App.getModel().getSessionUser().getUsername();
         double offeredFare = Double.valueOf(fareOfferingEditText.getText().toString().trim());
         if (offeredFare >= minimumFareOffering) {
@@ -202,9 +209,8 @@ public class TripBuilderActivity extends AppCompatActivity implements UIErrorHan
                     endLoc,
                     username
             );
-            App.getController().createNewTrip(tripRequest, this);
+            App.getController().createNewTrip(tripRequest, this, submitTripBtn);
             Toast.makeText(getBaseContext(), "Submitting Trip...", Toast.LENGTH_SHORT).show();
-            this.finish();
         } else {
             // Remind user of minimum cost+
             recalculateFareOffering();

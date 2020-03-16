@@ -60,8 +60,6 @@ dependencies {
 
 
     // UI Library
-//    implementation 'com.github.navasmdc:MaterialDesign:1.5@aar'
     implementation 'com.google.android.material:material:1.1.0'
-
-
+    implementation 'br.com.simplepass:loading-button-android:2.2.0'
 }

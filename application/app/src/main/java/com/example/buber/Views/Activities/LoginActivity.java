@@ -19,6 +19,8 @@ import com.example.buber.Views.UIErrorHandler;
 import java.util.Observable;
 import java.util.Observer;
 
+import br.com.simplepass.loadingbutton.customViews.CircularProgressButton;
+
 /**
  * Login Activity, handles all existing user authentication
  */
@@ -26,8 +28,8 @@ public class LoginActivity extends AppCompatActivity implements Observer, UIErro
     private String TAG = "LoginActivity";
     private EditText editEmail;
     private EditText editPassword;
-    private Button driverLoginBtn;
-    private Button riderLoginBtn;
+    private CircularProgressButton driverLoginBtn;
+    private CircularProgressButton riderLoginBtn;
     private int driverLoginBtnID;
 
     /**onCreate method creates the LoginActivity view when called
@@ -44,14 +46,25 @@ public class LoginActivity extends AppCompatActivity implements Observer, UIErro
         editPassword = findViewById(R.id.loginPasswordEditText);
         driverLoginBtn = findViewById(R.id.loginDriverButton);
         riderLoginBtn = findViewById(R.id.loginRiderButton);
+        riderLoginBtn.revertAnimation();
+        driverLoginBtn.revertAnimation();
         driverLoginBtnID = R.id.loginDriverButton;
     }
 
     /**Handles user interaction with login button (as either driver or rider - chosen by user)
      * @param view is an instance of the view*/
     public void handleLoginClick(View view) {
-        driverLoginBtn.setEnabled(false);
-        riderLoginBtn.setEnabled(false);
+        switch (view.getId()) {
+            case R.id.loginRiderButton:
+                riderLoginBtn.startAnimation();
+                driverLoginBtn.setEnabled(false);
+                break;
+            case R.id.loginDriverButton:
+                driverLoginBtn.startAnimation();
+                riderLoginBtn.setEnabled(false);
+                break;
+        }
+
         if (LoginFormUtils.validateForm(editEmail, editPassword)) {
             String email = editEmail.getText().toString();
             String password = editPassword.getText().toString();
@@ -61,6 +74,8 @@ public class LoginActivity extends AppCompatActivity implements Observer, UIErro
         } else {
             driverLoginBtn.setEnabled(true);
             riderLoginBtn.setEnabled(true);
+            riderLoginBtn.revertAnimation();
+            driverLoginBtn.revertAnimation();
         }
     }
 
@@ -101,5 +116,7 @@ public class LoginActivity extends AppCompatActivity implements Observer, UIErro
         Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
         driverLoginBtn.setEnabled(true);
         riderLoginBtn.setEnabled(true);
+        riderLoginBtn.revertAnimation();
+        driverLoginBtn.revertAnimation();
     }
 }

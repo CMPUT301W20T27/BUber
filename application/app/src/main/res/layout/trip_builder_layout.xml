@@ -156,10 +156,10 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <Button
+        <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
             android:id="@+id/submitTripBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="179dp"
+            android:layout_height="47dp"
             android:layout_marginTop="107dp"
             android:layout_marginBottom="4dp"
             android:backgroundTint="@color/quantum_lightgreen"
@@ -170,7 +170,10 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0"></Button>
+            app:layout_constraintVertical_bias="0.0"
+            app:spinning_bar_color="#FFF"
+            app:spinning_bar_padding="4dp"
+            app:spinning_bar_width="4dp"></br.com.simplepass.loadingbutton.customViews.CircularProgressButton>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
