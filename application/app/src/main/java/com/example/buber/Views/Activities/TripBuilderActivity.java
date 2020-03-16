@@ -90,10 +90,10 @@ public class TripBuilderActivity extends AppCompatActivity implements UIErrorHan
 
         // Instantiate TextViews/EditText
         startPointTextView = findViewById(R.id.startPointTextView);
-        startPointTextView.setText("Currently your location: \n" + startLoc.getAddress());
+        startPointTextView.setText("Set to your location: \n" + startLoc.getAddress());
         fareOfferingEditText = findViewById(R.id.fareOfferingEditText);
         endPointTextView = findViewById(R.id.endPointTextView);
-
+        endPointTextView.setText("Where to?");
 
         // Disengage submission UI elements
         tripSubmissionLayout = findViewById(R.id.tripSubmissionLayout);
@@ -109,13 +109,13 @@ public class TripBuilderActivity extends AppCompatActivity implements UIErrorHan
         } else {
             recalculateFareOffering();
         }
-        startPointTextView.setText("");
+        startPointTextView.setText("Set to your location: \n" + currentUserLoc.getAddress());
     }
 
     public void handleClearEndPtBtn(View v) {
         endLoc = null;
         tripSubmissionLayout.setVisibility(View.GONE);
-        endPointTextView.setText("");
+        endPointTextView.setText("Where to?");
     }
 
     public void engagePlacePicker(View v) {
@@ -189,7 +189,6 @@ public class TripBuilderActivity extends AppCompatActivity implements UIErrorHan
 
 
     public void handleTripSubmitBtn(View v) {
-        Toast.makeText(getBaseContext(), "Submitting Trip...", Toast.LENGTH_SHORT).show();
         String username = App.getModel().getSessionUser().getUsername();
         double offeredFare = Double.valueOf(fareOfferingEditText.getText().toString().trim());
         if (offeredFare >= minimumFareOffering) {
@@ -204,6 +203,7 @@ public class TripBuilderActivity extends AppCompatActivity implements UIErrorHan
                     username
             );
             App.getController().createNewTrip(tripRequest, this);
+            Toast.makeText(getBaseContext(), "Submitting Trip...", Toast.LENGTH_SHORT).show();
             this.finish();
         } else {
             // Remind user of minimum cost+
