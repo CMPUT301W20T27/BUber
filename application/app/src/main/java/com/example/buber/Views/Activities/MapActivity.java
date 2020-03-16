@@ -104,9 +104,9 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         driverShowRequestsMainBtn = findViewById(R.id.driver_show_requests_btn);
 
         // INSTANTIATE STATUS BUTTON
-        statusButton = findViewById(R.id.testButton);
-        statusButton.setText("Ride Status");
+        statusButton = findViewById(R.id.rideStatus);
         statusButton.setEnabled(false);
+
         // HIDE SIDEBAR
         hideSettingsPanel();
 
@@ -409,6 +409,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         if (mLocationPermissionGranted) {
             Log.d("GETTING LOCATION", "Trying to get current location");
             getDeviceLocation();
+            mMap.setMyLocationEnabled(true);
         }
 
         mMap.setOnMapClickListener(latLng -> {

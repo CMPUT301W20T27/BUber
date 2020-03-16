@@ -126,11 +126,12 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <Button
-        android:id="@+id/testButton"
+        android:id="@+id/rideStatus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="648dp"
         android:onClick="handleTestClick"
-        android:text="testStatus"
+        android:text="Ride Status"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
