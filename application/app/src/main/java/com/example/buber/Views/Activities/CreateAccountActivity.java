@@ -2,6 +2,7 @@ package com.example.buber.Views.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.transition.CircularPropagation;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -19,6 +20,8 @@ import com.example.buber.Views.UIErrorHandler;
 import java.util.Observable;
 import java.util.Observer;
 
+import br.com.simplepass.loadingbutton.customViews.CircularProgressButton;
+
 /**
  * Handles all new account activity creation. Valids the user input form and uses the application
  * controller to pass data to Firebase.
@@ -26,7 +29,7 @@ import java.util.Observer;
  */
 public class CreateAccountActivity extends AppCompatActivity implements View.OnClickListener, Observer, UIErrorHandler {
 
-    private Button btnCreate;
+    private CircularProgressButton btnCreate;
 
     private EditText editUserName;
     private EditText editpassword;
@@ -77,16 +80,17 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
             // TODO: MAKE NOT CONSTANT  *UI Team*
             User.TYPE type = User.TYPE.RIDER;
 
-        App.getController().createNewUser(
-                        userName,
-                        password,
-                        firstName,
-                        lastName,
-                        email,
-                        phoneNumber,
-                        type,
-                        this);
-        }
+            btnCreate.startAnimation();
+            App.getController().createNewUser(
+                            userName,
+                            password,
+                            firstName,
+                            lastName,
+                            email,
+                            phoneNumber,
+                            type,
+                            this);
+            }
     }
 
     /**onDestroy destructs the CreateAccountActivity when it is shut down*/
@@ -108,7 +112,7 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
             // LoginActivity has already been finished before going to Map
             startActivity(i);
             this.finish();
-            Toast.makeText(this, "Account Created Successfully!", Toast.LENGTH_LONG)
+            Toast.makeText(this, "Account Created Successfully. Logged in!", Toast.LENGTH_LONG)
                     .show();
         }
     }

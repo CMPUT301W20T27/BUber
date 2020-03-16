@@ -16,6 +16,9 @@ import com.example.buber.Views.UIErrorHandler;
 
 import java.util.List;
 import java.util.Observer;
+import java.util.concurrent.TimeUnit;
+
+import br.com.simplepass.loadingbutton.customViews.CircularProgressButton;
 
 /**
  * ApplicationController handles the interaction between our service layer and the model.
@@ -38,13 +41,16 @@ public class ApplicationController {
      */
 
     public void createNewTrip(Trip tripRequest,
-                              UIErrorHandler view) {
+                              UIErrorHandler view,
+                              CircularProgressButton submitTripBtn) {
         ApplicationService.createNewTrip(tripRequest,
                 (resultData, err) -> {
                     if (err != null) view.onError(err);
                     else {
                         Trip tripData =  (Trip) resultData.get("trip");
                         model.setSessionTrip(tripData);
+                        view.finish();
+                        submitTripBtn.stopAnimation();
                     }
                 }
         );
@@ -76,6 +82,7 @@ public class ApplicationController {
                     else {
                         User u = (User) resultData.get("user");
                         model.setSessionUser(u);
+                        view.finish();
                     }
                 }
         );
@@ -218,6 +225,7 @@ public class ApplicationController {
         ApplicationService.updateUser(updatedSessionUser,((resultData, err) -> {
             if (err == null) {
                 App.getModel().setSessionUser(updatedSessionUser);
+                view.finish();
             } else {
                 // TODO: Handle Errors
             }

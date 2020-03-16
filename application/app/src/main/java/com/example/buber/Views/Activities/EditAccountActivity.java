@@ -20,6 +20,8 @@ import com.example.buber.Views.UIErrorHandler;
 import java.util.Observable;
 import java.util.Observer;
 
+import br.com.simplepass.loadingbutton.customViews.CircularProgressButton;
+
 /**
  * Handles all User account updating.
  */
@@ -35,7 +37,7 @@ public class EditAccountActivity extends AppCompatActivity implements Observer, 
     private String oldLastName;
     private String oldPhoneNumber;
 
-    private Button btnSave;
+    private CircularProgressButton btnSave;
 
     private TextWatcher txtWatcher;
 
@@ -101,10 +103,11 @@ public class EditAccountActivity extends AppCompatActivity implements Observer, 
             String newLastName = editLastName.getText().toString().trim();
             String newPhoneNumber = editPhoneNumber.getText().toString().trim();
 
+            btnSave.startAnimation();
             updateNonCriticalUserFields(newUserName,newFirstName,newLastName,newPhoneNumber);
-            this.finish();
         }
         else{
+            btnSave.revertAnimation();
             btnSave.setEnabled(false);
         }
     }

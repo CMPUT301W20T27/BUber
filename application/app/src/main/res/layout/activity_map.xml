@@ -25,7 +25,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:background="@drawable/background_transparent"
+        android:background="@android:color/transparent"
         android:fontFamily="sans-serif"
         android:onClick="showSettingsPanel"
         android:rotation="90"
@@ -104,7 +104,7 @@
             android:id="@+id/account_button"
             android:layout_width="0dp"
             android:layout_height="50dp"
-            android:background="@drawable/background_transparent"
+            android:background="@android:color/transparent"
             android:onClick="handleAccountButtonClick"
             android:text="Account"
             app:layout_constraintBottom_toTopOf="@+id/logout_button"
@@ -116,7 +116,7 @@
             android:id="@+id/logout_button"
             android:layout_width="0dp"
             android:layout_height="50dp"
-            android:background="@drawable/background_transparent"
+            android:background="@android:color/transparent"
             android:onClick="handleLogoutButtonClick"
             android:text="Logout"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -126,11 +126,12 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <Button
-        android:id="@+id/testButton"
+        android:id="@+id/rideStatus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="648dp"
         android:onClick="handleTestClick"
-        android:text="testStatus"
+        android:text="Ride Status"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

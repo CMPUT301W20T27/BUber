@@ -101,15 +101,30 @@
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 
-    <Button
-        android:id="@+id/buttonEditAccountSave"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="handleEditAccountSaveClick"
-        android:text="Save Changes"
-        android:textSize="14sp"
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout"
+        android:layout_width="127dp"
+        android:layout_height="67dp"
+        android:layout_marginTop="588dp"
+        android:layout_marginBottom="76dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayoutCompat" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
+            android:id="@+id/buttonEditAccountSave"
+            android:layout_width="128dp"
+            android:layout_height="47dp"
+            android:text="Save Changes"
+            android:onClick="handleEditAccountSaveClick"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:spinning_bar_color="#FFF"
+            app:spinning_bar_padding="4dp"
+            app:spinning_bar_width="4dp" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

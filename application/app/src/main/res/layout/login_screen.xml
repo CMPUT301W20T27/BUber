@@ -79,37 +79,6 @@
         app:layout_constraintTop_toBottomOf="@+id/loginLogoTextView" />
 
     <Button
-        android:id="@+id/loginDriverButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="40dp"
-        android:layout_marginLeft="40dp"
-        android:layout_marginTop="54dp"
-        android:onClick="handleLoginClick"
-        android:text="Login As Driver"
-        app:layout_constraintBottom_toTopOf="@+id/loginCreateAccountButton"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/loginPasswordEditText"
-        app:layout_constraintVertical_bias="0.506" />
-
-    <Button
-        android:id="@+id/loginRiderButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="40dp"
-        android:layout_marginLeft="40dp"
-        android:layout_marginTop="54dp"
-        android:layout_marginEnd="40dp"
-        android:layout_marginRight="40dp"
-        android:onClick="handleLoginClick"
-        android:text="Login as Rider"
-        app:layout_constraintBottom_toTopOf="@+id/loginCreateAccountButton"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/loginDriverButton"
-        app:layout_constraintTop_toBottomOf="@+id/loginPasswordEditText"
-        app:layout_constraintVertical_bias="0.506" />
-
-    <Button
         android:id="@+id/loginCreateAccountButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -119,5 +88,58 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="127dp"
+        android:layout_height="67dp"
+        android:layout_marginTop="585dp"
+        android:layout_marginEnd="206dp"
+        android:layout_marginBottom="87dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.705"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
+            android:id="@+id/loginDriverButton"
+            android:layout_width="128dp"
+            android:layout_height="47dp"
+            android:onClick="handleLoginClick"
+            android:text="Login As Driver"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:spinning_bar_color="#FFF"
+            app:spinning_bar_padding="4dp"
+            app:spinning_bar_width="4dp" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="125dp"
+        android:layout_height="62dp"
+        android:layout_marginStart="206dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.3"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.871">
+
+        <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
+            android:id="@+id/loginRiderButton"
+            android:layout_width="127dp"
+            android:layout_height="46dp"
+            android:onClick="handleLoginClick"
+            android:text="Login as Rider"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:spinning_bar_color="#FFF"
+            app:spinning_bar_padding="4dp"
+            app:spinning_bar_width="4dp" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
