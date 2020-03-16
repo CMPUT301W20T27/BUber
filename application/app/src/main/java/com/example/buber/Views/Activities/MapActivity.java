@@ -251,6 +251,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
     /**Changes activity to EditAccountActivity when Account button is clicked*/
     public void handleAccountButtonClick(View v) {
         startActivity(new Intent(MapActivity.this, EditAccountActivity.class));
+        hideSettingsPanel();
     }
 
     /**Logs user out of app when log out button is clicked*/

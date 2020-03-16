@@ -82,6 +82,7 @@ public class ApplicationController {
                     else {
                         User u = (User) resultData.get("user");
                         model.setSessionUser(u);
+                        view.finish();
                     }
                 }
         );
@@ -224,6 +225,7 @@ public class ApplicationController {
         ApplicationService.updateUser(updatedSessionUser,((resultData, err) -> {
             if (err == null) {
                 App.getModel().setSessionUser(updatedSessionUser);
+                view.finish();
             } else {
                 // TODO: Handle Errors
             }

@@ -60,26 +60,4 @@ public class DriverUITests {
             solo.clickOnButton("Login As Driver");
         }
     }
-
-    /**
-     * Used to make a test ride
-     *
-     */
-    public void testRideCreation() {
-        solo.clickOnButton("Request a Ride");
-        assertTrue(solo.waitForActivity(TripBuilderActivity.class, 1000));
-        solo.clickOnView(solo.getView(R.id.to_autocomplete_fragment));
-        solo.sleep(1000);
-        solo.clickOnText("Search");
-        solo.enterText(2, "Cupertino");
-        solo.sleep(1000);
-        solo.clickOnText("Cupertino Library");
-        assertTrue(solo.waitForText("Submit Trip Request"));
-        solo.clickOnText("Submit Trip Request");
-        assertTrue(solo.waitForActivity(MapActivity.class));
-        //solo.finishOpenedActivities();
-        App.getAuthDBManager().signOut();
-        solo = new Solo(InstrumentationRegistry.getInstrumentation(),rule.getActivity());
-
-    }
 }
