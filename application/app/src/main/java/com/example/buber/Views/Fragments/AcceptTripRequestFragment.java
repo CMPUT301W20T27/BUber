@@ -83,8 +83,8 @@ public class AcceptTripRequestFragment extends DialogFragment {
             return builder.
                     setView(view)
                     .setTitle("View Trip")
-                    .setNegativeButton("Decline", null)
-                    .setPositiveButton("Accept", new DialogInterface.OnClickListener() {
+                    .setNegativeButton("Ignore", null)
+                    .setPositiveButton("Fair enough, offer ride", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             listener.onAcceptPressed(tripSearchRecord, position);
@@ -97,8 +97,8 @@ public class AcceptTripRequestFragment extends DialogFragment {
         return builder.
                 setView(view)
                 .setTitle("View Trip")
-                .setNegativeButton("Decline", null)
-                .setPositiveButton("Accept", new DialogInterface.OnClickListener() {
+                .setNegativeButton("Ignore", null)
+                .setPositiveButton("Fair enough, offer ride", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                        listener.onAcceptPressed(tripSearchRecord, position);
