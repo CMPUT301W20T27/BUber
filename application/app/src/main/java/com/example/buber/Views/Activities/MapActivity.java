@@ -36,6 +36,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.Task;
 
+import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -65,6 +66,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
     // RIDER MAIN ACTION BUTTONS
     private Button riderRequestMainBtn;
     private Button riderRequestCancelMainBtn;
+    private Button riderCancelPickupBtn;
 
     // DRIVER MAIN ACTION BUTTONS
     private Button driverShowRequestsMainBtn;
@@ -99,60 +101,74 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         // INSTANTIATE RIDER MAIN ACTION BUTTONS
         riderRequestMainBtn = findViewById(R.id.rider_request_btn);
         riderRequestCancelMainBtn = findViewById(R.id.rider_request_cancel_btn);
+        riderCancelPickupBtn = findViewById(R.id.rider_cancel_pickup_btn);
 
         // INSTANTIATE DRIVER MAIN ACTION BUTTONS
         driverShowRequestsMainBtn = findViewById(R.id.driver_show_requests_btn);
 
         // INSTANTIATE STATUS BUTTON
         statusButton = findViewById(R.id.rideStatus);
-        statusButton.setEnabled(false);
 
         // HIDE SIDEBAR
         hideSettingsPanel();
 
         App.getModel().addObserver(this);
-
-
         Trip sessionTrip = App.getModel().getSessionTrip();
         if (sessionTrip != null) {
             currentTripStatus = sessionTrip.getStatus();
+            statusButton.setVisibility(View.VISIBLE);
             showActiveMainActionButton();
-            statusButton.setEnabled(true);
         }
     }
 
     /***** OBSERVING OBSERVABLES ******/
-    /**update method updates the activity when necessary
+    /**update method updates the activity when necessary, USED MOSTLY FOR NOTIFICATIONS
      * @param o,arg are instances of the observable and object*/
     @Override
     public void update(Observable o, Object arg) {
         Trip sessionTrip = App.getModel().getSessionTrip();
-        User sessionUser = App.getModel().getSessionUser();
+        User.TYPE currentUserType = App.getModel().getSessionUser().getType();
+
+        // Handles State Resets regarding Trip Cancellations
         if (sessionTrip == null) {
-            this.setCurrentTripStatus(null);
+            if (this.currentTripStatus != null) {
+                switch (this.currentTripStatus) {
+                    case DRIVER_ACCEPT:
+                        if (currentUserType == DRIVER) {
+                            Toast.makeText(this, "Unfortunately, the rider has declined your offer.", Toast.LENGTH_SHORT).show();
+                        }
+                        break;
+                    case DRIVER_PICKING_UP:
+                        if (currentUserType == DRIVER) {
+                            Toast.makeText(this, "Unfortunately, the rider no longer needs a ride from you.", Toast.LENGTH_SHORT).show();
+                        }
+                        break;
+                }
+                this.setCurrentTripStatus(null);
+            }
         } else if (sessionTrip.getStatus() != currentTripStatus) {
             Toast.makeText(this, "Trip status changed to: " + sessionTrip.getStatus(), Toast.LENGTH_SHORT).show();
             this.setCurrentTripStatus(sessionTrip.getStatus());
         }
-        if (sessionTrip != null && App.getModel().getSessionUser() != null) {
-            if (sessionTrip.getStatus() == Trip.STATUS.DRIVER_ACCEPT
-                    && sessionTrip.getStatus() != currentTripStatus
-                    && sessionUser.getType() == DRIVER) {
-                Toast.makeText(this, "Rider has canceled", Toast.LENGTH_SHORT).show();
-            }
 
-            // FOR DEMO PURPOSES ONLY (will be removed on project completion)
-            if (sessionTrip.getStatus() == Trip.STATUS.DRIVER_ACCEPT) {
-                ApplicationController.deleteRiderCurrentTrip(MapActivity.this);
-                // TODO: part 3 cuts off here
-                Toast
-                        .makeText(
-                                this,
-                                "Driver has accepted! \n Cancelling trip and resetting \n...functionality to completed",
-                                Toast.LENGTH_LONG)
-                        .show();
+        // Handles Forward State Transitions regarding Trips
+        if (sessionTrip != null && App.getModel().getSessionUser() != null) {
+            switch (sessionTrip.getStatus()) {
+                case DRIVER_ACCEPT:
+                    if (currentUserType == RIDER)  {
+                        Toast.makeText(this, "Driver has accepted!", Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+                case DRIVER_PICKING_UP:
+                    if (currentUserType == RIDER) {
+                        Toast.makeText(this, "Your ride is on the way!", Toast.LENGTH_SHORT).show();
+                    } else if (currentUserType == DRIVER) {
+                        Toast.makeText(this, "The rider has accepted and is now ready for pickup!", Toast.LENGTH_SHORT).show();
+                    }
+                    break;
             }
         }
+
         showActiveMainActionButton();
     }
 
@@ -186,6 +202,33 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
                 .setNegativeButton("No", dialogClickListener).show();
     }
 
+    /**Handles user interaction with rider accept button*/
+    public void handleRiderOfferAccept() {
+        DialogInterface.OnClickListener dialogClickListener = ((DialogInterface dialog, int choice) -> {
+            switch (choice) {
+                case DialogInterface.BUTTON_POSITIVE:
+                    Toast.makeText(MapActivity.this, "Trip accepted! Notifying driver...", Toast.LENGTH_LONG).show();
+                    ApplicationController.handleRiderTripAccept();
+                    break;
+                case DialogInterface.BUTTON_NEGATIVE:
+                    Toast.makeText(MapActivity.this, "Cancelling trip...", Toast.LENGTH_SHORT).show();
+                    ApplicationController.deleteRiderCurrentTrip(MapActivity.this);
+                    break;
+            }
+        });
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("A driver has accepted! Proceed?")
+                .setPositiveButton("Yes", dialogClickListener)
+                .setNegativeButton("No", dialogClickListener).show();
+    }
+
+    /**Handles user interaction with rider cancel pickup button*/
+    public void handleRiderCancelPickupBtn(View v) {
+        Toast.makeText(MapActivity.this, "Cancelling trip...", Toast.LENGTH_SHORT).show();
+        ApplicationController.deleteRiderCurrentTrip(MapActivity.this);
+    }
+
     /**Handles interaction with driver show requests button
      * @param v is the view instance*/
     public void handleDriverShowRequestsBtn(View v) {
@@ -195,25 +238,35 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
     /**Shows active main action button when necessary*/
     public void showActiveMainActionButton() {
         hideMainActionButtons();
+        User.TYPE currentUserType = App.getModel().getSessionUser().getType();
 
         if (this.currentTripStatus == null) {
-            User sessionUser = App.getModel().getSessionUser();
-            if (sessionUser.getType() == RIDER) {
+            statusButton.setVisibility(View.GONE);
+
+            if (currentUserType== RIDER) {
                 riderRequestMainBtn.setVisibility(View.VISIBLE);
-            } else if(sessionUser.getType() == DRIVER){
+            } else if(currentUserType== DRIVER){
                 driverShowRequestsMainBtn.setVisibility(View.VISIBLE);
             }
-            statusButton.setEnabled(false);
+
         } else {
+            statusButton.setVisibility(View.VISIBLE);
+
             switch (this.currentTripStatus) {
                 case PENDING:
-                    riderRequestCancelMainBtn.setVisibility(View.VISIBLE);
-                    statusButton.setEnabled(true);
+                    if (currentUserType == RIDER) {
+                        riderRequestCancelMainBtn.setVisibility(View.VISIBLE);
+                    }
                     break;
                 case DRIVER_ACCEPT:
-                    // TODO: part 3 cuts off here
+                    if (currentUserType == RIDER) {
+                        handleRiderOfferAccept();
+                    }
                     break;
                 case DRIVER_PICKING_UP:
+                    if (currentUserType == RIDER) {
+                        riderCancelPickupBtn.setVisibility(View.VISIBLE);
+                    }
                     break;
                 case EN_ROUTE:
                     break;
@@ -227,6 +280,8 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
     public void hideMainActionButtons() {
         riderRequestMainBtn.setVisibility(View.INVISIBLE);
         riderRequestCancelMainBtn.setVisibility(View.INVISIBLE);
+        riderCancelPickupBtn.setVisibility(View.INVISIBLE);
+
         driverShowRequestsMainBtn.setVisibility(View.INVISIBLE);
     }
 

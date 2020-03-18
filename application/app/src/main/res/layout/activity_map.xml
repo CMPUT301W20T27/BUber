@@ -62,6 +62,18 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
+    <Button
+        android:text="Trip accepted! Cancel driver pick-up?"
+        android:id="@+id/rider_cancel_pickup_btn"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:onClick="handleRiderCancelPickupBtn"
+        android:textIsSelectable="false"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
     <!--  DRIVER MAIN ACTION BUTTONS  -->
     <Button
         android:text="Show Active Ride Requests Near You"
@@ -132,6 +144,7 @@
         android:layout_marginTop="648dp"
         android:onClick="handleTestClick"
         android:text="Ride Status"
+        android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

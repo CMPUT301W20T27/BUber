@@ -31,9 +31,10 @@
         android:textColor="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.146"
+        app:layout_constraintHorizontal_bias="0.177"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.39" />
 
     <EditText
         android:id="@+id/loginEmailEditText"
@@ -41,15 +42,15 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="58dp"
         android:background="#FFFFFF"
-        android:textColor="#000000"
         android:hint="Enter Email"
         android:inputType="textEmailAddress"
+        android:textColor="#000000"
         app:layout_constraintBottom_toTopOf="@+id/loginPasswordEditText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.495"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.964" />
+        app:layout_constraintVertical_bias="1.0" />
 
     <TextView
         android:id="@+id/loginPasswordHeaderText"
@@ -59,10 +60,9 @@
         android:textColor="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.158"
+        app:layout_constraintHorizontal_bias="0.157"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.634" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/loginPasswordEditText"
@@ -76,30 +76,18 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.495"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/loginLogoTextView" />
-
-    <Button
-        android:id="@+id/loginCreateAccountButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#B9613A3A"
-        android:onClick="handleAccountCreationClick"
-        android:text="Create an Account"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/loginLogoTextView"
+        app:layout_constraintVertical_bias="0.312" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="127dp"
-        android:layout_height="67dp"
-        android:layout_marginTop="585dp"
-        android:layout_marginEnd="206dp"
-        android:layout_marginBottom="87dp"
+        android:layout_width="125dp"
+        android:layout_height="62dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.705"
+        app:layout_constraintEnd_toStartOf="@+id/constraintLayout2"
+        app:layout_constraintHorizontal_bias="0.428"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.871">
 
         <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
             android:id="@+id/loginDriverButton"
@@ -117,6 +105,7 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout2"
         android:layout_width="125dp"
         android:layout_height="62dp"
         android:layout_marginStart="206dp"
@@ -141,5 +130,16 @@
             app:spinning_bar_padding="4dp"
             app:spinning_bar_width="4dp" />
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <Button
+        android:id="@+id/loginCreateAccountButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#B9613A3A"
+        android:onClick="handleAccountCreationClick"
+        android:text="Create an Account"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

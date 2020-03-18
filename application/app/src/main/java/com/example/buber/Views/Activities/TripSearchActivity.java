@@ -92,7 +92,6 @@ public class TripSearchActivity extends AppCompatActivity implements UIErrorHand
      * @param tripSearchRecord,position uses the position and trip search record to ensure the correct
      *      trip is accepted*/
     public void onAcceptPressed(TripSearchRecord tripSearchRecord, int position){
-        // TODO: Backend code for selecting trip
         Trip selectedTrip = App.getModel().getSessionTripList().get(position);
         ApplicationController.handleDriverTripSelect(selectedTrip);
         // Navigate back to main activity
