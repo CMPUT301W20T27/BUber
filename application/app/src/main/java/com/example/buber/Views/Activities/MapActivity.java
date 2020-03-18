@@ -146,13 +146,11 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
                 }
                 this.setCurrentTripStatus(null);
             }
+            showActiveMainActionButton();
         } else if (sessionTrip.getStatus() != currentTripStatus) {
             Toast.makeText(this, "Trip status changed to: " + sessionTrip.getStatus(), Toast.LENGTH_SHORT).show();
-            this.setCurrentTripStatus(sessionTrip.getStatus());
-        }
 
-        // Handles Forward State Transitions regarding Trips
-        if (sessionTrip != null && App.getModel().getSessionUser() != null) {
+            this.setCurrentTripStatus(sessionTrip.getStatus());
             switch (sessionTrip.getStatus()) {
                 case DRIVER_ACCEPT:
                     if (currentUserType == RIDER)  {
@@ -167,9 +165,8 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
                     }
                     break;
             }
+            showActiveMainActionButton();
         }
-
-        showActiveMainActionButton();
     }
 
     /***** MAIN ACTION BUTTON HANDLERS ******/
@@ -204,6 +201,9 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
 
     /**Handles user interaction with rider accept button*/
     public void handleRiderOfferAccept() {
+        if (this.currentTripStatus != Trip.STATUS.DRIVER_ACCEPT) {
+            return;
+        }
         DialogInterface.OnClickListener dialogClickListener = ((DialogInterface dialog, int choice) -> {
             switch (choice) {
                 case DialogInterface.BUTTON_POSITIVE:
