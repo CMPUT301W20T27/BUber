@@ -315,7 +315,8 @@ public class DBManager {
                                             if (updatedTrip.nextStatusValid(newStatus)) {
                                                 Trip newTrip = App.getModel().getSessionTrip();
                                                 newTrip.setStatus(newStatus);
-                                                App.getModel().setSessionTrip(newTrip);                                            }
+                                                App.getModel().setSessionTrip(newTrip);
+                                            }
                                         }
                                     }
                                 });
