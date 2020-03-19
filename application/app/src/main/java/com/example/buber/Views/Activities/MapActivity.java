@@ -1,9 +1,12 @@
 package com.example.buber.Views.Activities;
 
 import android.app.Dialog;
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,6 +18,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.buber.App;
@@ -36,12 +41,13 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.Task;
 
-import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
 import static com.example.buber.Model.User.TYPE.DRIVER;
 import static com.example.buber.Model.User.TYPE.RIDER;
+import static com.example.buber.App.DRIVER_CHANNEL_ID;
+import static com.example.buber.App.RIDER_CHANNEL_ID;
 
 /**
  * Main Map activity. Activity uses similiar UI for Rider and Driver, but changes functionality based
@@ -77,13 +83,18 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
     private View sideBarView;
     private Button statusButton;
 
-    /**onCreate method creates MapActivity when it is called
-     * @param savedInstanceState is a previous saved state if applicable*/
+    // NOTIFICATIONS
+    private NotificationManagerCompat notificationManager;
+
+    /**
+     * onCreate method creates MapActivity when it is called
+     *
+     * @param savedInstanceState is a previous saved state if applicable
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
-
 
         if (googleConnectionSuccessful()) {
             getLocationPermission();
@@ -91,7 +102,6 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
             Toast.makeText(this,
                     "map connection failed", Toast.LENGTH_SHORT).show();
         }
-
 
         // INSTANTIATE SIDEBAR BUTTONS
         settingsButton = findViewById(R.id.settings_button);
@@ -112,6 +122,9 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         // HIDE SIDEBAR
         hideSettingsPanel();
 
+        // INSTANTIATE NOTIFICATION MANAGER
+        notificationManager = NotificationManagerCompat.from(this);
+
         App.getModel().addObserver(this);
         Trip sessionTrip = App.getModel().getSessionTrip();
         if (sessionTrip != null) {
@@ -122,8 +135,11 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
     }
 
     /***** OBSERVING OBSERVABLES ******/
-    /**update method updates the activity when necessary, USED MOSTLY FOR NOTIFICATIONS
-     * @param o,arg are instances of the observable and object*/
+    /**
+     * update method updates the activity when necessary, USED MOSTLY FOR NOTIFICATIONS
+     *
+     * @param o,arg are instances of the observable and object
+     */
     @Override
     public void update(Observable o, Object arg) {
         Trip sessionTrip = App.getModel().getSessionTrip();
@@ -147,21 +163,30 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
                 this.setCurrentTripStatus(null);
             }
             showActiveMainActionButton();
-        } else if (sessionTrip.getStatus() != currentTripStatus) {
-            Toast.makeText(this, "Trip status changed to: " + sessionTrip.getStatus(), Toast.LENGTH_SHORT).show();
-
+        }
+        // Handles Forward State Transitions regarding Trip Progress
+        else if (sessionTrip.getStatus() != currentTripStatus) {
             this.setCurrentTripStatus(sessionTrip.getStatus());
             switch (sessionTrip.getStatus()) {
                 case DRIVER_ACCEPT:
-                    if (currentUserType == RIDER)  {
-                        Toast.makeText(this, "Driver has accepted!", Toast.LENGTH_SHORT).show();
+                    if (currentUserType == RIDER) {
+                        notifyOnRiderChannel(
+                                1, "A driver has accepted your request!",
+                                "BUber requires your action!",
+                                Color.GREEN);
                     }
                     break;
                 case DRIVER_PICKING_UP:
                     if (currentUserType == RIDER) {
-                        Toast.makeText(this, "Your ride is on the way!", Toast.LENGTH_SHORT).show();
+                        notifyOnRiderChannel(
+                                2, "Your ride is on the way!",
+                                "",
+                                Color.GREEN);
                     } else if (currentUserType == DRIVER) {
-                        Toast.makeText(this, "The rider has accepted and is now ready for pickup!", Toast.LENGTH_SHORT).show();
+                        notifyOnDriverChannel(
+                                3, "The rider has accepted and is now ready for pickup!",
+                                "Rider Username: " + sessionTrip.getRiderUserName(),
+                                Color.GREEN);
                     }
                     break;
             }
@@ -170,8 +195,11 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
     }
 
     /***** MAIN ACTION BUTTON HANDLERS ******/
-    /**handleRiderRequestBtn handles user interaction with the rider request button
-     * @param v is an instance of the view*/
+    /**
+     * handleRiderRequestBtn handles user interaction with the rider request button
+     *
+     * @param v is an instance of the view
+     */
     public void handleRiderRequestBtn(View v) {
         Intent intent = new Intent(getBaseContext(), TripBuilderActivity.class);
         intent.putExtra(
@@ -180,7 +208,9 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         startActivity(intent);
     }
 
-    /**Handles user interaction with rider cancel button*/
+    /**
+     * Handles user interaction with rider cancel button
+     */
     public void handleRiderCancelBtn(View v) {
         DialogInterface.OnClickListener dialogClickListener = ((DialogInterface dialog, int choice) -> {
             switch (choice) {
@@ -199,7 +229,9 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
                 .setNegativeButton("No", dialogClickListener).show();
     }
 
-    /**Handles user interaction with rider accept button*/
+    /**
+     * Handles user interaction with rider accept button
+     */
     public void handleRiderOfferAccept() {
         if (this.currentTripStatus != Trip.STATUS.DRIVER_ACCEPT) {
             return;
@@ -207,7 +239,6 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         DialogInterface.OnClickListener dialogClickListener = ((DialogInterface dialog, int choice) -> {
             switch (choice) {
                 case DialogInterface.BUTTON_POSITIVE:
-                    Toast.makeText(MapActivity.this, "Trip accepted! Notifying driver...", Toast.LENGTH_LONG).show();
                     ApplicationController.handleNotifyDriverForPickup();
                     break;
                 case DialogInterface.BUTTON_NEGATIVE:
@@ -223,19 +254,26 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
                 .setNegativeButton("No", dialogClickListener).show();
     }
 
-    /**Handles user interaction with rider cancel pickup button*/
+    /**
+     * Handles user interaction with rider cancel pickup button
+     */
     public void handleRiderCancelPickupBtn(View v) {
         Toast.makeText(MapActivity.this, "Cancelling trip...", Toast.LENGTH_SHORT).show();
         ApplicationController.deleteRiderCurrentTrip(MapActivity.this);
     }
 
-    /**Handles interaction with driver show requests button
-     * @param v is the view instance*/
+    /**
+     * Handles interaction with driver show requests button
+     *
+     * @param v is the view instance
+     */
     public void handleDriverShowRequestsBtn(View v) {
         startActivity(new Intent(getBaseContext(), TripSearchActivity.class));
     }
 
-    /**Shows active main action button when necessary*/
+    /**
+     * Shows active main action button when necessary
+     */
     public void showActiveMainActionButton() {
         hideMainActionButtons();
         User.TYPE currentUserType = App.getModel().getSessionUser().getType();
@@ -243,9 +281,9 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         if (this.currentTripStatus == null) {
             statusButton.setVisibility(View.GONE);
 
-            if (currentUserType== RIDER) {
+            if (currentUserType == RIDER) {
                 riderRequestMainBtn.setVisibility(View.VISIBLE);
-            } else if(currentUserType== DRIVER){
+            } else if (currentUserType == DRIVER) {
                 driverShowRequestsMainBtn.setVisibility(View.VISIBLE);
             }
 
@@ -276,7 +314,9 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         }
     }
 
-    /**Hides main action buttons when necessaru*/
+    /**
+     * Hides main action buttons when necessaru
+     */
     public void hideMainActionButtons() {
         riderRequestMainBtn.setVisibility(View.INVISIBLE);
         riderRequestCancelMainBtn.setVisibility(View.INVISIBLE);
@@ -286,8 +326,11 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
     }
 
     /***** HANDLING SETTINGS PANEL BUTTONS ******/
-    /**handleScreenClick handles what happens when user clicks on the screen
-     * @param v is the view instance*/
+    /**
+     * handleScreenClick handles what happens when user clicks on the screen
+     *
+     * @param v is the view instance
+     */
     public void handleScreenClick(View v) {
         if (showSideBar) {
             hideSettingsPanel();
@@ -297,19 +340,26 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         }
     }
 
-    /**Handles click on test
-     * @param v is the view instance*/
+    /**
+     * Handles click on test
+     *
+     * @param v is the view instance
+     */
     public void handleTestClick(View v) {
         startActivity(new Intent(MapActivity.this, RequestStatusActivity.class));
     }
 
-    /**Changes activity to EditAccountActivity when Account button is clicked*/
+    /**
+     * Changes activity to EditAccountActivity when Account button is clicked
+     */
     public void handleAccountButtonClick(View v) {
         startActivity(new Intent(MapActivity.this, EditAccountActivity.class));
         hideSettingsPanel();
     }
 
-    /**Logs user out of app when log out button is clicked*/
+    /**
+     * Logs user out of app when log out button is clicked
+     */
     public void handleLogoutButtonClick(View v) {
         User curUser = App.getModel().getSessionUser();
         curUser.setType(null);
@@ -321,7 +371,9 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         this.finish();
     }
 
-    /**Shows settings sidebar panel when necessary*/
+    /**
+     * Shows settings sidebar panel when necessary
+     */
     public void showSettingsPanel(View v) {
         sideBarView.setVisibility(View.VISIBLE);
         settingsButton.setVisibility(View.INVISIBLE);
@@ -330,7 +382,9 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         hideMainActionButtons();
     }
 
-    /**Hides settings sidebar panel when necessary*/
+    /**
+     * Hides settings sidebar panel when necessary
+     */
     public void hideSettingsPanel() {
         sideBarView.setVisibility(View.INVISIBLE);
         settingsButton.setVisibility(View.VISIBLE);
@@ -340,20 +394,70 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
     }
 
 
-    /***** GETTING/SETTING LOCAL TRIP STATUS W.R.T. FB UPDATES *****/
-    public Trip.STATUS getCurrentTripStatus() {
-        return currentTripStatus;
+    /***** NOTIFICATIONS *****/
+    public void notifyOnDriverChannel(int id, String title, String content, int color) {
+        Intent activityIntent = new Intent(this, MapActivity.class);
+        PendingIntent contentIntent = PendingIntent.getActivity(
+                this,
+                0,
+                activityIntent,
+                0);
+
+        Notification driverNotification = new NotificationCompat.Builder(this, DRIVER_CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_pickup_rider_24dp)
+                .setContentTitle(title)
+                .setContentText(content)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setCategory(NotificationCompat.CATEGORY_MESSAGE)
+                .setColor(color)
+                .setContentIntent(contentIntent)
+                .setAutoCancel(true)
+                .setOnlyAlertOnce(true)
+                .build();
+
+        notificationManager.notify(id, driverNotification);
     }
 
-    /**setCurrentTripStatus will set the trip status depending on whether it has been taken or not
-     * @param currentTripStatus is the status of current trip*/
+    public void notifyOnRiderChannel(int id, String title, String content, int color) {
+        Intent activityIntent = new Intent(this, MapActivity.class);
+        PendingIntent contentIntent = PendingIntent.getActivity(
+                this,
+                0,
+                activityIntent,
+                0);
+
+        Notification riderNotification = new NotificationCompat.Builder(this, RIDER_CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_driver_offering_24dp)
+                .setContentTitle(title)
+                .setContentText(content)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setCategory(NotificationCompat.CATEGORY_MESSAGE)
+                .setColor(color)
+                .setContentIntent(contentIntent)
+                .setAutoCancel(true)
+                .setOnlyAlertOnce(true)
+                .build();
+
+        notificationManager.notify(id, riderNotification);
+    }
+
+
+    /***** GETTING/SETTING LOCAL TRIP STATUS W.R.T. FB UPDATES *****/
+
+    /**
+     * setCurrentTripStatus will set the trip status depending on whether it has been taken or not
+     *
+     * @param currentTripStatus is the status of current trip
+     */
     public void setCurrentTripStatus(Trip.STATUS currentTripStatus) {
         this.currentTripStatus = currentTripStatus;
     }
 
 
     /***** DECLARING REST OF LIFECYCLE METHODS ******/
-    /**onDestroy method destructs activity if it is closed down*/
+    /**
+     * onDestroy method destructs activity if it is closed down
+     */
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -362,7 +466,9 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         m.deleteObserver(this);
     }
 
-    /**onError handles UI Errors if there are any*/
+    /**
+     * onError handles UI Errors if there are any
+     */
     @Override
     public void onError(Error e) {
         // TODO: Handle UI Errors
@@ -375,7 +481,9 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         mapFragment.getMapAsync(MapActivity.this);  //calls onMapReady
     }
 
-    /**getLocationPermission gets location permission from the user*/
+    /**
+     * getLocationPermission gets location permission from the user
+     */
     private void getLocationPermission() {
         /*
          * Request location permission, so that we can get the location of the
@@ -395,7 +503,9 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         }
     }
 
-    /**Gets the location of the users device*/
+    /**
+     * Gets the location of the users device
+     */
     private void getDeviceLocation() {
         /*
          * Get the best and most recent location of the device, which may be null in rare
@@ -440,7 +550,9 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         }
     }
 
-    /**Returns true if connection to google api is successful*/
+    /**
+     * Returns true if connection to google api is successful
+     */
     boolean googleConnectionSuccessful() {
         int connection = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(MapActivity.this);
         if (connection == ConnectionResult.SUCCESS) {
@@ -457,8 +569,11 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         return false;
     }
 
-    /**onMapReady lets the user know that the location is being gotten if permissions are granted
-     * @param googleMap is the map instance of GoogleMap*/
+    /**
+     * onMapReady lets the user know that the location is being gotten if permissions are granted
+     *
+     * @param googleMap is the map instance of GoogleMap
+     */
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
@@ -476,10 +591,13 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         });
     }
 
-    /**onRequestPermissionsResult gives the result of of the user permissions request
-     * @param requestCode is the result of the request
-     * @param permissions is a list of the permissions
-     * @param grantResults is a list of results granted*/
+    /**
+     * onRequestPermissionsResult gives the result of of the user permissions request
+     *
+     * @param requestCode  is the result of the request
+     * @param permissions  is a list of the permissions
+     * @param grantResults is a list of results granted
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         //this code is copied from google map api documentation
