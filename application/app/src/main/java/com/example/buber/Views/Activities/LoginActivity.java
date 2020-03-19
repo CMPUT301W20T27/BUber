@@ -49,10 +49,6 @@ public class LoginActivity extends AppCompatActivity implements Observer, UIErro
         riderLoginBtn.revertAnimation();
         driverLoginBtn.revertAnimation();
         driverLoginBtnID = R.id.loginDriverButton;
-
-        // for dev purposes only
-        editEmail.setText("lpd@lpd.lpd");
-        editPassword.setText("123456");
     }
 
     /**Handles user interaction with login button (as either driver or rider - chosen by user)
