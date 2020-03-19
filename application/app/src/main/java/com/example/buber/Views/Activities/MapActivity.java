@@ -208,7 +208,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
             switch (choice) {
                 case DialogInterface.BUTTON_POSITIVE:
                     Toast.makeText(MapActivity.this, "Trip accepted! Notifying driver...", Toast.LENGTH_LONG).show();
-                    ApplicationController.handleRiderTripAccept();
+                    ApplicationController.handleNotifyDriverForPickup();
                     break;
                 case DialogInterface.BUTTON_NEGATIVE:
                     Toast.makeText(MapActivity.this, "Cancelling trip...", Toast.LENGTH_SHORT).show();

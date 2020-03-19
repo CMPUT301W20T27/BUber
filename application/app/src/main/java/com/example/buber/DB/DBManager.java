@@ -204,18 +204,22 @@ public class DBManager {
             toReturn.put("trip", t);
 
             if (listenForUpdates && t != null) {
-                ListenerRegistration lr = collectionTrip.document(t.getRiderID()).addSnapshotListener((documentSnapshot1, e) -> {
-                    if (documentSnapshot1 != null) {
-                        Trip trip = documentSnapshot1.toObject(Trip.class);
-                        if (trip != null) {
-                            Trip.STATUS newStatus = trip.getStatus();
-                            if (trip.nextStatusValid(newStatus)) {
-                                App.getModel().getSessionTrip().setStatus(newStatus);
+                ListenerRegistration lr =
+                collectionTrip
+                        .document(t.getRiderID())
+                        .addSnapshotListener((documentSnapshot1, e) -> {
+                            if (documentSnapshot1 != null) {
+                                Trip trip = documentSnapshot1.toObject(Trip.class);
+                                if (trip != null) {
+                                    Trip.STATUS newStatus = trip.getStatus();
+                                    if (trip.nextStatusValid(newStatus)) {
+                                        Trip newTrip = App.getModel().getSessionTrip();
+                                        newTrip.setStatus(newStatus);
+                                        App.getModel().setSessionTrip(newTrip);
+                                    }
+                                }
                             }
-                        }
-                    }
-
-                });
+                    });
                 App.getModel().setTripListener(lr);
             }
 
@@ -300,17 +304,21 @@ public class DBManager {
                 .set(updatedTrip, SetOptions.merge())
                 .addOnSuccessListener(aVoid -> {
                     if (listenForUpdates) {
-                        ListenerRegistration lr = collectionTrip.document(updatedTrip.getRiderID()).addSnapshotListener((documentSnapshot1, e) -> {
-                            if (documentSnapshot1 != null) {
-                                Trip trip = documentSnapshot1.toObject(Trip.class);
-                                if (trip != null && updatedTrip != null) {
-                                    Trip.STATUS newStatus = trip.getStatus();
-                                    if (updatedTrip.nextStatusValid(newStatus)) {
-                                        App.getModel().getSessionTrip().setStatus(newStatus);
+                        ListenerRegistration lr =
+                        collectionTrip
+                                .document(updatedTrip.getRiderID())
+                                .addSnapshotListener((documentSnapshot1, e) -> {
+                                    if (documentSnapshot1 != null) {
+                                        Trip trip = documentSnapshot1.toObject(Trip.class);
+                                        if (trip != null && updatedTrip != null) {
+                                            Trip.STATUS newStatus = trip.getStatus();
+                                            if (updatedTrip.nextStatusValid(newStatus)) {
+                                                Trip newTrip = App.getModel().getSessionTrip();
+                                                newTrip.setStatus(newStatus);
+                                                App.getModel().setSessionTrip(newTrip);                                            }
+                                        }
                                     }
-                                }
-                            }
-                        });
+                                });
                         App.getModel().setTripListener(lr);
                     }
                     listener.onCompletion(null, null);

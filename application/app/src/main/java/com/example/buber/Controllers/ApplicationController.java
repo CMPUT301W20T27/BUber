@@ -199,10 +199,10 @@ public class ApplicationController {
     /**
      * Controls what happens after rider accept ride offer
      */
-    public static void handleRiderTripAccept() {
+    public static void handleNotifyDriverForPickup() {
         Trip currentTrip = App.getModel().getSessionTrip();
         currentTrip.setStatus(Trip.STATUS.DRIVER_PICKING_UP);
-        ApplicationService.selectTrip(currentTrip.getRiderID(), currentTrip, ((resultData, err) -> {
+        ApplicationService.notifyDriverForPickup(currentTrip.getRiderID(), currentTrip, ((resultData, err) -> {
             if (err != null) {
                 List<Observer> mapObservers = App.getModel().getObserversMatchingClass(MapActivity.class);
                 for (Observer map : mapObservers) {
