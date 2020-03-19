@@ -60,6 +60,10 @@ public class ApplicationModel extends Observable {
      * @param sessionTrip the session trip
      */
     public void setSessionTrip(Trip sessionTrip) {
+        if (sessionTrip == null) {
+            this.detachTripListener();
+        }
+
         this.sessionTrip = sessionTrip;
         setChanged();
         notifyObservers();

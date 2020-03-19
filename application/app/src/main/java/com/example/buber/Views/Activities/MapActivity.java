@@ -151,12 +151,14 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
                 switch (this.currentTripStatus) {
                     case DRIVER_ACCEPT:
                         if (currentUserType == DRIVER) {
-                            Toast.makeText(this, "Unfortunately, the rider has declined your offer.", Toast.LENGTH_SHORT).show();
+                            notifyOnDriverChannel(1, "Unfortunately, the rider has declined your offer.",
+                                    "", Color.RED);
                         }
                         break;
                     case DRIVER_PICKING_UP:
                         if (currentUserType == DRIVER) {
-                            Toast.makeText(this, "Unfortunately, the rider no longer needs a ride from you.", Toast.LENGTH_SHORT).show();
+                            notifyOnDriverChannel(2, "Unfortunately, the rider no longer needs a ride from you.",
+                                    "Rider no longer needs to be picked up.", Color.RED);
                         }
                         break;
                 }
@@ -171,7 +173,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
                 case DRIVER_ACCEPT:
                     if (currentUserType == RIDER) {
                         notifyOnRiderChannel(
-                                1, "A driver has accepted your request!",
+                                3, "A driver has accepted your request!",
                                 "BUber requires your action!",
                                 Color.GREEN);
                     }
@@ -179,12 +181,12 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
                 case DRIVER_PICKING_UP:
                     if (currentUserType == RIDER) {
                         notifyOnRiderChannel(
-                                2, "Your ride is on the way!",
+                                4, "Your ride is on the way!",
                                 "",
                                 Color.GREEN);
                     } else if (currentUserType == DRIVER) {
                         notifyOnDriverChannel(
-                                3, "The rider has accepted and is now ready for pickup!",
+                                5, "The rider has accepted and is now ready for pickup!",
                                 "Rider Username: " + sessionTrip.getRiderUserName(),
                                 Color.GREEN);
                     }

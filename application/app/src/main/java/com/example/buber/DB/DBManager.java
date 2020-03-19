@@ -116,26 +116,28 @@ public class DBManager {
                     toReturn.put("trip", tripRequest);
                     listener.onCompletion(toReturn, null);
                     if (listenForUpdates) {
-                        ListenerRegistration lr = collectionTrip.document(tripRequest.getRiderID()).addSnapshotListener((documentSnapshot, e) -> {
-                            if (documentSnapshot != null) {
-                                Trip newTrip = documentSnapshot.toObject(Trip.class);
+                        ListenerRegistration lr =
+                        collectionTrip
+                                .document(tripRequest.getRiderID())
+                                .addSnapshotListener((documentSnapshot, e) -> {
+                                    if (documentSnapshot != null) {
+                                        Trip newTrip = documentSnapshot.toObject(Trip.class);
 
-                                if (newTrip == null) {
-                                    return;
-                                }
-                                Trip.STATUS newStatus = newTrip.getStatus();
+                                        if (newTrip == null) {
+                                            return;
+                                        }
+                                        Trip.STATUS newStatus = newTrip.getStatus();
 
-                                if (tripRequest.nextStatusValid(newStatus)) {
-                                    Log.d(TAG, newTrip.getStatus().toString());
+                                        if (tripRequest.nextStatusValid(newStatus)) {
+                                            Log.d(TAG, newTrip.getStatus().toString());
 
-                                }
-                                Trip sessionTrip = App.getModel().getSessionTrip();
-                                if (sessionTrip != null) {
-                                    sessionTrip.setStatus(newStatus);
-                                    App.getModel().setSessionTrip(sessionTrip);
-                                }
-                            }
-                        });
+                                        }
+                                        Trip sessionTrip = App.getModel().getSessionTrip();
+                                        if (sessionTrip != null) {
+                                            sessionTrip.setStatus(newStatus);
+                                            App.getModel().setSessionTrip(sessionTrip);
+                                        }
+                                    }});
                        App.getModel().setTripListener(lr);
                     }
                 })
@@ -317,6 +319,8 @@ public class DBManager {
                                                 newTrip.setStatus(newStatus);
                                                 App.getModel().setSessionTrip(newTrip);
                                             }
+                                        } else {
+                                            App.getModel().setSessionTrip(null);
                                         }
                                     }
                                 });
