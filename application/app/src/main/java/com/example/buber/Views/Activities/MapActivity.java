@@ -194,6 +194,10 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
             }
             showActiveMainActionButton();
         }
+        // Unknown states
+        else {
+            Log.e("%s", "Unknown state has been encountered!");
+        }
     }
 
     /***** MAIN ACTION BUTTON HANDLERS ******/
