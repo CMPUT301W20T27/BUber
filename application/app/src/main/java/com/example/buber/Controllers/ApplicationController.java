@@ -194,6 +194,26 @@ public class ApplicationController {
             }
         });
     }
+
+
+    /**
+     * Controls what happens after rider accept ride offer
+     */
+    public static void handleNotifyDriverForPickup() {
+        Trip currentTrip = App.getModel().getSessionTrip();
+        currentTrip.setStatus(Trip.STATUS.DRIVER_PICKING_UP);
+        ApplicationService.notifyDriverForPickup(currentTrip.getRiderID(), currentTrip, ((resultData, err) -> {
+            if (err != null) {
+                List<Observer> mapObservers = App.getModel().getObserversMatchingClass(MapActivity.class);
+                for (Observer map : mapObservers) {
+                    ((UIErrorHandler) map).onError(err);
+                }
+            } else {
+                App.getModel().setSessionTrip(currentTrip);
+            }
+        }));
+    }
+
     /**
      * Gets the driver user's selected trip and changes the Trip status in Firebase
      * @param selectedTrip the drivers selected trip

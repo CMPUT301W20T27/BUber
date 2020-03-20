@@ -1,6 +1,11 @@
 package com.example.buber;
 
 import android.app.Application;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.os.Build;
+
+import androidx.core.app.NotificationManagerCompat;
 
 import com.example.buber.Controllers.ApplicationController;
 import com.example.buber.DB.AuthDBManager;
@@ -23,6 +28,11 @@ public class App extends Application {
     transient private static AuthDBManager authDBManager;
     transient private static DBManager dbManager;
 
+    // Notification Channels
+    public static final String DRIVER_CHANNEL_ID = "DRIVER_CHANNEL";
+    public static final String RIDER_CHANNEL_ID = "RIDER_CHANNEL";
+
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -30,6 +40,7 @@ public class App extends Application {
         getController();
         getAuthDBManager();
         getDbManager();
+        createNotificationChannels();
     }
 
     /**
@@ -49,6 +60,7 @@ public class App extends Application {
         }
     }
     /**/
+
     /**
      * Create a single Model
      */
@@ -59,6 +71,7 @@ public class App extends Application {
 
         return model;
     }
+
     /**
      * Create a single Controller
      */
@@ -69,8 +82,9 @@ public class App extends Application {
 
         return controller;
     }
+
     /**
-     *  Create a single Firebase authorization class
+     * Create a single Firebase authorization class
      */
 
     public static AuthDBManager getAuthDBManager() {
@@ -85,11 +99,37 @@ public class App extends Application {
      * Create a single Firebase database manager class
      */
     public static DBManager getDbManager() {
-        if (dbManager== null) {
+        if (dbManager == null) {
             dbManager = new DBManager(DRIVERS_COLLECTION_NAME, RIDERS_COLLECTION_NAME, TRIPS_COLLECTION_NAME);
         }
 
         return dbManager;
     }
 
+
+    /**
+     * Creates our notification channels
+     * Only supported from Android Oreo and greater
+     */
+    private void createNotificationChannels() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel driverChannel = new NotificationChannel(
+                    DRIVER_CHANNEL_ID,
+                    "Driver Channel",
+                    NotificationManager.IMPORTANCE_HIGH
+            );
+            driverChannel.setDescription("This is the driver channel.");
+
+            NotificationChannel riderChannel = new NotificationChannel(
+                    RIDER_CHANNEL_ID,
+                    "Rider Channel",
+                    NotificationManager.IMPORTANCE_HIGH
+            );
+            riderChannel.setDescription("This is the rider channel.");
+
+            NotificationManager manager = getSystemService(NotificationManager.class);
+            manager.createNotificationChannel(driverChannel);
+            manager.createNotificationChannel(riderChannel);
+        }
+    }
 }
