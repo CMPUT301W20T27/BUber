@@ -1,8 +1,6 @@
 package com.example.buber.Views.Activities;
 
 import android.app.Dialog;
-import android.app.Notification;
-import android.app.PendingIntent;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -18,8 +16,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.buber.App;
@@ -29,6 +25,7 @@ import com.example.buber.Model.Trip;
 import com.example.buber.Model.User;
 import com.example.buber.Model.UserLocation;
 import com.example.buber.R;
+import com.example.buber.Views.Components.BUberNotificationManager;
 import com.example.buber.Views.UIErrorHandler;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -46,8 +43,6 @@ import java.util.Observer;
 
 import static com.example.buber.Model.User.TYPE.DRIVER;
 import static com.example.buber.Model.User.TYPE.RIDER;
-import static com.example.buber.App.DRIVER_CHANNEL_ID;
-import static com.example.buber.App.RIDER_CHANNEL_ID;
 
 /**
  * Main Map activity. Activity uses similiar UI for Rider and Driver, but changes functionality based
@@ -84,7 +79,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
     private Button statusButton;
 
     // NOTIFICATIONS
-    private NotificationManagerCompat notificationManager;
+    private BUberNotificationManager notifManager;
 
     /**
      * onCreate method creates MapActivity when it is called
@@ -123,7 +118,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         hideSettingsPanel();
 
         // INSTANTIATE NOTIFICATION MANAGER
-        notificationManager = NotificationManagerCompat.from(this);
+        notifManager = new BUberNotificationManager(this, MapActivity.class);
 
         App.getModel().addObserver(this);
         Trip sessionTrip = App.getModel().getSessionTrip();
@@ -151,28 +146,30 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
                 switch (this.currentTripStatus) {
                     case DRIVER_ACCEPT:
                         if (currentUserType == DRIVER) {
-                            notifyOnDriverChannel(1, "Unfortunately, the rider has declined your offer.",
+                            notifManager.notifyOnDriverChannel(
+                                    1, "Unfortunately, the rider has declined your offer.",
                                     "", Color.RED);
                         }
                         break;
                     case DRIVER_PICKING_UP:
                         if (currentUserType == DRIVER) {
-                            notifyOnDriverChannel(2, "Unfortunately, the rider no longer needs a ride from you.",
+                            notifManager.notifyOnDriverChannel(
+                                    2, "Unfortunately, the rider no longer needs a ride from you.",
                                     "Rider no longer needs to be picked up.", Color.RED);
                         }
                         break;
                 }
-                this.setCurrentTripStatus(null);
+                this.currentTripStatus = null;
             }
             showActiveMainActionButton();
         }
         // Handles Forward State Transitions regarding Trip Progress
         else if (sessionTrip.getStatus() != currentTripStatus) {
-            this.setCurrentTripStatus(sessionTrip.getStatus());
+            this.currentTripStatus = sessionTrip.getStatus();
             switch (sessionTrip.getStatus()) {
                 case DRIVER_ACCEPT:
                     if (currentUserType == RIDER) {
-                        notifyOnRiderChannel(
+                        notifManager.notifyOnRiderChannel(
                                 3, "A driver has accepted your request!",
                                 "BUber requires your action!",
                                 Color.GREEN);
@@ -180,16 +177,16 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
                     break;
                 case DRIVER_PICKING_UP:
                     if (currentUserType == RIDER) {
-                        notifyOnRiderChannel(
+                        notifManager.notifyOnRiderChannel(
                                 4, "Your ride is on the way!",
                                 "",
-                                Color.GREEN);
+                                Color.GREEN
+                        );
                     } else if (currentUserType == DRIVER) {
-                        notifyOnDriverChannel(
+                        notifManager.notifyOnDriverChannel(
                                 5, "The rider has accepted and is now ready for pickup!",
                                 "Rider Username: " + sessionTrip.getRiderUserName(),
-                                Color.GREEN);
-                    }
+                                Color.GREEN);                    }
                     break;
             }
             showActiveMainActionButton();
@@ -399,65 +396,6 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         showActiveMainActionButton();
     }
 
-
-    /***** NOTIFICATIONS *****/
-    public void notifyOnDriverChannel(int id, String title, String content, int color) {
-        Intent activityIntent = new Intent(this, MapActivity.class);
-        PendingIntent contentIntent = PendingIntent.getActivity(
-                this,
-                0,
-                activityIntent,
-                0);
-
-        Notification driverNotification = new NotificationCompat.Builder(this, DRIVER_CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_pickup_rider_24dp)
-                .setContentTitle(title)
-                .setContentText(content)
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setCategory(NotificationCompat.CATEGORY_MESSAGE)
-                .setColor(color)
-                .setContentIntent(contentIntent)
-                .setAutoCancel(true)
-                .setOnlyAlertOnce(true)
-                .build();
-
-        notificationManager.notify(id, driverNotification);
-    }
-
-    public void notifyOnRiderChannel(int id, String title, String content, int color) {
-        Intent activityIntent = new Intent(this, MapActivity.class);
-        PendingIntent contentIntent = PendingIntent.getActivity(
-                this,
-                0,
-                activityIntent,
-                0);
-
-        Notification riderNotification = new NotificationCompat.Builder(this, RIDER_CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_driver_offering_24dp)
-                .setContentTitle(title)
-                .setContentText(content)
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setCategory(NotificationCompat.CATEGORY_MESSAGE)
-                .setColor(color)
-                .setContentIntent(contentIntent)
-                .setAutoCancel(true)
-                .setOnlyAlertOnce(true)
-                .build();
-
-        notificationManager.notify(id, riderNotification);
-    }
-
-
-    /***** GETTING/SETTING LOCAL TRIP STATUS W.R.T. FB UPDATES *****/
-
-    /**
-     * setCurrentTripStatus will set the trip status depending on whether it has been taken or not
-     *
-     * @param currentTripStatus is the status of current trip
-     */
-    public void setCurrentTripStatus(Trip.STATUS currentTripStatus) {
-        this.currentTripStatus = currentTripStatus;
-    }
 
 
     /***** DECLARING REST OF LIFECYCLE METHODS ******/

@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -19,11 +20,11 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="377dp"
-        android:layout_height="169dp"
-        android:layout_marginTop="128dp"
+        android:layout_width="376dp"
+        android:layout_height="157dp"
+        android:layout_marginTop="100dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.504"
+        app:layout_constraintHorizontal_bias="0.571"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -32,9 +33,9 @@
             android:layout_width="171dp"
             android:layout_height="51dp"
             android:layout_marginTop="32dp"
-            android:text="Select Start Point"
-            android:onClick="engagePlacePicker"
             android:backgroundTint="@color/places_autocomplete_error_button"
+            android:onClick="engagePlacePicker"
+            android:text="Select Start Point"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.035"
             app:layout_constraintStart_toStartOf="parent"
@@ -45,9 +46,9 @@
             android:layout_width="171dp"
             android:layout_height="51dp"
             android:layout_marginTop="32dp"
-            android:text="Clear Start Point"
-            android:onClick="handleClearStartPtBtn"
             android:backgroundTint="@color/design_default_color_error"
+            android:onClick="handleClearStartPtBtn"
+            android:text="Clear Start Point"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.989"
             app:layout_constraintStart_toStartOf="parent"
@@ -70,11 +71,10 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="378dp"
-        android:layout_height="181dp"
-        android:layout_marginTop="300dp"
+        android:layout_width="380dp"
+        android:layout_height="160dp"
+        android:layout_marginTop="268dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.505"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -122,10 +122,9 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/tripSubmissionLayout"
         android:layout_width="370dp"
-        android:layout_height="159dp"
-        android:layout_marginTop="480dp"
+        android:layout_height="140dp"
+        android:layout_marginTop="432dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.509"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -168,9 +167,10 @@
             android:text="Submit Trip Request"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.502"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0"
+            app:layout_constraintVertical_bias="1.0"
             app:spinning_bar_color="#FFF"
             app:spinning_bar_padding="4dp"
             app:spinning_bar_width="4dp"></br.com.simplepass.loadingbutton.customViews.CircularProgressButton>
