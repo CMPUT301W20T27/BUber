@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -25,6 +27,7 @@ import com.example.buber.Model.Trip;
 import com.example.buber.Model.User;
 import com.example.buber.Model.UserLocation;
 import com.example.buber.R;
+import com.example.buber.Views.Components.BUberMapUIAddOnsManager;
 import com.example.buber.Views.Components.BUberNotificationManager;
 import com.example.buber.Views.UIErrorHandler;
 import com.google.android.gms.common.ConnectionResult;
@@ -54,29 +57,22 @@ import static com.example.buber.Model.User.TYPE.RIDER;
 public class MapActivity extends AppCompatActivity implements Observer, OnMapReadyCallback, UIErrorHandler {
 
     // GOOGLE MAP STATE
+    public Location mLastKnownUserLocation;
     private static final int ERROR_DIALOG_REQUEST = 9001;
     private GoogleMap mMap;
     private boolean mLocationPermissionGranted = false;
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1234;
-    private Location mLastKnownUserLocation;
     private static final float DEFAULT_ZOOM = 15;
+    private LocationListener locationListener;
+    private LocationManager locationManager;
+    private final long MIN_MAP_UPDATE_INTERVAL = 1000; // update map on a 1 second delta
+    private final long MIN_MAP_UPDATE_DISTANCE = 5; // update map on a 5 meters delta (battery life conservation)
 
     // TRIP STATE
-    private Trip.STATUS currentTripStatus = null;
+    public Trip.STATUS currentTripStatus = null;
 
-    // RIDER MAIN ACTION BUTTONS
-    private Button riderRequestMainBtn;
-    private Button riderRequestCancelMainBtn;
-    private Button riderCancelPickupBtn;
-
-    // DRIVER MAIN ACTION BUTTONS
-    private Button driverShowRequestsMainBtn;
-
-    // SIDEBAR STATE
-    private boolean showSideBar;
-    private Button settingsButton;
-    private View sideBarView;
-    private Button statusButton;
+    // OTHER UI ELEMENTS (BUTTONS, SIDE-PANEL, and STATUS)
+    private BUberMapUIAddOnsManager uiAddOnsManager;
 
     // NOTIFICATIONS
     private BUberNotificationManager notifManager;
@@ -98,24 +94,8 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
                     "map connection failed", Toast.LENGTH_SHORT).show();
         }
 
-        // INSTANTIATE SIDEBAR BUTTONS
-        settingsButton = findViewById(R.id.settings_button);
-        sideBarView = findViewById(R.id.sidebar);
-
-
-        // INSTANTIATE RIDER MAIN ACTION BUTTONS
-        riderRequestMainBtn = findViewById(R.id.rider_request_btn);
-        riderRequestCancelMainBtn = findViewById(R.id.rider_request_cancel_btn);
-        riderCancelPickupBtn = findViewById(R.id.rider_cancel_pickup_btn);
-
-        // INSTANTIATE DRIVER MAIN ACTION BUTTONS
-        driverShowRequestsMainBtn = findViewById(R.id.driver_show_requests_btn);
-
-        // INSTANTIATE STATUS BUTTON
-        statusButton = findViewById(R.id.rideStatus);
-
-        // HIDE SIDEBAR
-        hideSettingsPanel();
+        // INSTANTIATE UI ADD-ONs MANAGER
+        uiAddOnsManager = new BUberMapUIAddOnsManager(this);
 
         // INSTANTIATE NOTIFICATION MANAGER
         notifManager = new BUberNotificationManager(this, MapActivity.class);
@@ -124,8 +104,8 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         Trip sessionTrip = App.getModel().getSessionTrip();
         if (sessionTrip != null) {
             currentTripStatus = sessionTrip.getStatus();
-            statusButton.setVisibility(View.VISIBLE);
-            showActiveMainActionButton();
+            uiAddOnsManager.showStatusButton();
+            uiAddOnsManager.showActiveMainActionButton();
         }
     }
 
@@ -161,7 +141,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
                 }
                 this.currentTripStatus = null;
             }
-            showActiveMainActionButton();
+            uiAddOnsManager.showActiveMainActionButton();
         }
         // Handles Forward State Transitions regarding Trip Progress
         else if (sessionTrip.getStatus() != currentTripStatus) {
@@ -186,10 +166,11 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
                         notifManager.notifyOnDriverChannel(
                                 5, "The rider has accepted and is now ready for pickup!",
                                 "Rider Username: " + sessionTrip.getRiderUserName(),
-                                Color.GREEN);                    }
+                                Color.GREEN);
+                    }
                     break;
             }
-            showActiveMainActionButton();
+            uiAddOnsManager.showActiveMainActionButton();
         }
         // Unknown states
         else {
@@ -197,227 +178,77 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         }
     }
 
-    /***** MAIN ACTION BUTTON HANDLERS ******/
-    /**
-     * handleRiderRequestBtn handles user interaction with the rider request button
-     *
-     * @param v is an instance of the view
-     */
-    public void handleRiderRequestBtn(View v) {
-        Intent intent = new Intent(getBaseContext(), TripBuilderActivity.class);
-        intent.putExtra(
-                "currentLatLong",
-                new double[]{mLastKnownUserLocation.getLatitude(), mLastKnownUserLocation.getLongitude()});
-        startActivity(intent);
-    }
 
-    /**
-     * Handles user interaction with rider cancel button
-     */
-    public void handleRiderCancelBtn(View v) {
-        DialogInterface.OnClickListener dialogClickListener = ((DialogInterface dialog, int choice) -> {
-            switch (choice) {
-                case DialogInterface.BUTTON_POSITIVE:
-                    Toast.makeText(MapActivity.this, "Cancelling trip...", Toast.LENGTH_SHORT).show();
-                    ApplicationController.deleteRiderCurrentTrip(MapActivity.this);
-                    break;
-                case DialogInterface.BUTTON_NEGATIVE:
-                    break;
-            }
-        });
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Cancel request?")
-                .setPositiveButton("Yes", dialogClickListener)
-                .setNegativeButton("No", dialogClickListener).show();
-    }
-
-    /**
-     * Handles user interaction with rider accept button
-     */
-    public void handleRiderOfferAccept() {
-        if (this.currentTripStatus != Trip.STATUS.DRIVER_ACCEPT) {
-            return;
-        }
-        DialogInterface.OnClickListener dialogClickListener = ((DialogInterface dialog, int choice) -> {
-            switch (choice) {
-                case DialogInterface.BUTTON_POSITIVE:
-                    ApplicationController.handleNotifyDriverForPickup();
-                    break;
-                case DialogInterface.BUTTON_NEGATIVE:
-                    Toast.makeText(MapActivity.this, "Cancelling trip...", Toast.LENGTH_SHORT).show();
-                    ApplicationController.deleteRiderCurrentTrip(MapActivity.this);
-                    break;
-            }
-        });
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("A driver has accepted! Proceed?")
-                .setPositiveButton("Yes", dialogClickListener)
-                .setNegativeButton("No", dialogClickListener).show();
-    }
-
-    /**
-     * Handles user interaction with rider cancel pickup button
-     */
-    public void handleRiderCancelPickupBtn(View v) {
-        Toast.makeText(MapActivity.this, "Cancelling trip...", Toast.LENGTH_SHORT).show();
-        ApplicationController.deleteRiderCurrentTrip(MapActivity.this);
-    }
-
-    /**
-     * Handles interaction with driver show requests button
-     *
-     * @param v is the view instance
-     */
-    public void handleDriverShowRequestsBtn(View v) {
-        startActivity(new Intent(getBaseContext(), TripSearchActivity.class));
-    }
-
-    /**
-     * Shows active main action button when necessary
-     */
-    public void showActiveMainActionButton() {
-        hideMainActionButtons();
-        User.TYPE currentUserType = App.getModel().getSessionUser().getType();
-
-        if (this.currentTripStatus == null) {
-            statusButton.setVisibility(View.GONE);
-
-            if (currentUserType == RIDER) {
-                riderRequestMainBtn.setVisibility(View.VISIBLE);
-            } else if (currentUserType == DRIVER) {
-                driverShowRequestsMainBtn.setVisibility(View.VISIBLE);
-            }
-
-        } else {
-            statusButton.setVisibility(View.VISIBLE);
-
-            switch (this.currentTripStatus) {
-                case PENDING:
-                    if (currentUserType == RIDER) {
-                        riderRequestCancelMainBtn.setVisibility(View.VISIBLE);
-                    }
-                    break;
-                case DRIVER_ACCEPT:
-                    if (currentUserType == RIDER) {
-                        handleRiderOfferAccept();
-                    }
-                    break;
-                case DRIVER_PICKING_UP:
-                    if (currentUserType == RIDER) {
-                        riderCancelPickupBtn.setVisibility(View.VISIBLE);
-                    }
-                    break;
-                case EN_ROUTE:
-                    break;
-                case COMPLETED:
-                    break;
-            }
-        }
-    }
-
-    /**
-     * Hides main action buttons when necessaru
-     */
-    public void hideMainActionButtons() {
-        riderRequestMainBtn.setVisibility(View.INVISIBLE);
-        riderRequestCancelMainBtn.setVisibility(View.INVISIBLE);
-        riderCancelPickupBtn.setVisibility(View.INVISIBLE);
-
-        driverShowRequestsMainBtn.setVisibility(View.INVISIBLE);
-    }
-
-    /***** HANDLING SETTINGS PANEL BUTTONS ******/
     /**
      * handleScreenClick handles what happens when user clicks on the screen
      *
      * @param v is the view instance
      */
     public void handleScreenClick(View v) {
-        if (showSideBar) {
-            hideSettingsPanel();
-            showActiveMainActionButton();
+        if (uiAddOnsManager.isShowSideBar()) {
+            uiAddOnsManager.hideSettingsPanel();
+            uiAddOnsManager.showActiveMainActionButton();
         } else {
             // TODO: Handle Everything else
         }
     }
 
+
     /**
-     * Handles click on test
+     * onMapReady lets the user know that the location is being gotten if permissions are granted
      *
-     * @param v is the view instance
-     */
-    public void handleTestClick(View v) {
-        startActivity(new Intent(MapActivity.this, RequestStatusActivity.class));
-    }
-
-    /**
-     * Changes activity to EditAccountActivity when Account button is clicked
-     */
-    public void handleAccountButtonClick(View v) {
-        startActivity(new Intent(MapActivity.this, EditAccountActivity.class));
-        hideSettingsPanel();
-    }
-
-    /**
-     * Logs user out of app when log out button is clicked
-     */
-    public void handleLogoutButtonClick(View v) {
-        User curUser = App.getModel().getSessionUser();
-        curUser.setType(null);
-        Log.d("APPSERVICE", "map logging out");
-        App.getController().updateNonCriticalUserFields(curUser, this);
-
-        App.getController().logout();
-        startActivity(new Intent(MapActivity.this, LoginActivity.class));
-        this.finish();
-    }
-
-    /**
-     * Shows settings sidebar panel when necessary
-     */
-    public void showSettingsPanel(View v) {
-        sideBarView.setVisibility(View.VISIBLE);
-        settingsButton.setVisibility(View.INVISIBLE);
-        showSideBar = true;
-
-        hideMainActionButtons();
-    }
-
-    /**
-     * Hides settings sidebar panel when necessary
-     */
-    public void hideSettingsPanel() {
-        sideBarView.setVisibility(View.INVISIBLE);
-        settingsButton.setVisibility(View.VISIBLE);
-        showSideBar = false;
-
-        showActiveMainActionButton();
-    }
-
-
-
-    /***** DECLARING REST OF LIFECYCLE METHODS ******/
-    /**
-     * onDestroy method destructs activity if it is closed down
+     * @param googleMap is the map instance of GoogleMap
      */
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        // THIS CODE SHOULD BE IMPLEMENTED IN EVERY VIEW
-        ApplicationModel m = App.getModel();
-        m.deleteObserver(this);
-    }
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+        if (mLocationPermissionGranted) {
+            Log.d("GETTING LOCATION", "Trying to get current location");
+            getDeviceLocation();
+            mMap.setMyLocationEnabled(true);
+        }
 
-    /**
-     * onError handles UI Errors if there are any
-     */
-    @Override
-    public void onError(Error e) {
-        // TODO: Handle UI Errors
-    }
+        mMap.setOnMapClickListener(latLng -> {
+            if (uiAddOnsManager.isShowSideBar()) {
+                uiAddOnsManager.hideSettingsPanel();
+                uiAddOnsManager.showActiveMainActionButton();
+            }
+        });
 
+        locationListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+
+            }
+
+            @Override
+            public void onProviderEnabled(String provider) {
+
+            }
+
+            @Override
+            public void onProviderDisabled(String provider) {
+
+            }
+        };
+
+        try {
+            locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+            locationManager.requestLocationUpdates(
+                    LocationManager.GPS_PROVIDER,
+                    MIN_MAP_UPDATE_INTERVAL,
+                    MIN_MAP_UPDATE_DISTANCE,
+                    locationListener);
+        } catch (SecurityException sece) {
+            sece.printStackTrace();
+        }
+
+    }
 
     /***** BUILDING CUSTOM GOOGLE MAP (CODE REFERENCED FROM GOOGLE API DOCS) ******/
     public void initializeMap() {
@@ -514,28 +345,6 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
     }
 
     /**
-     * onMapReady lets the user know that the location is being gotten if permissions are granted
-     *
-     * @param googleMap is the map instance of GoogleMap
-     */
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
-        if (mLocationPermissionGranted) {
-            Log.d("GETTING LOCATION", "Trying to get current location");
-            getDeviceLocation();
-            mMap.setMyLocationEnabled(true);
-        }
-
-        mMap.setOnMapClickListener(latLng -> {
-            if (showSideBar) {
-                hideSettingsPanel();
-                showActiveMainActionButton();
-            }
-        });
-    }
-
-    /**
      * onRequestPermissionsResult gives the result of of the user permissions request
      *
      * @param requestCode  is the result of the request
@@ -559,5 +368,26 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
                 }
             }
         }
+    }
+
+
+    /***** DECLARING REST OF LIFECYCLE METHODS ******/
+    /**
+     * onDestroy method destructs activity if it is closed down
+     */
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        // THIS CODE SHOULD BE IMPLEMENTED IN EVERY VIEW
+        ApplicationModel m = App.getModel();
+        m.deleteObserver(this);
+    }
+
+    /**
+     * onError handles UI Errors if there are any
+     */
+    @Override
+    public void onError(Error e) {
+        // TODO: Handle UI Errors
     }
 }
