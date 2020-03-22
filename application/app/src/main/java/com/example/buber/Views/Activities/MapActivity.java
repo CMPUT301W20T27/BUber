@@ -124,20 +124,20 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
                     case DRIVER_ACCEPT:
                         if (currentUserType == DRIVER) {
                             notifManager.notifyOnDriverChannel(
-                                    1, "Unfortunately, the rider has declined your offer.",
+                                    1,"Unfortunately, the rider has declined your offer.",
                                     "", Color.RED);
                         }
                         break;
                     case DRIVER_PICKING_UP:
                         if (currentUserType == DRIVER) {
                             notifManager.notifyOnDriverChannel(
-                                    1, "Unfortunately, the rider no longer needs a ride from you.",
+                                    2, "Unfortunately, the rider no longer needs a ride from you.",
                                     "Rider no longer needs to be picked up.", Color.RED);
                         }
                         break;
                     case EN_ROUTE:
                         notifManager.notifyOnAllChannels(
-                                1, "Unfortunately, a rider or driver has stopped this trip.",
+                                3, "Unfortunately, a rider or driver has stopped this trip.",
                                 "", Color.RED);
                 }
                 this.currentTripStatus = null;
@@ -151,7 +151,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
                 case DRIVER_ACCEPT:
                     if (currentUserType == RIDER) {
                         notifManager.notifyOnRiderChannel(
-                                1, "A driver has accepted your request!",
+                                4,"A driver has accepted your request!",
                                 "BUber requires your action!",
                                 Color.GREEN);
                     }
@@ -159,21 +159,22 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
                 case DRIVER_PICKING_UP:
                     if (currentUserType == RIDER) {
                         notifManager.notifyOnRiderChannel(
-                                4, "Your ride is on the way!",
+                                5, "Your ride is on the way!",
                                 "",
                                 Color.GREEN
                         );
                     } else if (currentUserType == DRIVER) {
                         notifManager.notifyOnDriverChannel(
-                                1, "The rider has accepted and is now ready for pickup!",
+                                6, "The rider has accepted and is now ready for pickup!",
                                 "Rider Username: " + sessionTrip.getRiderUserName(),
                                 Color.GREEN);
+                        verifyDriverHasArrived();
                     }
                     break;
                 case DRIVER_ARRIVED:
                     if (currentUserType == RIDER) {
                         notifManager.notifyOnRiderChannel(
-                                1, "Your driver has arrived!",
+                                7, "Your driver has arrived!",
                                 "",
                                 Color.GREEN
                         );
@@ -188,6 +189,24 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         }
     }
 
+    public void verifyDriverHasArrived() {
+        getDeviceLocation(false);
+        Trip sessionTrip = App.getModel().getSessionTrip();
+        if (sessionTrip != null && mLastKnownUserLocation != null) {
+            User.TYPE currentUserType = App.getModel().getSessionUser().getType();
+            UserLocation startUserLocation = sessionTrip.getStartUserLocation();
+            UserLocation driverLoc = new UserLocation(
+                    mLastKnownUserLocation.getLatitude(),
+                    mLastKnownUserLocation.getLongitude());
+
+            if (currentUserType == DRIVER && currentTripStatus == DRIVER_PICKING_UP) {
+                if (startUserLocation.distanceTo(driverLoc) <= GEOFENCE_DETECTION_TOLERANCE) {
+                    Toast.makeText(getBaseContext(), "Notifying rider you have arrived...", Toast.LENGTH_LONG).show();
+                    App.getController().handleNotifyRiderForPickup();
+                }
+            }
+        }
+    }
 
     /**
      * onMapReady lets the user know that the location is being gotten if permissions are granted
@@ -198,7 +217,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         if (mLocationPermissionGranted) {
-            getDeviceLocation();
+            getDeviceLocation(true);
             mMap.setMyLocationEnabled(true);
         }
 
@@ -212,24 +231,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
-                Trip sessionTrip = App.getModel().getSessionTrip();
-                if (sessionTrip != null) {
-                    try {
-                        User.TYPE currentUserType = App.getModel().getSessionUser().getType();
-                        UserLocation startUserLocation = sessionTrip.getStartUserLocation();
-                        UserLocation driverLoc = new UserLocation(location.getLatitude(), location.getLongitude());
-
-                        if (currentUserType == DRIVER && currentTripStatus == DRIVER_PICKING_UP) {
-                            if (startUserLocation.distanceTo(driverLoc) <= GEOFENCE_DETECTION_TOLERANCE) {
-                                // TODO: be sure to enter the EN_ROUTE state if drive happens to already be where the RIDER is at
-                                Toast.makeText(getBaseContext(), "Notifying rider you have arrived...", Toast.LENGTH_LONG).show();
-                                App.getController().handleNotifyRiderForPickup();
-                            }
-                        }
-                    } catch (SecurityException sece) {
-                        sece.printStackTrace();
-                    }
-                }
+                verifyDriverHasArrived();
             }
 
             @Override
@@ -280,7 +282,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
     }
 
     /** Gets the location of the users device **/
-    private void getDeviceLocation() {
+    private void getDeviceLocation(boolean updateFirebase) {
         /*
          * Get the best and most recent location of the device, which may be null in rare
          * cases when a location is not available.
@@ -296,14 +298,15 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
                         mLastKnownUserLocation = (Location) task.getResult();
                         //TODO::fix controller lat and long
 
-                        App.getController()
-                                .updateUserLocation(
-                                        new UserLocation(
-                                                mLastKnownUserLocation.getLatitude(),
-                                                mLastKnownUserLocation.getLongitude()
-                                        )
-                                );
-
+                        if (updateFirebase) {
+                            App.getController()
+                                    .updateUserLocation(
+                                            new UserLocation(
+                                                    mLastKnownUserLocation.getLatitude(),
+                                                    mLastKnownUserLocation.getLongitude()
+                                            )
+                                    );
+                        }
 
                         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                                 new LatLng(mLastKnownUserLocation.getLatitude(),

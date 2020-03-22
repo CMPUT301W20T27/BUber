@@ -314,8 +314,8 @@ public class DBManager {
                                         Trip trip = documentSnapshot1.toObject(Trip.class);
                                         if (trip != null && updatedTrip != null) {
                                             Trip.STATUS newStatus = trip.getStatus();
-                                            if (updatedTrip.nextStatusValid(newStatus)) {
-                                                Trip newTrip = App.getModel().getSessionTrip();
+                                            Trip newTrip = App.getModel().getSessionTrip();
+                                            if (updatedTrip.nextStatusValid(newStatus) && newTrip != null) {
                                                 newTrip.setStatus(newStatus);
                                                 App.getModel().setSessionTrip(newTrip);
                                             }
