@@ -189,12 +189,33 @@ public class ApplicationController {
         ApplicationService.deleteRiderCurrentTrip(m.getSessionTrip().getRiderID(), (resultData, err) -> {
             if (err != null) view.onError(err);
             else {
-                m.detachTripListener();
                 m.setSessionTrip(null);
+                m.detachTripListener();
             }
         });
     }
 
+    /**
+     * Gets the driver user's selected trip and changes the Trip status in Firebase
+     * @param selectedTrip the drivers selected trip
+     */
+    public static void handleDriverTripSelect(Trip selectedTrip) {
+        ApplicationModel m = App.getModel();
+        selectedTrip.setStatus(Trip.STATUS.DRIVER_ACCEPT);
+        String userId = App.getAuthDBManager().getCurrentUserID();
+        selectedTrip.setDriverID(userId);
+        ApplicationService.selectTrip(selectedTrip.getRiderID(), selectedTrip, ((resultData, err) -> {
+            if (err != null) {
+                List<Observer> mapObservers = m.getObserversMatchingClass(MapActivity.class);
+                for (Observer map : mapObservers) {
+                    ((UIErrorHandler) map).onError(err);
+                }
+            } else {
+                m.setSessionTrip(selectedTrip);
+                m.setSessionTripList(null);
+            }
+        }));
+    }
 
     /** Controls what happens after rider accept ride offer **/
     public static void handleNotifyDriverForPickup() {
@@ -228,27 +249,23 @@ public class ApplicationController {
         }));
     }
 
-    /**
-     * Gets the driver user's selected trip and changes the Trip status in Firebase
-     * @param selectedTrip the drivers selected trip
-    */
-    public static void handleDriverTripSelect(Trip selectedTrip) {
-        ApplicationModel m = App.getModel();
-        selectedTrip.setStatus(Trip.STATUS.DRIVER_ACCEPT);
-        String userId = App.getAuthDBManager().getCurrentUserID();
-        selectedTrip.setDriverID(userId);
-        ApplicationService.selectTrip(selectedTrip.getRiderID(), selectedTrip, ((resultData, err) -> {
+    /** Controls what happens after rider accept ride offer **/
+    public static void beginTrip() {
+        Trip currentTrip = App.getModel().getSessionTrip();
+        currentTrip.setStatus(Trip.STATUS.EN_ROUTE);
+        ApplicationService.beginTrip(currentTrip.getRiderID(), currentTrip, ((resultData, err) -> {
             if (err != null) {
-                List<Observer> mapObservers = m.getObserversMatchingClass(MapActivity.class);
+                List<Observer> mapObservers = App.getModel().getObserversMatchingClass(MapActivity.class);
                 for (Observer map : mapObservers) {
                     ((UIErrorHandler) map).onError(err);
                 }
             } else {
-                m.setSessionTrip(selectedTrip);
-                m.setSessionTripList(null);
+                App.getModel().setSessionTrip(currentTrip);
             }
         }));
     }
+
+
     /**
      * Updates non critical user fields when they are edited by user. On success set the new session user.
      * @param updatedSessionUser the updated user object

@@ -21,6 +21,8 @@ import com.example.buber.Views.Activities.RequestStatusActivity;
 import com.example.buber.Views.Activities.TripBuilderActivity;
 import com.example.buber.Views.Activities.TripSearchActivity;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import static com.example.buber.Model.User.TYPE.DRIVER;
 import static com.example.buber.Model.User.TYPE.RIDER;
 
@@ -34,6 +36,9 @@ public class BUberMapUIAddOnsManager {
 
     // DRIVER MAIN ACTION BUTTON(s)
     private Button driverShowRequestsMainBtn;
+
+    // RIDER/DRIVER BUTTON(s)
+    private Button cancelRideInProgress;
 
     // STATUS BUTTON(s)
     private Button statusButton;
@@ -59,13 +64,16 @@ public class BUberMapUIAddOnsManager {
         // INSTANTIATE DRIVER MAIN ACTION BUTTONS
         this.driverShowRequestsMainBtn = map.findViewById(R.id.driver_show_requests_btn);
 
+        // INSTANTIATE RIDER/DRIVER BUTTON(s)
+        this.cancelRideInProgress = map.findViewById(R.id.cancel_ride_in_progess);
+
         // INSTANTIATE STATUS BUTTON
-        statusButton = map.findViewById(R.id.rideStatus);
+        this.statusButton = map.findViewById(R.id.rideStatus);
 
         // INSTANTIATE SIDEBAR BUTTONS
-        settingsButton = map.findViewById(R.id.settings_button);
-        accountButton = map.findViewById(R.id.account_button);
-        logoutButton = map.findViewById(R.id.logout_button);
+        this.settingsButton = map.findViewById(R.id.settings_button);
+        this.accountButton = map.findViewById(R.id.account_button);
+        this.logoutButton = map.findViewById(R.id.logout_button);
 
         // SIDEBAR STATE
         sideBarView = map.findViewById(R.id.sidebar);
@@ -124,6 +132,33 @@ public class BUberMapUIAddOnsManager {
          */
         driverShowRequestsMainBtn.setOnClickListener((View v) -> {
             map.startActivity(new Intent(map, TripSearchActivity.class));
+        });
+
+        /**
+         * Handles ride-in-progress
+         *
+         * @param v is the view instance
+         */
+        cancelRideInProgress.setOnClickListener((View v) -> {
+            if (map.currentTripStatus != Trip.STATUS.EN_ROUTE) {
+                return;
+            }
+
+            DialogInterface.OnClickListener dialogClickListener = ((DialogInterface dialog, int choice) -> {
+                switch (choice) {
+                    case DialogInterface.BUTTON_POSITIVE:
+                        Toast.makeText(map, "Cancelling trip...", Toast.LENGTH_SHORT).show();
+                        ApplicationController.deleteRiderCurrentTrip(map);
+                        break;
+                    case DialogInterface.BUTTON_NEGATIVE:
+                        break;
+                }
+            });
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(map);
+            builder.setMessage("Ride in progress! Are you extra sure?")
+                    .setPositiveButton("Yes", dialogClickListener)
+                    .setNegativeButton("No", dialogClickListener).show();
         });
 
 
@@ -201,8 +236,12 @@ public class BUberMapUIAddOnsManager {
                     }
                     break;
                 case DRIVER_ARRIVED:
+                    if (currentUserType == RIDER) {
+                        ensureRiderHasBoardedRide();
+                    }
                     break;
                 case EN_ROUTE:
+                    cancelRideInProgress.setVisibility(View.VISIBLE);
                     break;
                 case COMPLETED:
                     break;
@@ -215,14 +254,19 @@ public class BUberMapUIAddOnsManager {
         if (map.currentTripStatus != Trip.STATUS.DRIVER_ACCEPT) {
             return;
         }
+
+        // can't modify local vars in Java, so a thread-safe AtomicBoolean wrapper is used
+        final AtomicBoolean userHasConfirmed = new AtomicBoolean(false); // constructor defaults to false
         DialogInterface.OnClickListener dialogClickListener = ((DialogInterface dialog, int choice) -> {
             switch (choice) {
                 case DialogInterface.BUTTON_POSITIVE:
                     ApplicationController.handleNotifyDriverForPickup();
+                    userHasConfirmed.set(true);
                     break;
                 case DialogInterface.BUTTON_NEGATIVE:
                     Toast.makeText(map, "Cancelling trip...", Toast.LENGTH_SHORT).show();
                     ApplicationController.deleteRiderCurrentTrip(map);
+                    userHasConfirmed.set(true);
                     break;
             }
         });
@@ -230,7 +274,59 @@ public class BUberMapUIAddOnsManager {
         AlertDialog.Builder builder = new AlertDialog.Builder(map);
         builder.setMessage("A driver has accepted! Proceed?")
                 .setPositiveButton("Yes", dialogClickListener)
-                .setNegativeButton("No", dialogClickListener).show();
+                .setNegativeButton("No", dialogClickListener);
+
+        // This builder MUST persist because the USER has to be sure they are on their way!
+        builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                if (!userHasConfirmed.get()) {
+                    builder.show();
+                }
+            }
+        });
+
+        builder.show();
+    }
+
+    /** Handles user interaction with rider accept button **/
+    public void ensureRiderHasBoardedRide() {
+        if (map.currentTripStatus != Trip.STATUS.DRIVER_ARRIVED) {
+            return;
+        }
+
+        // can't modify local vars in Java, so a thread-safe AtomicBoolean wrapper is used
+        final AtomicBoolean userHasConfirmed = new AtomicBoolean(false); // constructor defaults to false
+        DialogInterface.OnClickListener dialogClickListener = ((DialogInterface dialog, int choice) -> {
+            switch (choice) {
+                case DialogInterface.BUTTON_POSITIVE:
+                    ApplicationController.beginTrip();
+                    userHasConfirmed.set(true);
+                    break;
+                case DialogInterface.BUTTON_NEGATIVE:
+                    Toast.makeText(map, "Sorry to see you go.\nCancelling trip...", Toast.LENGTH_SHORT).show();
+                    userHasConfirmed.set(true);
+                    ApplicationController.deleteRiderCurrentTrip(map);
+                    break;
+            }
+        });
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(map);
+        builder.setMessage("Your ride is here.\nPlease confirm that your trip is about to begin.")
+                .setPositiveButton("Yes", dialogClickListener)
+                .setNegativeButton("No, I am cancelling", dialogClickListener).create();
+
+        // This builder MUST persist because the USER has to be sure they are on their way!
+        builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                if (!userHasConfirmed.get()) {
+                    builder.show();
+                }
+            }
+        });
+
+        builder.show();
     }
 
 
@@ -243,6 +339,8 @@ public class BUberMapUIAddOnsManager {
         riderCancelPickupBtn.setVisibility(View.INVISIBLE);
 
         driverShowRequestsMainBtn.setVisibility(View.INVISIBLE);
+
+        cancelRideInProgress.setVisibility(View.INVISIBLE);
     }
 
     /**

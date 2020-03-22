@@ -69,6 +69,17 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
+    <Button
+        android:id="@+id/cancel_ride_in_progess"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Cancel Ride In Progress"
+        android:textIsSelectable="false"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
     <!--  DRIVER MAIN ACTION BUTTONS  -->
     <Button
         android:id="@+id/driver_show_requests_btn"

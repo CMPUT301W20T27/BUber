@@ -64,7 +64,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
     private LocationManager locationManager;
     private final long MIN_MAP_UPDATE_INTERVAL = 1000; // update map on a 1 second delta
     private final long MIN_MAP_UPDATE_DISTANCE = 5; // update map on a 5 meters delta (battery life conservation)
-    private final double GEOFENCE_DETECTION_TOLERANCE = 0.045; // 45 meters is the average house perimeter width in North America
+    private final double GEOFENCE_DETECTION_TOLERANCE = 0.040; // 40 meters is the average house perimeter width in North America
 
     // LOCAL TRIP STATE
     public Trip.STATUS currentTripStatus = null;
@@ -131,10 +131,14 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
                     case DRIVER_PICKING_UP:
                         if (currentUserType == DRIVER) {
                             notifManager.notifyOnDriverChannel(
-                                    2, "Unfortunately, the rider no longer needs a ride from you.",
+                                    1, "Unfortunately, the rider no longer needs a ride from you.",
                                     "Rider no longer needs to be picked up.", Color.RED);
                         }
                         break;
+                    case EN_ROUTE:
+                        notifManager.notifyOnAllChannels(
+                                1, "Unfortunately, a rider or driver has stopped this trip.",
+                                "", Color.RED);
                 }
                 this.currentTripStatus = null;
             }
@@ -147,7 +151,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
                 case DRIVER_ACCEPT:
                     if (currentUserType == RIDER) {
                         notifManager.notifyOnRiderChannel(
-                                3, "A driver has accepted your request!",
+                                1, "A driver has accepted your request!",
                                 "BUber requires your action!",
                                 Color.GREEN);
                     }
@@ -161,7 +165,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
                         );
                     } else if (currentUserType == DRIVER) {
                         notifManager.notifyOnDriverChannel(
-                                5, "The rider has accepted and is now ready for pickup!",
+                                1, "The rider has accepted and is now ready for pickup!",
                                 "Rider Username: " + sessionTrip.getRiderUserName(),
                                 Color.GREEN);
                     }
@@ -169,7 +173,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
                 case DRIVER_ARRIVED:
                     if (currentUserType == RIDER) {
                         notifManager.notifyOnRiderChannel(
-                                6, "Your driver has arrived!",
+                                1, "Your driver has arrived!",
                                 "",
                                 Color.GREEN
                         );
@@ -217,6 +221,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
 
                         if (currentUserType == DRIVER && currentTripStatus == DRIVER_PICKING_UP) {
                             if (startUserLocation.distanceTo(driverLoc) <= GEOFENCE_DETECTION_TOLERANCE) {
+                                // TODO: be sure to enter the EN_ROUTE state if drive happens to already be where the RIDER is at
                                 Toast.makeText(getBaseContext(), "Notifying rider you have arrived...", Toast.LENGTH_LONG).show();
                                 App.getController().handleNotifyRiderForPickup();
                             }

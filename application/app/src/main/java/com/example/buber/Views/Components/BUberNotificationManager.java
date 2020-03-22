@@ -70,4 +70,9 @@ public class BUberNotificationManager {
 
         notificationManager.notify(id, riderNotification);
     }
+
+    public void notifyOnAllChannels(int id, String title, String content, int color) {
+        notifyOnRiderChannel(id, title, content, color);
+        notifyOnDriverChannel(id, title, content, color);
+    }
 }
