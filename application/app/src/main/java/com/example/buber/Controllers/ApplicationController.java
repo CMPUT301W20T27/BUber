@@ -196,13 +196,27 @@ public class ApplicationController {
     }
 
 
-    /**
-     * Controls what happens after rider accept ride offer
-     */
+    /** Controls what happens after rider accept ride offer **/
     public static void handleNotifyDriverForPickup() {
         Trip currentTrip = App.getModel().getSessionTrip();
         currentTrip.setStatus(Trip.STATUS.DRIVER_PICKING_UP);
         ApplicationService.notifyDriverForPickup(currentTrip.getRiderID(), currentTrip, ((resultData, err) -> {
+            if (err != null) {
+                List<Observer> mapObservers = App.getModel().getObserversMatchingClass(MapActivity.class);
+                for (Observer map : mapObservers) {
+                    ((UIErrorHandler) map).onError(err);
+                }
+            } else {
+                App.getModel().setSessionTrip(currentTrip);
+            }
+        }));
+    }
+
+    /** Controls what happens after rider accept ride offer **/
+    public static void handleNotifyRiderForPickup() {
+        Trip currentTrip = App.getModel().getSessionTrip();
+        currentTrip.setStatus(Trip.STATUS.DRIVER_ARRIVED);
+        ApplicationService.notifyRiderForPickup(currentTrip.getRiderID(), currentTrip, ((resultData, err) -> {
             if (err != null) {
                 List<Observer> mapObservers = App.getModel().getObserversMatchingClass(MapActivity.class);
                 for (Observer map : mapObservers) {

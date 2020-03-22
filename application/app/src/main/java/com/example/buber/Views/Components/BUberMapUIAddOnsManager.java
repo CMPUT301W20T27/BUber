@@ -74,6 +74,7 @@ public class BUberMapUIAddOnsManager {
         setMapButtonOnClickListeners();
     }
 
+    /** Sets up OnClick listeners for ALL buttons on the MapActivity **/
     private void setMapButtonOnClickListeners() {
         /**
          * handleRiderRequestBtn handles user interaction with the rider request button
@@ -166,10 +167,7 @@ public class BUberMapUIAddOnsManager {
         });
     }
 
-
-    /**
-     * Shows active main action button when necessary
-     */
+    /** Shows active main action button when necessary **/
     public void showActiveMainActionButton() {
         hideMainActionButtons();
         User.TYPE currentUserType = App.getModel().getSessionUser().getType();
@@ -202,6 +200,8 @@ public class BUberMapUIAddOnsManager {
                         riderCancelPickupBtn.setVisibility(View.VISIBLE);
                     }
                     break;
+                case DRIVER_ARRIVED:
+                    break;
                 case EN_ROUTE:
                     break;
                 case COMPLETED:
@@ -210,9 +210,7 @@ public class BUberMapUIAddOnsManager {
         }
     }
 
-    /**
-     * Handles user interaction with rider accept button
-     */
+    /** Handles user interaction with rider accept button **/
     public void handleRiderOfferAccept() {
         if (map.currentTripStatus != Trip.STATUS.DRIVER_ACCEPT) {
             return;
@@ -246,7 +244,6 @@ public class BUberMapUIAddOnsManager {
 
         driverShowRequestsMainBtn.setVisibility(View.INVISIBLE);
     }
-
 
     /**
      * Hides settings sidebar panel when necessary

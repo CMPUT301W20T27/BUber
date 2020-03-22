@@ -1,8 +1,6 @@
 package com.example.buber.Views.Activities;
 
 import android.app.Dialog;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
@@ -10,18 +8,14 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.buber.App;
-import com.example.buber.Controllers.ApplicationController;
 import com.example.buber.Model.ApplicationModel;
 import com.example.buber.Model.Trip;
 import com.example.buber.Model.User;
@@ -33,6 +27,7 @@ import com.example.buber.Views.UIErrorHandler;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.GeofencingClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -44,6 +39,8 @@ import com.google.android.gms.tasks.Task;
 import java.util.Observable;
 import java.util.Observer;
 
+import static com.example.buber.Model.Trip.STATUS.DRIVER_PICKING_UP;
+import static com.example.buber.Model.Trip.STATUS.EN_ROUTE;
 import static com.example.buber.Model.User.TYPE.DRIVER;
 import static com.example.buber.Model.User.TYPE.RIDER;
 
@@ -67,8 +64,9 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
     private LocationManager locationManager;
     private final long MIN_MAP_UPDATE_INTERVAL = 1000; // update map on a 1 second delta
     private final long MIN_MAP_UPDATE_DISTANCE = 5; // update map on a 5 meters delta (battery life conservation)
+    private final double GEOFENCE_DETECTION_TOLERANCE = 0.045; // 45 meters is the average house perimeter width in North America
 
-    // TRIP STATE
+    // LOCAL TRIP STATE
     public Trip.STATUS currentTripStatus = null;
 
     // OTHER UI ELEMENTS (BUTTONS, SIDE-PANEL, and STATUS)
@@ -109,7 +107,6 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         }
     }
 
-    /***** OBSERVING OBSERVABLES ******/
     /**
      * update method updates the activity when necessary, USED MOSTLY FOR NOTIFICATIONS
      *
@@ -169,27 +166,21 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
                                 Color.GREEN);
                     }
                     break;
+                case DRIVER_ARRIVED:
+                    if (currentUserType == RIDER) {
+                        notifManager.notifyOnRiderChannel(
+                                6, "Your driver has arrived!",
+                                "",
+                                Color.GREEN
+                        );
+                    }
+
             }
             uiAddOnsManager.showActiveMainActionButton();
         }
         // Unknown states
         else {
             Log.e("%s", "Unknown state has been encountered!");
-        }
-    }
-
-
-    /**
-     * handleScreenClick handles what happens when user clicks on the screen
-     *
-     * @param v is the view instance
-     */
-    public void handleScreenClick(View v) {
-        if (uiAddOnsManager.isShowSideBar()) {
-            uiAddOnsManager.hideSettingsPanel();
-            uiAddOnsManager.showActiveMainActionButton();
-        } else {
-            // TODO: Handle Everything else
         }
     }
 
@@ -203,7 +194,6 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         if (mLocationPermissionGranted) {
-            Log.d("GETTING LOCATION", "Trying to get current location");
             getDeviceLocation();
             mMap.setMyLocationEnabled(true);
         }
@@ -218,23 +208,31 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
+                Trip sessionTrip = App.getModel().getSessionTrip();
+                if (sessionTrip != null) {
+                    try {
+                        User.TYPE currentUserType = App.getModel().getSessionUser().getType();
+                        UserLocation startUserLocation = sessionTrip.getStartUserLocation();
+                        UserLocation driverLoc = new UserLocation(location.getLatitude(), location.getLongitude());
 
+                        if (currentUserType == DRIVER && currentTripStatus == DRIVER_PICKING_UP) {
+                            if (startUserLocation.distanceTo(driverLoc) <= GEOFENCE_DETECTION_TOLERANCE) {
+                                Toast.makeText(getBaseContext(), "Notifying rider you have arrived...", Toast.LENGTH_LONG).show();
+                                App.getController().handleNotifyRiderForPickup();
+                            }
+                        }
+                    } catch (SecurityException sece) {
+                        sece.printStackTrace();
+                    }
+                }
             }
 
             @Override
-            public void onStatusChanged(String provider, int status, Bundle extras) {
-
-            }
-
+            public void onStatusChanged(String provider, int status, Bundle extras) {}
             @Override
-            public void onProviderEnabled(String provider) {
-
-            }
-
+            public void onProviderEnabled(String provider) {}
             @Override
-            public void onProviderDisabled(String provider) {
-
-            }
+            public void onProviderDisabled(String provider) {}
         };
 
         try {
@@ -256,9 +254,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         mapFragment.getMapAsync(MapActivity.this);  //calls onMapReady
     }
 
-    /**
-     * getLocationPermission gets location permission from the user
-     */
+    /** getLocationPermission gets location permission from the user **/
     private void getLocationPermission() {
         /*
          * Request location permission, so that we can get the location of the
@@ -278,9 +274,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         }
     }
 
-    /**
-     * Gets the location of the users device
-     */
+    /** Gets the location of the users device **/
     private void getDeviceLocation() {
         /*
          * Get the best and most recent location of the device, which may be null in rare
@@ -321,13 +315,11 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
                 });
             }
         } catch (SecurityException e) {
-            Log.e("Exception: %s", e.getMessage());
+            e.printStackTrace();
         }
     }
 
-    /**
-     * Returns true if connection to google api is successful
-     */
+    /** Returns true if connection to google api is successful **/
     boolean googleConnectionSuccessful() {
         int connection = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(MapActivity.this);
         if (connection == ConnectionResult.SUCCESS) {
@@ -371,10 +363,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
     }
 
 
-    /***** DECLARING REST OF LIFECYCLE METHODS ******/
-    /**
-     * onDestroy method destructs activity if it is closed down
-     */
+    /** onDestroy method destructs activity if it is closed down **/
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -383,9 +372,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         m.deleteObserver(this);
     }
 
-    /**
-     * onError handles UI Errors if there are any
-     */
+    /** onError handles UI Errors if there are any **/
     @Override
     public void onError(Error e) {
         // TODO: Handle UI Errors
