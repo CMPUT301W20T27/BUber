@@ -124,4 +124,10 @@
         android:background="#3c0046"
         android:gravity="center"/>
 
+    <Button
+        android:id="@+id/viewContactButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="View Contact Details" />
+
 </LinearLayout>

@@ -3,32 +3,25 @@ package com.example.buber.Views.Activities;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
-import android.location.Address;
-import android.location.Geocoder;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.buber.App;
-import com.example.buber.Controllers.ApplicationController;
-import com.example.buber.DB.DBManager;
 import com.example.buber.Model.Account;
 import com.example.buber.Model.ApplicationModel;
 import com.example.buber.Model.Driver;
+import com.example.buber.Model.Rider;
 import com.example.buber.Model.Trip;
 import com.example.buber.Model.User;
 import com.example.buber.R;
-import com.example.buber.Services.ApplicationService;
 import com.example.buber.Views.UIErrorHandler;
 
-import java.util.List;
-import java.util.Locale;
 import java.util.Observable;
 import java.util.Observer;
 
-import static com.example.buber.Model.User.TYPE.DRIVER;
 import static com.example.buber.Model.User.TYPE.RIDER;
 
 /**
@@ -38,15 +31,14 @@ import static com.example.buber.Model.User.TYPE.RIDER;
  /** ReequestStatusActivity is used to show status of trip requests, as well as driver's info
  */
 public class RequestStatusActivity extends AppCompatActivity implements Observer, UIErrorHandler {
+    private final String TAG = "RequestStatusActivity";
     private TextView statusTextView;
     private TextView startTextView;
     private TextView endTextView;
     private TextView usernameTextTextView;
     private TextView usernameTextView;
-    private TextView driverPhoneTextTextView;
-    private TextView driverPhoneTextView;
-    private TextView driverEmailTextTextView;
-    private TextView driverEmailTextView;
+    private TextView driverRatingTextView;
+    private Button viewContactButton;
 
     /**onCreate method will create the activity when called
      * @param savedInstanceState is a previous saved state for activity if available*/
@@ -62,12 +54,8 @@ public class RequestStatusActivity extends AppCompatActivity implements Observer
 
         usernameTextTextView = findViewById(R.id.txtRideStatusCurDriverTextTextView);
         usernameTextView = findViewById(R.id.txtRideStatusCurDriverUserName);
-        driverPhoneTextTextView = findViewById(R.id.txtRideStatusPhoneTextTextView);
-        driverPhoneTextView = findViewById(R.id.txtRideStatusDriverPhoneNumber);
-        driverEmailTextTextView = findViewById(R.id.txtRideStatusEmailTextTextView);
-        driverEmailTextView = findViewById(R.id.txtRideStatusDriverEmail);
-
-
+        driverRatingTextView =  findViewById(R.id.txtDriverRatingDisplay);
+        viewContactButton = findViewById(R.id.viewContactButton);
         //initial form fill
         fillStatusForm();
     }
@@ -81,8 +69,7 @@ public class RequestStatusActivity extends AppCompatActivity implements Observer
                 Driver tmpDriver = (Driver) resultData.get("user");
                 Account tmpAccount = tmpDriver.getAccount();
                 usernameTextView.setText(tmpDriver.getUsername());
-                driverPhoneTextView.setText(tmpAccount.getPhoneNumber());
-                driverEmailTextView.setText(tmpAccount.getEmail());
+                driverRatingTextView.setText("Current Rating: " + tmpDriver.getRating() + " / 5.0");
             }
             else {
                 Toast.makeText(this, err.getMessage(), Toast.LENGTH_LONG);
@@ -105,37 +92,37 @@ public class RequestStatusActivity extends AppCompatActivity implements Observer
             statusTextView.setText(trip.getStatus().toString());
             startTextView.setText(trip.getStartUserLocation().getAddress());
             endTextView.setText(trip.getEndUserLocation().getAddress());
-            if(trip.getDriverID()!= null){
+            if(trip.getDriverID() != null){
                 //TODO:: Error handling
                 getDriverInfo(trip.getDriverID());
                 usernameTextTextView.setVisibility(View.VISIBLE);
-                driverEmailTextTextView.setVisibility(View.VISIBLE);
-                driverPhoneTextTextView.setVisibility(View.VISIBLE);
                 usernameTextView.setVisibility(View.VISIBLE);
-                driverEmailTextView.setVisibility(View.VISIBLE);
-                driverPhoneTextView.setVisibility(View.VISIBLE);
             }
             else{  //no driver accepted yet
                 usernameTextTextView.setVisibility(View.INVISIBLE);
-                driverEmailTextTextView.setVisibility(View.INVISIBLE);
-                driverPhoneTextTextView.setVisibility(View.INVISIBLE);
                 usernameTextView.setVisibility(View.INVISIBLE);
-                driverEmailTextView.setVisibility(View.INVISIBLE);
-                driverPhoneTextView.setVisibility(View.INVISIBLE);
             }
-        }
-
-        else{  //driver opening the view
+        } else {  //driver opening the view
             statusTextView.setText(trip.getStatus().toString());
             startTextView.setText(trip.getStartUserLocation().getAddress());
             endTextView.setText(trip.getEndUserLocation().getAddress());
             usernameTextTextView.setVisibility(View.INVISIBLE);
-            driverEmailTextTextView.setVisibility(View.INVISIBLE);
-            driverPhoneTextTextView.setVisibility(View.INVISIBLE);
             usernameTextView.setVisibility(View.INVISIBLE);
-            driverEmailTextView.setVisibility(View.INVISIBLE);
-            driverPhoneTextView.setVisibility(View.INVISIBLE);
+        }
+        if (trip.getStatus() != Trip.STATUS.PENDING && trip.getStatus() != Trip.STATUS.COMPLETED) {
+            viewContactButton.setVisibility(View.VISIBLE);
+        } else {
+            viewContactButton.setVisibility(View.INVISIBLE);
+        }
+    }
 
+    public void handleViewContactButtonClick(View v) {
+        // if Rider clicks this, then we want to load the drivers contact info with option to
+        // call the driver, else load the riders contact information
+        Trip trip = App.getModel().getSessionTrip();
+        if (trip != null && trip.getDriverID() != null) {
+            Intent contactIntent = new Intent(this, ContactViewerActivity.class);
+            App.getController().handleViewContactInformation(this, contactIntent, trip.getRiderID(), trip.getDriverID());
         }
     }
 

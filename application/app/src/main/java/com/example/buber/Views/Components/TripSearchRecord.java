@@ -16,6 +16,7 @@ public class TripSearchRecord implements Serializable {
     private String endLongitude;
     private String estimatedCost;
     private String distanceFromDriver;
+    private String riderID;
 
     /**The following function is used assign user info for use in TripSearch views
      * @param t The stored trip information
@@ -27,6 +28,7 @@ public class TripSearchRecord implements Serializable {
         this.estimatedCost = ((Double) t.getFareOffering()).toString();
         this.distanceFromDriver = ((Double) t.getStartUserLocation().distanceTo(driverLocation))
                 .toString();
+        this.riderID = t.getRiderID();
     }
 
     public String getRiderName(){return this.riderName;}
@@ -40,4 +42,12 @@ public class TripSearchRecord implements Serializable {
     public void setEndAddress(String newStartLong){this.endAddress = newStartLong;}
     public void setEstimatedCost(String newEstimatedCost){this.estimatedCost = newEstimatedCost;}
     public void setDistanceFromDriver(String newDistance){this.distanceFromDriver = newDistance;}
+
+    public String getRiderID() {
+        return riderID;
+    }
+
+    public void setRiderID(String riderID) {
+        this.riderID = riderID;
+    }
 }

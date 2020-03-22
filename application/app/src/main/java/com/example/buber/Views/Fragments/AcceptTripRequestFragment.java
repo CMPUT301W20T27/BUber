@@ -1,19 +1,27 @@
 package com.example.buber.Views.Fragments;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
+import com.example.buber.App;
+import com.example.buber.Model.Trip;
 import com.example.buber.R;
+import com.example.buber.Views.Activities.ContactViewerActivity;
+import com.example.buber.Views.Activities.TripBuilderActivity;
+import com.example.buber.Views.Activities.TripSearchActivity;
 import com.example.buber.Views.Components.TripSearchRecord;
 
 /**
@@ -26,6 +34,8 @@ public class AcceptTripRequestFragment extends DialogFragment {
     private TextView endAdd;
     private TextView rider;
     private TextView driverDistance;
+    private Button viewContactButton;
+    private TripSearchActivity parentActivity;
 
     private OnFragmentInteractionListener listener;
     private TripSearchRecord tripSearchRecord;
@@ -34,9 +44,10 @@ public class AcceptTripRequestFragment extends DialogFragment {
     /**
      * Constructor for AcceptTripRequestFragment
      * @param tripSearchRecord,position the tripSearchRecord and its position in the tripSearch list*/
-    public AcceptTripRequestFragment(TripSearchRecord tripSearchRecord, int position){
+    public AcceptTripRequestFragment(TripSearchRecord tripSearchRecord, int position, TripSearchActivity parentActivity){
         this.tripSearchRecord = tripSearchRecord;
         this.position = position;
+        this.parentActivity = parentActivity;
     }
 
     /**
@@ -71,6 +82,9 @@ public class AcceptTripRequestFragment extends DialogFragment {
         endAdd = view.findViewById(R.id.fragment_endAdd);
         rider = view.findViewById(R.id.fragment_riderName);
         driverDistance = view.findViewById(R.id.fragment_distance);
+        viewContactButton = view.findViewById(R.id.viewContactButton);
+
+
 
         if (tripSearchRecord != null){
             estimatedCost.setText(tripSearchRecord.getEstimatedCost());
@@ -78,20 +92,12 @@ public class AcceptTripRequestFragment extends DialogFragment {
             endAdd.setText(tripSearchRecord.getEndAddress());
             rider.setText(tripSearchRecord.getRiderName());
             driverDistance.setText(tripSearchRecord.getDistanceFromDriver());
-
-            final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-            return builder.
-                    setView(view)
-                    .setTitle("View Trip")
-                    .setNegativeButton("Ignore", null)
-                    .setPositiveButton("Fair enough, offer ride", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            listener.onAcceptPressed(tripSearchRecord, position);
-                        }
-                    }).create();
-
+            viewContactButton.setOnClickListener(v -> {
+                handleViewRiderContact(tripSearchRecord.getRiderID());
+            });
         }
+
+
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         return builder.
@@ -104,5 +110,12 @@ public class AcceptTripRequestFragment extends DialogFragment {
                        listener.onAcceptPressed(tripSearchRecord, position);
                     }
                 }).create();
+
+
+    }
+
+    public void handleViewRiderContact(String riderID) {
+        Intent contactIntent = new Intent(parentActivity, ContactViewerActivity.class);
+        App.getController().handleViewContactInformation(parentActivity, contactIntent, riderID, null);
     }
 }
