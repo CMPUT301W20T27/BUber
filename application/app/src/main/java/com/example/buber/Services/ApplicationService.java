@@ -220,6 +220,52 @@ public class ApplicationService {
         });
     }
 
+    /**
+     * Calls the DBManager class to update the trip selected. On success the listener returns
+     * the trip updates. On failure the listener returns the exception.
+     * @param uid The document id of the trip
+     * @param selectedTrip the trip object selected
+     * @param controllerListener the listener that gets results from the Firebase call.
+     */
+    public static void notifyRiderForPickup(String uid, Trip selectedTrip, EventCompletionListener controllerListener) {
+        // First: get the Driver ID who wants to pick the rider up!
+        ApplicationService.getSessionTripForUser((resultData, err) -> {
+            if (err != null) {
+                Log.e("Exception: %s", err.getMessage());
+            } else {
+                if (resultData != null && resultData.containsKey("trip")) {
+                    Trip sessionTrip = (Trip) resultData.get("trip");
+                    String tripDriverID = sessionTrip.getDriverID();
+                    selectedTrip.setDriverID(tripDriverID);
+                    // Second: call updateTrip to change the trip status and thus notify the driver!
+                    App.getDbManager().updateTrip(uid, selectedTrip, controllerListener, true);
+                }
+            }
+        });
+    }
+
+    /**
+     * Begins trip
+     * @param uid The document id of the trip
+     * @param selectedTrip the trip object selected
+     * @param controllerListener the listener that gets results from the Firebase call.
+     */
+    public static void beginTrip(String uid, Trip selectedTrip, EventCompletionListener controllerListener) {
+        // First: get the Driver ID who wants to pick the rider up!
+        ApplicationService.getSessionTripForUser((resultData, err) -> {
+            if (err != null) {
+                Log.e("Exception: %s", err.getMessage());
+            } else {
+                if (resultData != null && resultData.containsKey("trip")) {
+                    Trip sessionTrip = (Trip) resultData.get("trip");
+                    String tripDriverID = sessionTrip.getDriverID();
+                    selectedTrip.setDriverID(tripDriverID);
+                    // Second: call updateTrip to change the trip status and thus notify the driver!
+                    App.getDbManager().updateTrip(uid, selectedTrip, controllerListener, true);
+                }
+            }
+        });
+    }
 
     /**
      * Calls the DBManager class to update the trip selected. On success the listener returns

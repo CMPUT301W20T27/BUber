@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:onClick="handleScreenClick"
     tools:context=".Views.Activities.MapActivity">
 
     <fragment
@@ -27,11 +26,10 @@
         android:layout_marginTop="8dp"
         android:background="@android:color/transparent"
         android:fontFamily="sans-serif"
-        android:onClick="showSettingsPanel"
         android:rotation="90"
         android:text="|||"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        android:textColor="@color/common_google_signin_btn_text_dark_focused"
+        android:textColor="@color/black"
         android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
@@ -42,7 +40,6 @@
         android:id="@+id/rider_request_btn"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:onClick="handleRiderRequestBtn"
         android:text="Request a Ride"
         android:textIsSelectable="false"
         android:visibility="invisible"
@@ -54,7 +51,6 @@
         android:id="@+id/rider_request_cancel_btn"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:onClick="handleRiderCancelBtn"
         android:text="Cancel Your Current Ride Request"
         android:textIsSelectable="false"
         android:visibility="invisible"
@@ -66,7 +62,6 @@
         android:id="@+id/rider_cancel_pickup_btn"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:onClick="handleRiderCancelPickupBtn"
         android:text="Trip accepted! Cancel driver pick-up?"
         android:textIsSelectable="false"
         android:visibility="invisible"
@@ -79,8 +74,20 @@
         android:id="@+id/driver_show_requests_btn"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:onClick="handleDriverShowRequestsBtn"
         android:text="Show Active Ride Requests Near You"
+        android:textIsSelectable="false"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <!--  RIDER / DRIVER MAIN ACTION BUTTONS  -->
+    <Button
+        android:id="@+id/cancel_ride_in_progess"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Cancel Ride In Progress"
+        android:textColor="#FFFFFF"
         android:textIsSelectable="false"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -117,7 +124,6 @@
             android:layout_width="0dp"
             android:layout_height="50dp"
             android:background="@android:color/transparent"
-            android:onClick="handleAccountButtonClick"
             android:text="Account"
             app:layout_constraintBottom_toTopOf="@+id/logout_button"
             app:layout_constraintEnd_toEndOf="parent"
@@ -129,7 +135,6 @@
             android:layout_width="0dp"
             android:layout_height="50dp"
             android:background="@android:color/transparent"
-            android:onClick="handleLogoutButtonClick"
             android:text="Logout"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -143,7 +148,6 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="286dp"
         android:layout_marginEnd="16dp"
-        android:onClick="handleTestClick"
         android:text="Ride Status"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -151,6 +155,6 @@
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.932" />
+        app:layout_constraintVertical_bias="0.918" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
