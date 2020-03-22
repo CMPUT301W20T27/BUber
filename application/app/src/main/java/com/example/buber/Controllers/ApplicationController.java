@@ -1,10 +1,13 @@
 package com.example.buber.Controllers;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.widget.Toast;
 
 import com.example.buber.App;
 import com.example.buber.Model.ApplicationModel;
+import com.example.buber.Model.Driver;
+import com.example.buber.Model.Rider;
 import com.example.buber.Model.Trip;
 import com.example.buber.Model.User;
 import com.example.buber.Model.UserLocation;
@@ -12,6 +15,7 @@ import com.example.buber.Services.ApplicationService;
 import com.example.buber.Views.Activities.LoginActivity;
 import com.example.buber.Views.Activities.MainActivity;
 import com.example.buber.Views.Activities.MapActivity;
+import com.example.buber.Views.Activities.RequestStatusActivity;
 import com.example.buber.Views.UIErrorHandler;
 
 import java.util.List;
@@ -19,6 +23,8 @@ import java.util.Observer;
 import java.util.concurrent.TimeUnit;
 
 import br.com.simplepass.loadingbutton.customViews.CircularProgressButton;
+
+import static com.example.buber.Model.User.TYPE.RIDER;
 
 /**
  * ApplicationController handles the interaction between our service layer and the model.
@@ -283,4 +289,31 @@ public class ApplicationController {
         }));
     }
 
+
+    public static void handleViewContactInformation(Activity view, Intent contactIntent, String riderID, String driverID) {
+        if (App.getModel().getSessionUser().getType() == RIDER) {
+            App.getDbManager().getDriver(driverID, ((resultData, err) -> {
+                if (err == null) {
+                    Driver d = (Driver) resultData.get("user");
+                    contactIntent.putExtra("ID", d.getDocID());
+                    contactIntent.putExtra("username", d.getUsername());
+                    contactIntent.putExtra("email", d.getAccount().getEmail());
+                    contactIntent.putExtra("phoneNumber", d.getAccount().getPhoneNumber());
+                    view.startActivity(contactIntent);
+                }
+
+            }));
+        } else {
+            App.getDbManager().getRider(riderID, ((resultData, err) -> {
+                if (err == null) {
+                    Rider r = (Rider) resultData.get("user");
+                    contactIntent.putExtra("ID", r.getDocID());
+                    contactIntent.putExtra("username", r.getUsername());
+                    contactIntent.putExtra("email", r.getAccount().getEmail());
+                    contactIntent.putExtra("phoneNumber", r.getAccount().getPhoneNumber());
+                    view.startActivity(contactIntent);
+                }
+            }));
+        }
+    }
 }
