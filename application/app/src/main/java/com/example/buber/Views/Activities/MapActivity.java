@@ -473,6 +473,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         mMap.addMarker(new MarkerOptions().position(startloc).title("Start Location"));
         mMap.addMarker(new MarkerOptions().position(endloc).title("End Location"));
 
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(endloc, 13));
         //mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(strEndLoc,));
         //mMap.addPolyline(new PolylineOptions().add(startloc).add(endloc).width(4f).color(Color.RED));
     }
