@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.example.buber.R;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.PolylineOptions;
 
@@ -18,15 +19,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import static androidx.core.graphics.drawable.IconCompat.getResources;
+
 //Source Citation: https://stackoverflow.com/questions/47492459/how-do-i-draw-a-route-along-an-existing-road-between-two-points
 public class GetPathFromLocation extends AsyncTask<String, Void, PolylineOptions> {
     private String TAG = "GetPathFromLocation";
     //current app key
-    private String APIKEY = "AIzaSyDFEIMmFpPoMijm_0YraJn4S33UvtlnqF8";
-    //android key
-    //private String APIKEY = "AIzaSyB_5EyZzKt22bFS-qmyl0gxk3hAlWb0sS4";
-    //API key 5
-    //private String APIKEY = "AIzaSyANx-KaDU6unJw-6lUoVZ-iz30UoSQFu8Y";
+    //private String APIKEY = getResources().getString(R.string.google_api_key);
+
 
     private com.google.android.gms.maps.model.LatLng source, destination;
     private DirectionPointListener resultCallback;

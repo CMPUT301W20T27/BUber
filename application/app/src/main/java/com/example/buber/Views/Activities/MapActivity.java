@@ -93,8 +93,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
     private BUberNotificationManager notifManager;
 
     //Private string of API Key
-    private String APIKEY = "AIzaSyDFEIMmFpPoMijm_0YraJn4S33UvtlnqF8";
-
+    private String APIKEY = getResources().getString(R.string.google_api_key);
     /**
      * onCreate method creates MapActivity when it is called
      *
