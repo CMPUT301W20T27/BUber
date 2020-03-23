@@ -20,8 +20,9 @@ public class Trip {
         PENDING,
         DRIVER_ACCEPT,
         DRIVER_PICKING_UP,
+        DRIVER_ARRIVED,
         EN_ROUTE,
-        COMPLETED
+        COMPLETED,
     }
 
     private STATUS status;
@@ -123,10 +124,14 @@ public class Trip {
                 return true;
             }
         } else if (this.getStatus() == Trip.STATUS.DRIVER_PICKING_UP) {
+            if (newStatus == STATUS.DRIVER_ARRIVED || newStatus == STATUS.PENDING) {
+                return true;
+            }
+        } else if (this.getStatus() == Trip.STATUS.DRIVER_ARRIVED) {
             if (newStatus == Trip.STATUS.EN_ROUTE || newStatus == STATUS.PENDING) {
                 return true;
             }
-        }else if (this.getStatus() == STATUS.EN_ROUTE) {
+        } else if (this.getStatus() == STATUS.EN_ROUTE) {
             if (newStatus == STATUS.COMPLETED || newStatus == STATUS.PENDING) {
                 return true;
             }

@@ -3,6 +3,7 @@
     package="com.example.buber">
     <!-- Needed for google maps -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
@@ -13,8 +14,8 @@
         android:roundIcon="@mipmap/buber_logo_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.NoActionBar">
-        <activity android:name=".Views.Activities.RequestStatusActivity"/>
-        <activity android:name=".Views.Activities.RiderCurrentRequestActivity" />
+        <activity android:name=".Views.Activities.ContactViewerActivity"></activity>
+        <activity android:name=".Views.Activities.RequestStatusActivity" />
         <activity android:name=".Views.Activities.EditAccountActivity" />
 
         <meta-data

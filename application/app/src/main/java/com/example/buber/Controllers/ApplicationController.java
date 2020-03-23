@@ -1,10 +1,13 @@
 package com.example.buber.Controllers;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.widget.Toast;
 
 import com.example.buber.App;
 import com.example.buber.Model.ApplicationModel;
+import com.example.buber.Model.Driver;
+import com.example.buber.Model.Rider;
 import com.example.buber.Model.Trip;
 import com.example.buber.Model.User;
 import com.example.buber.Model.UserLocation;
@@ -12,6 +15,7 @@ import com.example.buber.Services.ApplicationService;
 import com.example.buber.Views.Activities.LoginActivity;
 import com.example.buber.Views.Activities.MainActivity;
 import com.example.buber.Views.Activities.MapActivity;
+import com.example.buber.Views.Activities.RequestStatusActivity;
 import com.example.buber.Views.UIErrorHandler;
 
 import java.util.List;
@@ -19,6 +23,8 @@ import java.util.Observer;
 import java.util.concurrent.TimeUnit;
 
 import br.com.simplepass.loadingbutton.customViews.CircularProgressButton;
+
+import static com.example.buber.Model.User.TYPE.RIDER;
 
 /**
  * ApplicationController handles the interaction between our service layer and the model.
@@ -189,35 +195,16 @@ public class ApplicationController {
         ApplicationService.deleteRiderCurrentTrip(m.getSessionTrip().getRiderID(), (resultData, err) -> {
             if (err != null) view.onError(err);
             else {
-                m.detachTripListener();
                 m.setSessionTrip(null);
+                m.detachTripListener();
             }
         });
-    }
-
-
-    /**
-     * Controls what happens after rider accept ride offer
-     */
-    public static void handleNotifyDriverForPickup() {
-        Trip currentTrip = App.getModel().getSessionTrip();
-        currentTrip.setStatus(Trip.STATUS.DRIVER_PICKING_UP);
-        ApplicationService.notifyDriverForPickup(currentTrip.getRiderID(), currentTrip, ((resultData, err) -> {
-            if (err != null) {
-                List<Observer> mapObservers = App.getModel().getObserversMatchingClass(MapActivity.class);
-                for (Observer map : mapObservers) {
-                    ((UIErrorHandler) map).onError(err);
-                }
-            } else {
-                App.getModel().setSessionTrip(currentTrip);
-            }
-        }));
     }
 
     /**
      * Gets the driver user's selected trip and changes the Trip status in Firebase
      * @param selectedTrip the drivers selected trip
-    */
+     */
     public static void handleDriverTripSelect(Trip selectedTrip) {
         ApplicationModel m = App.getModel();
         selectedTrip.setStatus(Trip.STATUS.DRIVER_ACCEPT);
@@ -235,6 +222,56 @@ public class ApplicationController {
             }
         }));
     }
+
+    /** Controls what happens after rider accept ride offer **/
+    public static void handleNotifyDriverForPickup() {
+        Trip currentTrip = App.getModel().getSessionTrip();
+        currentTrip.setStatus(Trip.STATUS.DRIVER_PICKING_UP);
+        ApplicationService.notifyDriverForPickup(currentTrip.getRiderID(), currentTrip, ((resultData, err) -> {
+            if (err != null) {
+                List<Observer> mapObservers = App.getModel().getObserversMatchingClass(MapActivity.class);
+                for (Observer map : mapObservers) {
+                    ((UIErrorHandler) map).onError(err);
+                }
+            } else {
+                App.getModel().setSessionTrip(currentTrip);
+            }
+        }));
+    }
+
+    /** Controls what happens after rider accept ride offer **/
+    public static void handleNotifyRiderForPickup() {
+        Trip currentTrip = App.getModel().getSessionTrip();
+        currentTrip.setStatus(Trip.STATUS.DRIVER_ARRIVED);
+        ApplicationService.notifyRiderForPickup(currentTrip.getRiderID(), currentTrip, ((resultData, err) -> {
+            if (err != null) {
+                List<Observer> mapObservers = App.getModel().getObserversMatchingClass(MapActivity.class);
+                for (Observer map : mapObservers) {
+                    ((UIErrorHandler) map).onError(err);
+                }
+            } else {
+                App.getModel().setSessionTrip(currentTrip);
+            }
+        }));
+    }
+
+    /** Controls what happens after rider accept ride offer **/
+    public static void beginTrip() {
+        Trip currentTrip = App.getModel().getSessionTrip();
+        currentTrip.setStatus(Trip.STATUS.EN_ROUTE);
+        ApplicationService.beginTrip(currentTrip.getRiderID(), currentTrip, ((resultData, err) -> {
+            if (err != null) {
+                List<Observer> mapObservers = App.getModel().getObserversMatchingClass(MapActivity.class);
+                for (Observer map : mapObservers) {
+                    ((UIErrorHandler) map).onError(err);
+                }
+            } else {
+                App.getModel().setSessionTrip(currentTrip);
+            }
+        }));
+    }
+
+
     /**
      * Updates non critical user fields when they are edited by user. On success set the new session user.
      * @param updatedSessionUser the updated user object
@@ -252,4 +289,31 @@ public class ApplicationController {
         }));
     }
 
+
+    public static void handleViewContactInformation(Activity view, Intent contactIntent, String riderID, String driverID) {
+        if (App.getModel().getSessionUser().getType() == RIDER) {
+            App.getDbManager().getDriver(driverID, ((resultData, err) -> {
+                if (err == null) {
+                    Driver d = (Driver) resultData.get("user");
+                    contactIntent.putExtra("ID", d.getDocID());
+                    contactIntent.putExtra("username", d.getUsername());
+                    contactIntent.putExtra("email", d.getAccount().getEmail());
+                    contactIntent.putExtra("phoneNumber", d.getAccount().getPhoneNumber());
+                    view.startActivity(contactIntent);
+                }
+
+            }));
+        } else {
+            App.getDbManager().getRider(riderID, ((resultData, err) -> {
+                if (err == null) {
+                    Rider r = (Rider) resultData.get("user");
+                    contactIntent.putExtra("ID", r.getDocID());
+                    contactIntent.putExtra("username", r.getUsername());
+                    contactIntent.putExtra("email", r.getAccount().getEmail());
+                    contactIntent.putExtra("phoneNumber", r.getAccount().getPhoneNumber());
+                    view.startActivity(contactIntent);
+                }
+            }));
+        }
+    }
 }

@@ -143,61 +143,20 @@
                 android:textSize="24sp" />
         </LinearLayout>
 
-        <LinearLayout
+        <TextView
+            android:id="@+id/txtDriverRatingDisplay"
             android:layout_width="match_parent"
-            android:layout_height="66dp"
+            android:layout_height="35dp"
+            android:textAlignment="center"
+            android:textSize="24sp"
+            tools:text="Driver Rating" />
 
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/txtRideStatusPhoneTextTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="0"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:text="Driver Phone Number:    "
-                android:textSize="24sp" />
-
-            <TextView
-                android:id="@+id/txtRideStatusDriverPhoneNumber"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:ellipsize="end"
-                android:lines="3"
-                android:maxLines="1"
-                android:text="driver phone"
-                android:textSize="24sp" />
-        </LinearLayout>
-
-        <LinearLayout
+        <Button
+            android:id="@+id/viewContactButton"
             android:layout_width="match_parent"
-            android:layout_height="66dp"
-
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/txtRideStatusEmailTextTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="0"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:text="Driver Email:    "
-                android:textSize="24sp" />
-
-            <TextView
-                android:id="@+id/txtRideStatusDriverEmail"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:ellipsize="end"
-                android:lines="1"
-                android:maxLines="1"
-                android:text="driver email"
-                android:textSize="24sp" />
-        </LinearLayout>
+            android:layout_height="wrap_content"
+            android:onClick="handleViewContactButtonClick"
+            android:text="View Contact Details" />
     </LinearLayout>
 
 
