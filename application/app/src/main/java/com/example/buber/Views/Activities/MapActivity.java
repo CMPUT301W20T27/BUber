@@ -93,7 +93,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
     private BUberNotificationManager notifManager;
 
     //Private string of API Key
-    private String APIKEY = getResources().getString(R.string.google_api_key);
+    private String APIKEY = "AIzaSyDFEIMmFpPoMijm_0YraJn4S33UvtlnqF8";
     /**
      * onCreate method creates MapActivity when it is called
      *
@@ -473,8 +473,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         mMap.addMarker(new MarkerOptions().position(startloc).title("Start Location"));
         mMap.addMarker(new MarkerOptions().position(endloc).title("End Location"));
 
-        LatLngBounds routeBoundaries = new LatLngBounds(new LatLng(startLAT,startLNG), new LatLng(endLAT, endLNG));
-        mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(routeBoundaries, 20));
+        //mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(strEndLoc,));
         //mMap.addPolyline(new PolylineOptions().add(startloc).add(endloc).width(4f).color(Color.RED));
     }
 
