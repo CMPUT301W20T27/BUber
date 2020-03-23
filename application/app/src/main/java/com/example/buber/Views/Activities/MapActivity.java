@@ -43,6 +43,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.Task;
@@ -710,7 +711,8 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         mMap.addMarker(new MarkerOptions().position(startloc).title("Start Location"));
         mMap.addMarker(new MarkerOptions().position(endloc).title("End Location"));
 
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(startloc, 13f));
+        LatLngBounds routeBoundaries = new LatLngBounds(new LatLng(startLAT,startLNG), new LatLng(endLAT, endLNG));
+        mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(routeBoundaries, 20));
         //mMap.addPolyline(new PolylineOptions().add(startloc).add(endloc).width(4f).color(Color.RED));
     }
 
