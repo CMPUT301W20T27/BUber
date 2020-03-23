@@ -22,10 +22,11 @@ import java.util.List;
 public class GetPathFromLocation extends AsyncTask<String, Void, PolylineOptions> {
     private String TAG = "GetPathFromLocation";
     //current app key
-    //private String APIKEY = "AIzaSyDFEIMmFpPoMijm_0YraJn4S33UvtlnqF8";
+    private String APIKEY = "AIzaSyDFEIMmFpPoMijm_0YraJn4S33UvtlnqF8";
     //android key
     //private String APIKEY = "AIzaSyB_5EyZzKt22bFS-qmyl0gxk3hAlWb0sS4";
-    private String APIKEY = "AIzaSyANx-KaDU6unJw-6lUoVZ-iz30UoSQFu8Y";
+    //API key 5
+    //private String APIKEY = "AIzaSyANx-KaDU6unJw-6lUoVZ-iz30UoSQFu8Y";
 
     private com.google.android.gms.maps.model.LatLng source, destination;
     private DirectionPointListener resultCallback;
