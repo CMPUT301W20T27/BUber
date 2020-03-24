@@ -173,6 +173,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
                                 6, "The rider has accepted and is now ready for pickup!",
                                 "Rider Username: " + sessionTrip.getRiderUserName(),
                                 Color.GREEN);
+                        // Edge case: check if driver is already at rider's location
                         updateOnLocationChange();
                     }
                     break;

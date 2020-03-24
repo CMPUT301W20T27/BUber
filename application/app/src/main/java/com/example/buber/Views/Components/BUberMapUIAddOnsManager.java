@@ -96,16 +96,14 @@ public class BUberMapUIAddOnsManager {
          * @param v is an instance of the view
          */
         riderRequestMainBtn.setOnClickListener((View v) -> {
-            UserLocation riderLoc = new UserLocation(
-                    map.mLastKnownUserLocation.getLatitude(),
-                    map.mLastKnownUserLocation.getLongitude());
-
             Intent intent = new Intent(map, TripBuilderActivity.class);
             intent.putExtra(
                     "currentLatLong",
                     new double[]{
                             map.mLastKnownUserLocation.getLatitude(),
                             map.mLastKnownUserLocation.getLongitude()});
+            intent.putExtra("GEOFENCE_DETECTION_TOLERANCE",
+                    map.GEOFENCE_DETECTION_TOLERANCE);
             map.startActivity(intent);
         });
 
