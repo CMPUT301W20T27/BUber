@@ -3,7 +3,9 @@ package com.example.buber.Views.Activities;
 import android.app.Dialog;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.location.Location;
+import android.nfc.Tag;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -23,6 +25,8 @@ import com.example.buber.Model.UserLocation;
 import com.example.buber.R;
 import com.example.buber.Views.Components.BUberMapUIAddOnsManager;
 import com.example.buber.Views.Components.BUberNotificationManager;
+import com.example.buber.Views.Components.DirectionPointListener;
+import com.example.buber.Views.Components.GetPathFromLocation;
 import com.example.buber.Views.UIErrorHandler;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -34,8 +38,21 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.Task;
+import com.google.maps.DirectionsApi;
+import com.google.maps.DirectionsApiRequest;
+import com.google.maps.GeoApiContext;
+import com.google.maps.model.DirectionsLeg;
+import com.google.maps.model.DirectionsResult;
+import com.google.maps.model.DirectionsRoute;
+import com.google.maps.model.DirectionsStep;
+import com.google.maps.model.EncodedPolyline;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -105,6 +122,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
             uiAddOnsManager.showStatusButton();
             uiAddOnsManager.showActiveMainActionButton();
         }
+
     }
 
     /**
@@ -139,6 +157,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
                         notifManager.notifyOnAllChannels(
                                 3, "Unfortunately, a rider or driver has stopped this trip.",
                                 "", Color.RED);
+                        clearMapRoute();
                 }
                 this.currentTripStatus = null;
             }
@@ -179,6 +198,11 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
                                 Color.GREEN
                         );
                     }
+                    break;
+                case EN_ROUTE:
+                    // Used to call drawRouteMap functn.
+                    drawRouteMap();
+
 
             }
             uiAddOnsManager.showActiveMainActionButton();
@@ -384,5 +408,35 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
     @Override
     public void onError(Error e) {
         // TODO: Handle UI Errors
+    }
+
+    /**Draws start/end route polylines on map when requested - also adds markers to start/end location*/
+    public void drawRouteMap(){
+        //Gets a LatLng of the StartUserLocation
+        Double startLAT = App.getModel().getSessionTrip().getStartUserLocation().getLatitude();
+        Double startLNG = App.getModel().getSessionTrip().getStartUserLocation().getLongitude();
+        LatLng startloc = new LatLng(startLAT, startLNG);
+
+        //Gets a LatLng of the EndUserLocation
+        Double endLAT = App.getModel().getSessionTrip().getEndUserLocation().getLatitude();
+        Double endLNG = App.getModel().getSessionTrip().getEndUserLocation().getLongitude();
+        LatLng endloc = new LatLng(endLAT, endLNG);
+
+        //Source Citation: https://stackoverflow.com/questions/47492459/how-do-i-draw-a-route-along-an-existing-road-between-two-points
+        //Function calls Direction API and adds route polyline to map
+        new GetPathFromLocation(startloc, endloc, polyLine -> mMap.addPolyline(polyLine)).execute();
+        //Adds start and end point markers to map
+        mMap.addMarker(new MarkerOptions().position(startloc).title("Start Location"));
+        mMap.addMarker(new MarkerOptions().position(endloc).title("End Location"));
+        //Changes camera to endlocation
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(endloc, 13));
+    }
+
+    /**Clears map of polylines and markers - also resets camera to userlocation*/
+    public void clearMapRoute(){
+        mMap.clear();
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                new LatLng(mLastKnownUserLocation.getLatitude(),
+                        mLastKnownUserLocation.getLongitude()), DEFAULT_ZOOM));
     }
 }
