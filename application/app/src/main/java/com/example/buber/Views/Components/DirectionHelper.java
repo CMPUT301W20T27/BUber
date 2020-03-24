@@ -11,8 +11,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-    public class DirectionHelper {
+/**DirectionHelper helps parse the route object to be turned into polylines*/
+//Source Citation: https://stackoverflow.com/questions/47492459/how-do-i-draw-a-route-along-an-existing-road-between-two-points
+public class DirectionHelper {
 
+        /**parse() parses the the route JSON object to create polylines it returns the routes
+         * @param jObject is the JSONObject that is parsed to create polylines*/
         public List<List<HashMap<String, String>>> parse(JSONObject jObject) {
 
             List<List<HashMap<String, String>>> routes = new ArrayList<>();
@@ -60,6 +64,8 @@ import java.util.List;
             return routes;
         }
 
+        /**decodePoly decodes the encoded polyline points
+         * @param encoded is a string of encoded polyline points*/
         //Method to decode polyline points
         private List<LatLng> decodePoly(String encoded) {
 

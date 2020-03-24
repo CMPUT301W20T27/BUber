@@ -1,5 +1,6 @@
 package com.example.buber.Views.Components;
 
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -19,17 +20,25 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import static java.security.AccessController.getContext;
 
+/**
+ * GetPathFromLocation class makes an api call to DirectionsAPI. It creates a URL using the start
+ * and end locations of the rider trip. Then it parses the route data into the polylines used
+ * to create a driving route on the map*/
 //Source Citation: https://stackoverflow.com/questions/47492459/how-do-i-draw-a-route-along-an-existing-road-between-two-points
 public class GetPathFromLocation extends AsyncTask<String, Void, PolylineOptions> {
     private String TAG = "GetPathFromLocation";
-    //current app key
+    //Private String of APIKEY
     private String APIKEY = "AIzaSyDFEIMmFpPoMijm_0YraJn4S33UvtlnqF8";
-
 
     private com.google.android.gms.maps.model.LatLng source, destination;
     private DirectionPointListener resultCallback;
 
+    /**Constructor for GetPathFromLocation
+     * @param source a LatLng variable of the start location
+     * @param destination a LatLng variable of the end location
+     * @param  resultCallback a DirectionPointListener used for the path call*/
     public GetPathFromLocation(LatLng source,
                                LatLng destination,
                                DirectionPointListener resultCallback){
@@ -38,6 +47,9 @@ public class GetPathFromLocation extends AsyncTask<String, Void, PolylineOptions
         this.resultCallback = resultCallback;
     }
 
+    /**GetURL() returns a URL string for use in the API call
+     * @param  origin a LatLng variable of the StartLocation
+     * @param  destination a LatLng variable of the EndLocation*/
     public String getUrl(LatLng origin, LatLng destination){
 
         String str_origin = "origin=" + origin.latitude + "," + origin.longitude;
@@ -51,6 +63,8 @@ public class GetPathFromLocation extends AsyncTask<String, Void, PolylineOptions
         return url;
     }
 
+    /**doInBackground
+     * @param url is the url used to make an api call for DirectionsAPI*/
     @Override
     protected PolylineOptions doInBackground(String... url) {
         String data;
@@ -121,7 +135,7 @@ public class GetPathFromLocation extends AsyncTask<String, Void, PolylineOptions
                     // Adding all the points in the route to LineOptions
                     lineOptions.addAll(points);
                     lineOptions.width(10);
-                    lineOptions.color(Color.BLUE);
+                    lineOptions.color(Color.RED);
 
                     Log.e(TAG, "PolylineOptions Decoded");
                 }
@@ -144,6 +158,8 @@ public class GetPathFromLocation extends AsyncTask<String, Void, PolylineOptions
         }
     }
 
+    /**onPostExecute executes the drawing of the polyline
+     * @param polylineOptions the instance of the polyline*/
     @Override
     protected void onPostExecute(PolylineOptions polylineOptions) {
         super.onPostExecute(polylineOptions);

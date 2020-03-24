@@ -92,8 +92,6 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
     // NOTIFICATIONS
     private BUberNotificationManager notifManager;
 
-    //Private string of API Key
-    private String APIKEY = "AIzaSyDFEIMmFpPoMijm_0YraJn4S33UvtlnqF8";
     /**
      * onCreate method creates MapActivity when it is called
      *
@@ -124,6 +122,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
             uiAddOnsManager.showStatusButton();
             uiAddOnsManager.showActiveMainActionButton();
         }
+
     }
 
     /**
@@ -135,8 +134,6 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
     public void update(Observable o, Object arg) {
         Trip sessionTrip = App.getModel().getSessionTrip();
         User.TYPE currentUserType = App.getModel().getSessionUser().getType();
-        // Used to call drawRouteMap functn.
-        drawRouteMap();
 
         // Handles State Resets regarding Trip Cancellations
         if (sessionTrip == null) {
@@ -160,6 +157,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
                         notifManager.notifyOnAllChannels(
                                 3, "Unfortunately, a rider or driver has stopped this trip.",
                                 "", Color.RED);
+                        clearMapRoute();
                 }
                 this.currentTripStatus = null;
             }
@@ -200,6 +198,11 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
                                 Color.GREEN
                         );
                     }
+                    break;
+                case EN_ROUTE:
+                    // Used to call drawRouteMap functn.
+                    drawRouteMap();
+
 
             }
             uiAddOnsManager.showActiveMainActionButton();
@@ -407,135 +410,33 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         // TODO: Handle UI Errors
     }
 
-    //Drawing polylines on the map when ride is requested
+    /**Draws start/end route polylines on map when requested - also adds markers to start/end location*/
     public void drawRouteMap(){
-        //String TAG = "DrawRouteMap() :";
+        //Gets a LatLng of the StartUserLocation
         Double startLAT = App.getModel().getSessionTrip().getStartUserLocation().getLatitude();
         Double startLNG = App.getModel().getSessionTrip().getStartUserLocation().getLongitude();
-        String strStartLAT = startLAT.toString();
-        String strStartLNG = startLNG.toString();
-        String strStartLoc = strStartLAT+','+strStartLNG;
-        //LatLng startloc = new LatLng(startLAT,startLNG);
         LatLng startloc = new LatLng(startLAT, startLNG);
 
+        //Gets a LatLng of the EndUserLocation
         Double endLAT = App.getModel().getSessionTrip().getEndUserLocation().getLatitude();
         Double endLNG = App.getModel().getSessionTrip().getEndUserLocation().getLongitude();
-        String strEndLAT = endLAT.toString();
-        String strEndLNG = endLNG.toString();
-        String strEndLoc = strStartLAT+','+strStartLNG;
-
-        //LatLng endloc = new LatLng(endLAT, endLNG);
         LatLng endloc = new LatLng(endLAT, endLNG);
-        /**NOTE: GetPathFromLocation() and getPath() do the same thing
-         * both try to get the Route Polyline from DirectionsAPI.
-         * Only use one at a time - right now they're both breaking at API call.*/
-        //Note GetPathFromLocation(...) uses parses route through other .java files found in view components
-        new GetPathFromLocation(startloc, endloc, polyLine -> mMap.addPolyline(polyLine)).execute();
-        //getPath(...) uses the getPath function at the bottom of MapActivity to get route polylines
-        //List<LatLng> path = getPath(strStartLoc, strEndLoc);
-        /*
+
         //Source Citation: https://stackoverflow.com/questions/47492459/how-do-i-draw-a-route-along-an-existing-road-between-two-points
-        //Define list to get all latlng for the route
-        List<LatLng> path = new ArrayList();
-
-        //Execute Directions API Request
-
-        GeoApiContext context = new GeoApiContext.Builder()
-                .apiKey(APIKEY)
-                .build();
-
-        DirectionsApiRequest request = DirectionsApi.getDirections(context,strStartLoc,strEndLoc);
-
-        try{
-            DirectionsResult result = request.await();
-
-            if(result.routes != null && result.routes.length > 0){
-                DirectionsRoute route = result.routes[0];
-                r
-
-
-            }catch(Exception ex){
-            Log.e(TAG, ex.getLocalizedMessage());
-        }
-        //Draw the polyline
-        if (path.size() > 0){
-            PolylineOptions options = new PolylineOptions()
-                    .add()
-                    .color(Color.RED)
-                    .width(5);
-            mMap.addPolyline(options);
-        }
-        mMap.getUiSettings().setZoomControlsEnabled(true);
-        LatLng end = new LatLng(53.5225, 113.6242);
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(end, 13));
-        */
-        //mMap.addPolyline(new PolylineOptions().addAll(path).color(Color.RED).width(5));
+        //Function calls Direction API and adds route polyline to map
+        new GetPathFromLocation(startloc, endloc, polyLine -> mMap.addPolyline(polyLine)).execute();
+        //Adds start and end point markers to map
         mMap.addMarker(new MarkerOptions().position(startloc).title("Start Location"));
         mMap.addMarker(new MarkerOptions().position(endloc).title("End Location"));
-
+        //Changes camera to endlocation
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(endloc, 13));
-        //mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(strEndLoc,));
-        //mMap.addPolyline(new PolylineOptions().add(startloc).add(endloc).width(4f).color(Color.RED));
     }
 
-    public List<LatLng> getPath(String start, String end){
-        String TAG = "getPath: ";
-        List<LatLng> path = new ArrayList();
-        List<LatLng> routeLine = new ArrayList();
-
-
-        GeoApiContext context = new  GeoApiContext.Builder().apiKey(APIKEY).build();
-        DirectionsApiRequest request = DirectionsApi.getDirections(context, start, end);
-        try {
-            DirectionsResult result = request.await();
-
-            if(result.routes != null && result.routes.length > 0){
-                DirectionsRoute route = result.routes[0];
-
-                List<com.google.maps.model.LatLng> routes = route.overviewPolyline.decodePath();
-                for (com.google.maps.model.LatLng routed : routes){
-                    path.add(new LatLng(routed.lat, routed.lng));
-                }
-
-                if(route.legs != null){
-                    for(int i = 0; i<route.legs.length; i++){
-                        DirectionsLeg leg = route.legs[i];
-                        if (leg.steps != null){
-                            for (int j=0; j<leg.steps.length; j++){
-                                DirectionsStep step = leg.steps[j];
-                                if (step.steps != null && step.steps.length > 0){
-                                    for (int k=0; k<step.steps.length; k++){
-                                        DirectionsStep step1 = step.steps[k];
-                                        EncodedPolyline points1 = step1.polyline;
-                                        if (points1 != null){
-                                            List<com.google.maps.model.LatLng> coords1 = points1.decodePath();
-                                            for(com.google.maps.model.LatLng coord1 : coords1){
-                                                path.add(new LatLng(coord1.lat, coord1.lng));
-                                            }
-                                        }
-                                    }
-                                }else{
-                                    EncodedPolyline points = step.polyline;
-                                    if (points != null){
-
-                                        List<com.google.maps.model.LatLng> coords = points.decodePath();
-                                        for (com.google.maps.model.LatLng coord : coords){
-                                            path.add(new LatLng(coord.lat, coord.lng));
-                                        }
-                                    }
-                                }
-
-
-                            }
-                        }
-                    }
-                }
-            }
-
-        }catch (Exception ex){
-            Log.e(TAG, ex.toString());
-        }
-        return routeLine;
-        //return path;
+    /**Clears map of polylines and markers - also resets camera to userlocation*/
+    public void clearMapRoute(){
+        mMap.clear();
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                new LatLng(mLastKnownUserLocation.getLatitude(),
+                        mLastKnownUserLocation.getLongitude()), DEFAULT_ZOOM));
     }
 }
