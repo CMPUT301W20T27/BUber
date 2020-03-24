@@ -42,6 +42,7 @@ import com.google.android.gms.tasks.Task;
 import java.util.Observable;
 import java.util.Observer;
 
+import static com.example.buber.Model.Trip.STATUS.COMPLETED;
 import static com.example.buber.Model.Trip.STATUS.DRIVER_PICKING_UP;
 import static com.example.buber.Model.Trip.STATUS.EN_ROUTE;
 import static com.example.buber.Model.User.TYPE.DRIVER;
@@ -67,7 +68,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
     private LocationManager locationManager;
     private final long MIN_MAP_UPDATE_INTERVAL = 1000; // update map on a 1 second delta
     private final long MIN_MAP_UPDATE_DISTANCE = 5; // update map on a 5 meters delta (battery life conservation)
-    private final double GEOFENCE_DETECTION_TOLERANCE = 0.040; // 40 meters is the average house perimeter width in North America
+    public final double GEOFENCE_DETECTION_TOLERANCE = 0.040; // 40 meters is the average house perimeter width in North America
 
     // LOCAL TRIP STATE
     public Trip.STATUS currentTripStatus = null;
@@ -166,8 +167,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
                         notifManager.notifyOnRiderChannel(
                                 5, "Your ride is on the way!",
                                 "",
-                                Color.GREEN
-                        );
+                                Color.GREEN);
                     } else if (currentUserType == DRIVER) {
                         notifManager.notifyOnDriverChannel(
                                 6, "The rider has accepted and is now ready for pickup!",
@@ -181,13 +181,18 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
                         notifManager.notifyOnRiderChannel(
                                 7, "Your driver has arrived!",
                                 "",
-                                Color.GREEN
-                        );
+                                Color.GREEN);
                     }
                     break;
                 case EN_ROUTE:
-                    // Used to call drawRouteMap functn.
                     drawRouteMap();
+                    break;
+                case COMPLETED:
+                    notifManager.notifyOnAllChannels(
+                            8, "Trip completed. Your destination has been reached!",
+                            "You have arrived at: " + sessionTrip.getEndUserLocation().getAddress(),
+                            Color.GREEN);
+                    clearMapRoute();
                     break;
             }
             uiAddOnsManager.showActiveMainActionButton();
@@ -199,19 +204,30 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
     }
 
     public void updateOnLocationChange() {
-        getDeviceLocation(false);
+        getDeviceLocation(false, false);
         Trip sessionTrip = App.getModel().getSessionTrip();
         if (sessionTrip != null && mLastKnownUserLocation != null) {
             User.TYPE currentUserType = App.getModel().getSessionUser().getType();
             UserLocation startUserLocation = sessionTrip.getStartUserLocation();
-            UserLocation driverLoc = new UserLocation(
-                    mLastKnownUserLocation.getLatitude(),
-                    mLastKnownUserLocation.getLongitude());
+            UserLocation endUserLocation = sessionTrip.getEndUserLocation();
 
             if (currentUserType == DRIVER && currentTripStatus == DRIVER_PICKING_UP) {
+                UserLocation driverLoc = new UserLocation(
+                        mLastKnownUserLocation.getLatitude(),
+                        mLastKnownUserLocation.getLongitude());
                 if (startUserLocation.distanceTo(driverLoc) <= GEOFENCE_DETECTION_TOLERANCE) {
                     Toast.makeText(getBaseContext(), "Notifying rider you have arrived...", Toast.LENGTH_LONG).show();
                     App.getController().handleNotifyRiderForPickup();
+                }
+            }
+
+            if (currentUserType == RIDER && currentTripStatus == EN_ROUTE) {
+                UserLocation riderLoc = new UserLocation(
+                        mLastKnownUserLocation.getLatitude(),
+                        mLastKnownUserLocation.getLongitude());
+                Log.d("", "" + riderLoc.distanceTo(endUserLocation));
+                if (riderLoc.distanceTo(endUserLocation) <= GEOFENCE_DETECTION_TOLERANCE) {
+                    App.getController().completeTrip();
                 }
             }
         }
@@ -226,7 +242,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         if (mLocationPermissionGranted) {
-            getDeviceLocation(true);
+            getDeviceLocation(true, true);
             mMap.setMyLocationEnabled(true);
         }
 
@@ -236,11 +252,6 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
                 uiAddOnsManager.showActiveMainActionButton();
             }
         });
-
-        Trip sessionTrip = App.getModel().getSessionTrip();
-        if (sessionTrip != null && sessionTrip.getStatus() == EN_ROUTE) {
-            drawRouteMap();
-        }
 
         locationListener = new LocationListener() {
             @Override
@@ -266,7 +277,6 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         } catch (SecurityException sece) {
             sece.printStackTrace();
         }
-
     }
 
     /***** BUILDING CUSTOM GOOGLE MAP (CODE REFERENCED FROM GOOGLE API DOCS) ******/
@@ -296,7 +306,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
     }
 
     /** Gets the location of the users device **/
-    private void getDeviceLocation(boolean updateFirebase) {
+    private void getDeviceLocation(boolean updateFirebase, boolean attemptRouteRedraw) {
         /*
          * Get the best and most recent location of the device, which may be null in rare
          * cases when a location is not available.
@@ -313,18 +323,22 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
                         //TODO::fix controller lat and long
 
                         if (updateFirebase) {
-                            App.getController()
-                                    .updateUserLocation(
-                                            new UserLocation(
+                            App.getController().updateUserLocation(new UserLocation(
                                                     mLastKnownUserLocation.getLatitude(),
-                                                    mLastKnownUserLocation.getLongitude()
-                                            )
-                                    );
+                                                    mLastKnownUserLocation.getLongitude()));
                         }
 
-                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                                new LatLng(mLastKnownUserLocation.getLatitude(),
-                                        mLastKnownUserLocation.getLongitude()), DEFAULT_ZOOM));
+                        Trip sessionTrip = App.getModel().getSessionTrip();
+                        if (attemptRouteRedraw &&
+                            sessionTrip != null && sessionTrip.getStatus() == EN_ROUTE) {
+                            drawRouteMap();
+                        } else {
+                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                                    new LatLng(
+                                            mLastKnownUserLocation.getLatitude(),
+                                            mLastKnownUserLocation.getLongitude()),
+                                    DEFAULT_ZOOM));
+                        }
 
                     } else {
                         Log.d("NULLLOCATION", "Current location is null. Using defaults.");
@@ -384,7 +398,6 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         }
     }
 
-
     /** onDestroy method destructs activity if it is closed down **/
     @Override
     public void onDestroy() {
@@ -415,14 +428,17 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         mMap.addMarker(new MarkerOptions().position(startLoc).title("Start Location"));
         mMap.addMarker(new MarkerOptions().position(endLoc).title("End Location"));
         //Changes camera to endlocation
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(startLoc, 13));
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
+                // can be left as driver/rider current location cause they're together when EN_ROUTE
+                new LatLng(mLastKnownUserLocation.getLatitude(), mLastKnownUserLocation.getLongitude()),
+                DEFAULT_ZOOM));
     }
 
     /**Clears map of polylines and markers - also resets camera to userlocation*/
     public void clearMapRoute(){
         mMap.clear();
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                new LatLng(mLastKnownUserLocation.getLatitude(),
-                        mLastKnownUserLocation.getLongitude()), DEFAULT_ZOOM));
+                new LatLng(mLastKnownUserLocation.getLatitude(), mLastKnownUserLocation.getLongitude()),
+                DEFAULT_ZOOM));
     }
 }
