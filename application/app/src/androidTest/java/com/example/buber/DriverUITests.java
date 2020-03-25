@@ -63,7 +63,7 @@ public class DriverUITests {
     }
 
     @Test
-    public void selectTrip(){
+    public void selectTripDRIVER_ACCEPT(){
         //select trip with username = tester
         boolean onlyVisible = true;
         if(solo.searchText("Show Active Ride Requests Near You", onlyVisible)) {
@@ -73,12 +73,11 @@ public class DriverUITests {
             }
     }
 
-
     @Test
-    public void tripStatusCheck() {
-
+    public void viewStatusAndContact() {
+        //test calling
+        //view driver rating
 
     }
-
 
 }

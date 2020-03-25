@@ -65,8 +65,14 @@ public class RiderUITests {
             solo.clickOnButton("Cancel Your Current Ride Request");
             solo.clickOnText("Yes");
         }
-        if(solo.searchText("Trip accepted! Cancel Driver pick-up?", onlyVisible)) {
-            solo.clickOnButton("Trip accepted! Cancel Driver pick-up?");
+     }
+
+    @Test
+    public void cancelTripBeforDriverPicksUp() {
+        // Remove trip from firebase
+        boolean onlyVisible = true;
+        if (solo.searchText("Trip accepted! Cancel driver pick-up?", onlyVisible)) {
+            solo.clickOnButton("Trip accepted! Cancel driver pick-up?");
         }
     }
 
@@ -75,14 +81,14 @@ public class RiderUITests {
         boolean onlyVisible = true;
         if(solo.searchText("Request a Ride", onlyVisible)) {
             solo.clickOnButton("Request a Ride");
+
             //select start point
             solo.clickOnButton("Select Start Point");
             solo.clickOnText("Search");
             solo.typeText(0, "Megan Johnson High-Walkability Path");
             solo.clickOnText("Megan Johnson High-Walkability Path", 2);
-//        solo.waitForActivity(solo.getCurrentActivity().toString());
-//        solo.waitForActivity(MapActivity.class, 1000000000);
             solo.clickOnText("OK");
+
             //Select end point
             solo.clickOnButton("Select End Point");
             solo.clickOnText("Search");
@@ -98,9 +104,14 @@ public class RiderUITests {
         }
     }
 
+    @Test
+    public void tripStatusCheckforDRIVER_ARRIVED() {
+        //when luke finishes his  EN_ROUTE
+    }
+
 
     @Test
-    public void tripStatusCheck() {
+    public void tripStatusCheckforDRIVER_PICKING_UP() {
         boolean onlyVisible = true;
         if(solo.searchText("A driver has accepted! Proceed?", onlyVisible)){
             solo.waitForDialogToOpen(5000);
@@ -111,6 +122,13 @@ public class RiderUITests {
         }
 
     }
+
+    @Test
+    public void viewDriverContactAndRating() {
+        //test calling
+
+    }
+
 
     @Test
     public void testInvalidTripEntry() {
