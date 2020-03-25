@@ -69,12 +69,34 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
+    <Button
+        android:id="@+id/rider_qrpayment_btn"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Generate your QR code for payment"
+        android:textIsSelectable="false"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
     <!--  DRIVER MAIN ACTION BUTTONS  -->
     <Button
         android:id="@+id/driver_show_requests_btn"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="Show Active Ride Requests Near You"
+        android:textIsSelectable="false"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/driver_qrpaymentaccept_btn"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Scan rider's QR code to accept payment"
         android:textIsSelectable="false"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -93,6 +115,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/sidebar"

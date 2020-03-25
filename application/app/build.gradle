@@ -52,6 +52,7 @@ dependencies {
     //google maps
     implementation 'com.google.android.gms:play-services-maps:16.1.0'
     implementation 'com.google.android.gms:play-services-location:15.0.1'
+    implementation 'com.google.maps:google-maps-services:0.11.0'
 
     // Places library
     implementation 'com.google.android.libraries.places:places:2.0.0'
@@ -65,4 +66,5 @@ dependencies {
 
     //QR code tool
     implementation 'androidmads.library.qrgenearator:QRGenearator:1.0.3'
+
 }

@@ -13,6 +13,7 @@ import com.example.buber.App;
 import com.example.buber.Controllers.ApplicationController;
 import com.example.buber.Model.Trip;
 import com.example.buber.Model.User;
+import com.example.buber.Model.UserLocation;
 import com.example.buber.R;
 import com.example.buber.Views.Activities.EditAccountActivity;
 import com.example.buber.Views.Activities.LoginActivity;
@@ -21,6 +22,7 @@ import com.example.buber.Views.Activities.RequestStatusActivity;
 import com.example.buber.Views.Activities.TripBuilderActivity;
 import com.example.buber.Views.Activities.TripSearchActivity;
 
+import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.example.buber.Model.User.TYPE.DRIVER;
@@ -33,9 +35,11 @@ public class BUberMapUIAddOnsManager {
     private Button riderRequestMainBtn;
     private Button riderRequestCancelMainBtn;
     private Button riderCancelPickupBtn;
+    private Button riderQRPaymentBtn;
 
     // DRIVER MAIN ACTION BUTTON(s)
     private Button driverShowRequestsMainBtn;
+    private Button driverQRPaymentAcceptBtn;
 
     // RIDER/DRIVER BUTTON(s)
     private Button cancelRideInProgress;
@@ -60,9 +64,11 @@ public class BUberMapUIAddOnsManager {
         this.riderRequestMainBtn = map.findViewById(R.id.rider_request_btn);
         this.riderRequestCancelMainBtn = map.findViewById(R.id.rider_request_cancel_btn);
         this.riderCancelPickupBtn = map.findViewById(R.id.rider_cancel_pickup_btn);
+        this.riderQRPaymentBtn = map.findViewById(R.id.rider_qrpayment_btn);
 
         // INSTANTIATE DRIVER MAIN ACTION BUTTONS
         this.driverShowRequestsMainBtn = map.findViewById(R.id.driver_show_requests_btn);
+        this.driverQRPaymentAcceptBtn = map.findViewById(R.id.driver_qrpaymentaccept_btn);
 
         // INSTANTIATE RIDER/DRIVER BUTTON(s)
         this.cancelRideInProgress = map.findViewById(R.id.cancel_ride_in_progess);
@@ -96,6 +102,8 @@ public class BUberMapUIAddOnsManager {
                     new double[]{
                             map.mLastKnownUserLocation.getLatitude(),
                             map.mLastKnownUserLocation.getLongitude()});
+            intent.putExtra("GEOFENCE_DETECTION_TOLERANCE",
+                    map.GEOFENCE_DETECTION_TOLERANCE);
             map.startActivity(intent);
         });
 
@@ -160,6 +168,39 @@ public class BUberMapUIAddOnsManager {
                     .setPositiveButton("Yes", dialogClickListener)
                     .setNegativeButton("No", dialogClickListener).show();
         });
+
+
+        /**
+         * Starts rider's payment activity
+         * @param v is the view instance
+         */
+        riderQRPaymentBtn.setOnClickListener((View v) -> {
+            Toast.makeText(map, "Payment not implemented yet...resetting trip", Toast.LENGTH_SHORT).show();
+            ApplicationController.deleteRiderCurrentTrip(map);
+            // TODO: Nick, just uncomment this to start your payment activity
+            /**
+             Intent paymentIntent = new Intent(mapActivity, NickYourPaymentActivityGoesHere.class);
+             mapActivity.startActivity(paymentIntent);
+             mapActivity.finish();
+             **/
+        });
+
+
+        /**
+         * Starts driver's payment QR buck scanning activity
+         * @param v is the view instance
+         */
+        driverQRPaymentAcceptBtn.setOnClickListener((View v) -> {
+            Toast.makeText(map, "Payment not implemented yet...resetting trip", Toast.LENGTH_SHORT).show();
+            ApplicationController.deleteRiderCurrentTrip(map);
+            // TODO: Nick, just uncomment this to start your payment activity
+            /**
+             Intent paymentIntent = new Intent(mapActivity, NickYourPaymentActivityGoesHere.class);
+             mapActivity.startActivity(paymentIntent);
+             mapActivity.finish();
+             **/
+        });
+
 
 
         /** Shows settings sidebar panel when necessary **/
@@ -244,6 +285,11 @@ public class BUberMapUIAddOnsManager {
                     cancelRideInProgress.setVisibility(View.VISIBLE);
                     break;
                 case COMPLETED:
+                    if (currentUserType == RIDER) {
+                        riderQRPaymentBtn.setVisibility(View.VISIBLE);
+                    } else if (currentUserType == DRIVER) {
+                        driverQRPaymentAcceptBtn.setVisibility(View.VISIBLE);
+                    }
                     break;
             }
         }
@@ -337,8 +383,10 @@ public class BUberMapUIAddOnsManager {
         riderRequestMainBtn.setVisibility(View.INVISIBLE);
         riderRequestCancelMainBtn.setVisibility(View.INVISIBLE);
         riderCancelPickupBtn.setVisibility(View.INVISIBLE);
+        riderQRPaymentBtn.setVisibility(View.INVISIBLE);
 
         driverShowRequestsMainBtn.setVisibility(View.INVISIBLE);
+        driverQRPaymentAcceptBtn.setVisibility(View.INVISIBLE);
 
         cancelRideInProgress.setVisibility(View.INVISIBLE);
     }
