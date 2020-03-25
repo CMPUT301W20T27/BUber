@@ -8,6 +8,7 @@ import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.ActivityTestRule;
 
 import com.example.buber.Model.Trip;
+import com.example.buber.Model.UserLocation;
 import com.example.buber.Views.Activities.MainActivity;
 import com.example.buber.Views.Activities.MapActivity;
 import com.example.buber.Views.Activities.RequestStatusActivity;
@@ -53,11 +54,31 @@ public class DriverUITests {
     public void runLoginDriver() {
         solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
         if (!solo.waitForActivity(MapActivity.class, 1000)) {
-            String email = "tester@tester.tester";
+            String email = "tester2@tester.tester";
             String password = "123456";
             solo.enterText((EditText) solo.getView(R.id.loginEmailEditText), email);
             solo.enterText((EditText) solo.getView(R.id.loginPasswordEditText), password);
-            solo.clickOnButton("Login As Driver");
+            solo.clickOnText("Login As Driver");
         }
     }
+
+    @Test
+    public void selectTrip(){
+        //select trip with username = tester
+        if(solo.waitForText("Show Active Ride Requests Near You", 1, 1000)) {
+            solo.clickOnText("Show Active Ride Requests Near You");
+            solo.clickOnText("tester");
+            solo.clickOnButton(2);
+            solo.waitForActivity(MapActivity.class, 1000000000);
+        }
+    }
+
+
+    @Test
+    public void tripStatusCheck() {
+
+
+    }
+
+
 }

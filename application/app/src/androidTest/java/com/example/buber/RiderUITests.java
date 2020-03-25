@@ -57,23 +57,60 @@ public class RiderUITests {
             solo.clickOnButton("Login as Rider");
         }
     }
-
+    @Test
     public void cleanUp() {
         // Remove trip from firebase
-        if (solo.waitForText("Cancel Your Current Ride Request")) {
-            solo.clickOnText("Cancel Your Current Ride Request");
+        if(solo.waitForText("Cancel Your Current Ride Request", 1, 1000)) {
+            solo.clickOnButton("Cancel Your Current Ride Request");
             solo.clickOnText("Yes");
-            assertTrue(solo.waitForText("Request a Ride"));
         }
-
     }
 
     @Test
+    public void createTrip(){
+        if(solo.waitForText("Request a Ride", 1, 1000)) {
+            solo.clickOnButton("Request a Ride");
+            //select start point
+            solo.clickOnButton("Select Start Point");
+            solo.clickOnText("Search");
+            solo.typeText(0, "Megan Johnson High-Walkability Path");
+            solo.clickOnText("Megan Johnson High-Walkability Path", 2);
+//        solo.waitForActivity(solo.getCurrentActivity().toString());
+//        solo.waitForActivity(MapActivity.class, 1000000000);
+            solo.clickOnText("OK");
+            //Select end point
+            solo.clickOnButton("Select End Point");
+            solo.clickOnText("Search");
+            solo.typeText(0, "1842 N Shoreline Blvd");
+            solo.clickOnText("1842 N Shoreline Blvd", 2);
+            solo.clickOnText("OK");
+
+            //Submit Trip Request
+            solo.clickOnButton("Submit Trip Request");
+
+
+            solo.waitForActivity(MapActivity.class, 1000000000);
+        }
+    }
+
+
+    @Test
+    public void tripStatusCheck() {
+
+
+    }
+
+
+
+
+    @Test
     public void testInvalidTripEntry() {
-        solo.assertCurrentActivity("Wrong activity",MapActivity.class);
-        solo.clickOnButton("Request a Ride");
-        assertTrue(solo.waitForActivity(TripBuilderActivity.class, 1000));
-        assertFalse(solo.getView(R.id.submitTripBtn).getVisibility() == View.INVISIBLE);
+        if (solo.waitForText("Request a Ride", 1, 1000)) {
+            solo.assertCurrentActivity("Wrong activity", MapActivity.class);
+            solo.clickOnButton("Request a Ride");
+            assertTrue(solo.waitForActivity(TripBuilderActivity.class, 1000));
+            assertFalse(solo.getView(R.id.submitTripBtn).getVisibility() == View.INVISIBLE);
+        }
     }
 
 }

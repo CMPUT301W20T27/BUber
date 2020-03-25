@@ -45,6 +45,8 @@ import br.com.simplepass.loadingbutton.customViews.CircularProgressButton;
  * and added to Firebase.
  * TODO: MVC Updating and Error Handling.
  */
+
+
 public class TripBuilderActivity extends AppCompatActivity implements UIErrorHandler, Observer {
     // Trip tings
     Trip tripRequest;

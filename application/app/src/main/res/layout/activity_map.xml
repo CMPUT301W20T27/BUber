@@ -70,6 +70,8 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <!--  DRIVER MAIN ACTION BUTTONS  -->
+
+    <!--  RIDER / DRIVER MAIN ACTION BUTTONS  -->
     <Button
         android:id="@+id/driver_show_requests_btn"
         android:layout_width="0dp"
@@ -79,9 +81,9 @@
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <!--  RIDER / DRIVER MAIN ACTION BUTTONS  -->
     <Button
         android:id="@+id/cancel_ride_in_progess"
         android:layout_width="0dp"
