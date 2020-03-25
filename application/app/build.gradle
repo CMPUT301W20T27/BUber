@@ -62,4 +62,7 @@ dependencies {
     // UI Library
     implementation 'com.google.android.material:material:1.1.0'
     implementation 'br.com.simplepass:loading-button-android:2.2.0'
+
+    //QR code tool
+    implementation 'androidmads.library.qrgenearator:QRGenearator:1.0.3'
 }

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Views.Activities.PaymentActivity"
+    android:background="@drawable/webb_dark">
+    <TextView
+        android:id="@+id/txtPaymentScreen"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Payment Screen"
+        android:textColor="#FFFFFF"
+        android:textSize="38sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.52"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.061" />
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/qrContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="104dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.529"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtPaymentScreen"
+        app:layout_constraintVertical_bias="0.153">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/imageViewQRCode"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:maxWidth="200dp"
+            android:maxHeight="200dp"
+            android:minWidth="200dp"
+            android:minHeight="200dp" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+</androidx.constraintlayout.widget.ConstraintLayout>

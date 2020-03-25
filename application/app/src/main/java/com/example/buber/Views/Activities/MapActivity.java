@@ -1,6 +1,7 @@
 package com.example.buber.Views.Activities;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
@@ -8,6 +9,8 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -105,6 +108,10 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
             uiAddOnsManager.showStatusButton();
             uiAddOnsManager.showActiveMainActionButton();
         }
+    }
+    //TODO: remove this method and the button on the map later
+    public void handlePaymentClick(View v){
+        this.startActivity(new Intent(this, PaymentActivity.class));
     }
 
     /**
