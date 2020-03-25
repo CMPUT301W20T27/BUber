@@ -182,13 +182,12 @@
         app:layout_constraintVertical_bias="0.918" />
 
     <Button
-        android:id="@+id/btnPaymentTest"
+        android:id="@+id/buttonPaymentTest"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="handlePaymentClick"
-        android:text="Button"
+        android:text="test payment"
         app:layout_constraintBottom_toTopOf="@+id/rideStatus"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:layout_editor_absoluteX="297dp" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

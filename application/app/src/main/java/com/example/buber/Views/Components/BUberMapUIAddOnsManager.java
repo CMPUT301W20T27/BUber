@@ -18,6 +18,7 @@ import com.example.buber.R;
 import com.example.buber.Views.Activities.EditAccountActivity;
 import com.example.buber.Views.Activities.LoginActivity;
 import com.example.buber.Views.Activities.MapActivity;
+import com.example.buber.Views.Activities.PaymentActivity;
 import com.example.buber.Views.Activities.RequestStatusActivity;
 import com.example.buber.Views.Activities.TripBuilderActivity;
 import com.example.buber.Views.Activities.TripSearchActivity;
@@ -175,14 +176,12 @@ public class BUberMapUIAddOnsManager {
          * @param v is the view instance
          */
         riderQRPaymentBtn.setOnClickListener((View v) -> {
-            Toast.makeText(map, "Payment not implemented yet...resetting trip", Toast.LENGTH_SHORT).show();
-            ApplicationController.deleteRiderCurrentTrip(map);
-            // TODO: Nick, just uncomment this to start your payment activity
-            /**
-             Intent paymentIntent = new Intent(mapActivity, NickYourPaymentActivityGoesHere.class);
-             mapActivity.startActivity(paymentIntent);
-             mapActivity.finish();
-             **/
+            //Toast.makeText(map, "Payment not implemented yet...resetting trip", Toast.LENGTH_SHORT).show();
+            ///ApplicationController.deleteRiderCurrentTrip(map);
+
+             Intent paymentIntent = new Intent(map, PaymentActivity.class);
+             map.startActivity(paymentIntent);
+             //map.finish();
         });
 
 
@@ -191,14 +190,11 @@ public class BUberMapUIAddOnsManager {
          * @param v is the view instance
          */
         driverQRPaymentAcceptBtn.setOnClickListener((View v) -> {
-            Toast.makeText(map, "Payment not implemented yet...resetting trip", Toast.LENGTH_SHORT).show();
-            ApplicationController.deleteRiderCurrentTrip(map);
-            // TODO: Nick, just uncomment this to start your payment activity
-            /**
-             Intent paymentIntent = new Intent(mapActivity, NickYourPaymentActivityGoesHere.class);
-             mapActivity.startActivity(paymentIntent);
-             mapActivity.finish();
-             **/
+            //Toast.makeText(map, "Payment not implemented yet...resetting trip", Toast.LENGTH_SHORT).show();
+            //ApplicationController.deleteRiderCurrentTrip(map);
+             Intent paymentIntent = new Intent(map, PaymentActivity.class);
+             map.startActivity(paymentIntent);
+             //map.finish();
         });
 
 
