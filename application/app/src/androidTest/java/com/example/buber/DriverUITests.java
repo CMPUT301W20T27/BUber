@@ -65,12 +65,12 @@ public class DriverUITests {
     @Test
     public void selectTrip(){
         //select trip with username = tester
-        if(solo.waitForText("Show Active Ride Requests Near You", 1, 1000)) {
+        boolean onlyVisible = true;
+        if(solo.searchText("Show Active Ride Requests Near You", onlyVisible)) {
             solo.clickOnText("Show Active Ride Requests Near You");
             solo.clickOnText("tester");
             solo.clickOnButton(2);
-            solo.waitForActivity(MapActivity.class, 1000000000);
-        }
+            }
     }
 
 

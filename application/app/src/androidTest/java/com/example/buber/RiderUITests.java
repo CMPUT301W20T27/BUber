@@ -60,15 +60,20 @@ public class RiderUITests {
     @Test
     public void cleanUp() {
         // Remove trip from firebase
-        if(solo.waitForText("Cancel Your Current Ride Request", 1, 1000)) {
+        boolean onlyVisible = true;
+            if(solo.searchText("Cancel Your Current Ride Request", onlyVisible)){
             solo.clickOnButton("Cancel Your Current Ride Request");
             solo.clickOnText("Yes");
+        }
+        if(solo.searchText("Trip accepted! Cancel Driver pick-up?", onlyVisible)) {
+            solo.clickOnButton("Trip accepted! Cancel Driver pick-up?");
         }
     }
 
     @Test
     public void createTrip(){
-        if(solo.waitForText("Request a Ride", 1, 1000)) {
+        boolean onlyVisible = true;
+        if(solo.searchText("Request a Ride", onlyVisible)) {
             solo.clickOnButton("Request a Ride");
             //select start point
             solo.clickOnButton("Select Start Point");
@@ -96,16 +101,21 @@ public class RiderUITests {
 
     @Test
     public void tripStatusCheck() {
-
+        boolean onlyVisible = true;
+        if(solo.searchText("A driver has accepted! Proceed?", onlyVisible)){
+            solo.waitForDialogToOpen(5000);
+            assertTrue(solo.searchText("A driver has accepted! Proceed?", 1));
+            solo.searchText("A driver has accepted! Proceed?", 1);
+            solo.clickOnButton(1);
+            solo.waitForActivity(MapActivity.class, 5000);
+        }
 
     }
 
-
-
-
     @Test
     public void testInvalidTripEntry() {
-        if (solo.waitForText("Request a Ride", 1, 1000)) {
+        boolean onlyVisible = true;
+        if(solo.searchText("Request a Ride", onlyVisible)){
             solo.assertCurrentActivity("Wrong activity", MapActivity.class);
             solo.clickOnButton("Request a Ride");
             assertTrue(solo.waitForActivity(TripBuilderActivity.class, 1000));
