@@ -8,6 +8,7 @@ import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.ActivityTestRule;
 
 import com.example.buber.Model.Trip;
+import com.example.buber.Model.User;
 import com.example.buber.Model.UserLocation;
 import com.example.buber.Views.Activities.MainActivity;
 import com.example.buber.Views.Activities.MapActivity;
@@ -71,6 +72,15 @@ public class DriverUITests {
             solo.clickOnText("tester");
             solo.clickOnButton(2);
             }
+    }
+
+
+    @Test
+    public void driverDriving(){
+        UserLocation location = new UserLocation(37.420855, -122.077642);
+        App.getController().updateUserLocation(location);
+
+
     }
 
     @Test
