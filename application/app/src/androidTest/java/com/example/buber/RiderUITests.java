@@ -106,7 +106,12 @@ public class RiderUITests {
 
     @Test
     public void tripStatusCheckforDRIVER_ARRIVED() {
-        //when luke finishes his  EN_ROUTE
+        //TODO: When luke finishes his EN_ROUTE so that it follows MVC so that the
+        // location in the controller changes when the driver Location changes
+        // So that the rider is notified ONLY based on the location in the MODEl
+
+        //
+
     }
 
 

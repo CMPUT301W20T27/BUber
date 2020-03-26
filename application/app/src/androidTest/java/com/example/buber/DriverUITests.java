@@ -1,5 +1,11 @@
 package com.example.buber;
 
+import android.content.Context;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationManager;
+import android.location.LocationProvider;
+import android.os.SystemClock;
 import android.view.View;
 import android.widget.EditText;
 
@@ -22,6 +28,10 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.List;
 
 import static junit.framework.TestCase.assertFalse;
 import static junit.framework.TestCase.assertTrue;
@@ -77,6 +87,7 @@ public class DriverUITests {
 
     @Test
     public void driverDriving(){
+
         UserLocation location = new UserLocation(37.420855, -122.077642);
         App.getController().updateUserLocation(location);
 
@@ -84,10 +95,18 @@ public class DriverUITests {
     }
 
     @Test
+    public void testGPS() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        MapActivity.getMockLocation(37.420855, -122.077642);
+    }
+
+
+
+    @Test
     public void viewStatusAndContact() {
         //test calling
         //view driver rating
 
     }
+
 
 }
