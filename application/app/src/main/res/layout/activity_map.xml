@@ -182,11 +182,11 @@
         app:layout_constraintVertical_bias="0.918" />
 
     <Button
-        android:id="@+id/buttonPaymentTest"
+        android:id="@+id/buttonTestPayment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="handlePaymentClick"
-        android:text="test payment"
+        android:text="TestPayment"
         app:layout_constraintBottom_toTopOf="@+id/rideStatus"
         app:layout_constraintEnd_toEndOf="parent" />
 
