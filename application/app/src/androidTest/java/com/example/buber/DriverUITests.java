@@ -86,22 +86,6 @@ public class DriverUITests {
 
 
     @Test
-    public void driverDriving(){
-
-        UserLocation location = new UserLocation(37.420855, -122.077642);
-        App.getController().updateUserLocation(location);
-
-
-    }
-
-    @Test
-    public void testGPS() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        MapActivity.getMockLocation(37.420855, -122.077642);
-    }
-
-
-
-    @Test
     public void viewStatusAndContact() {
         //test calling
         //view driver rating
