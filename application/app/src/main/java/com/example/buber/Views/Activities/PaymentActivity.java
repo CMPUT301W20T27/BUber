@@ -2,6 +2,7 @@ package com.example.buber.Views.Activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Environment;
@@ -32,20 +33,28 @@ import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
 public class PaymentActivity extends AppCompatActivity implements Observer, ZXingScannerView.ResultHandler, UIErrorHandler {
 
-    private String TAG = "GenerateQRCode";
+    private String TAG = "GenerateQRCode Failed";
     private ImageView qrImage;
     private String qrData;
     //private String savePath;
     private Bitmap bitmap;
     private QRGEncoder qrEncoder;
     private ZXingScannerView mScannerView;
+    private String driverID;  //stored locally before trip is deleted from db
 
+    /**
+     * If we are a rider, generate the qr code and render a view to show that code
+     * If we are a driver, open a scanner view(camera) to scan for a qr code
+     *
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_payment);
 
         App.getModel().addObserver(this);
+        driverID = App.getModel().getSessionTrip().getDriverID();  //do this before driver deletes trip
         mScannerView = new ZXingScannerView(this);  //do not move this line
         if(App.getModel().getSessionUser().getType() == User.TYPE.RIDER){
             generateQRCode();
@@ -61,6 +70,8 @@ public class PaymentActivity extends AppCompatActivity implements Observer, ZXin
      * Grabs the current trip session, encodes the rider id, driver id, and fair amount of the trip
      * into a bitmap, and converts that bitmap into an imageView to be rendered in
      * activity_payment.xml
+     * The qr code stores data as a string, in the format:
+     * String str = "riderID,driverID,QRBucksAmount"
      */
     public void generateQRCode() {
         //initializations, turn trip data into bitmap
@@ -99,9 +110,7 @@ public class PaymentActivity extends AppCompatActivity implements Observer, ZXin
     @Override
     public void onResume() {
         super.onResume();
-        // Register ourselves as a handler for scan results.
         mScannerView.setResultHandler(this);
-        // Start camera on resume
         mScannerView.startCamera();
     }
 
@@ -114,8 +123,8 @@ public class PaymentActivity extends AppCompatActivity implements Observer, ZXin
 
     /**
      * Once a qr code is detected from the camera, grab the data,
-     * and receive the money.
-     * String[] strValues = [riderID, driverId, fairAmount]
+     * and receive the money. Drip then deletes from db, and the rider calls update()
+     * String[] strData = [riderID, driverId, fairAmount]
      * @param result is the resulting bytes grabbed from the QR Code
      */
     @Override
@@ -128,6 +137,13 @@ public class PaymentActivity extends AppCompatActivity implements Observer, ZXin
         finish();
     }
 
+    /**
+     * After a trip gets deleted, rider calls update, and transitions them to the
+     * rating activty to rate their driver
+     *
+     * @param observable
+     * @param o
+     */
     @Override
     public void update(Observable observable, Object o) {
         Trip sessionTrip = App.getModel().getSessionTrip();
@@ -135,8 +151,12 @@ public class PaymentActivity extends AppCompatActivity implements Observer, ZXin
 
         if(currentUserType == User.TYPE.RIDER){
             if(sessionTrip == null){
-                
-                this.finish();
+                Intent intent = new Intent(this, ratingActivity.class);// New activity
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.putExtra("driverID",driverID);
+                startActivity(intent);
+                finish();
+                //this.finish();
             }
         }
     }
@@ -148,7 +168,6 @@ public class PaymentActivity extends AppCompatActivity implements Observer, ZXin
         // THIS CODE SHOULD BE IMPLEMENTED IN EVERY VIEW
         ApplicationModel m = App.getModel();
         m.deleteObserver(this);
-
     }
 
     @Override

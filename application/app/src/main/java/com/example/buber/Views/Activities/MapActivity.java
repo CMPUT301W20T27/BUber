@@ -114,10 +114,6 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
             uiAddOnsManager.showActiveMainActionButton();
         }
     }
-    //TODO: remove this method and the button on the map later
-    public void handlePaymentClick(View v){
-        this.startActivity(new Intent(this, PaymentActivity.class));
-    }
 
     /**
      * update method updates the activity when necessary, USED MOSTLY FOR NOTIFICATIONS
