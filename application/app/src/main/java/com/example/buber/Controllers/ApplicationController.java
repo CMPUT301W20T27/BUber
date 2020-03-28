@@ -2,6 +2,7 @@ package com.example.buber.Controllers;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.example.buber.App;
@@ -16,6 +17,7 @@ import com.example.buber.Views.Activities.LoginActivity;
 import com.example.buber.Views.Activities.MainActivity;
 import com.example.buber.Views.Activities.MapActivity;
 import com.example.buber.Views.Activities.RequestStatusActivity;
+import com.example.buber.Views.Activities.ratingActivity;
 import com.example.buber.Views.UIErrorHandler;
 
 import java.util.List;
@@ -24,6 +26,7 @@ import java.util.concurrent.TimeUnit;
 
 import br.com.simplepass.loadingbutton.customViews.CircularProgressButton;
 
+import static com.example.buber.Model.User.TYPE.DRIVER;
 import static com.example.buber.Model.User.TYPE.RIDER;
 
 /**
@@ -39,28 +42,6 @@ public class ApplicationController {
         this.model = model;
     }
 
-    /**
-     * Calls the  ApplicationService class to create a trip. On success the listener gets
-     * the trip object. On failure the  error listener returns the exception. And updates the model
-     * @param tripRequest The created trips object
-     * @param view the UI Error Handler interface callback.
-     */
-
-    public void createNewTrip(Trip tripRequest,
-                              UIErrorHandler view,
-                              CircularProgressButton submitTripBtn) {
-        ApplicationService.createNewTrip(tripRequest,
-                (resultData, err) -> {
-                    if (err != null) view.onError(err);
-                    else {
-                        Trip tripData =  (Trip) resultData.get("trip");
-                        model.setSessionTrip(tripData);
-                        view.finish();
-                        submitTripBtn.stopAnimation();
-                    }
-                }
-        );
-    }
     /**
      * Calls the  ApplicationService class to create a user. On success the listener gets
      * the user object. On failure the  error listener returns the exception. And updates the model
@@ -112,13 +93,29 @@ public class ApplicationController {
             }
         });
     }
+
     /**
-     * Calls the  ApplicationService class to logout a user. And updates the model
+     * Calls the  ApplicationService class to create a trip. On success the listener gets
+     * the trip object. On failure the  error listener returns the exception. And updates the model
+     * @param tripRequest The created trips object
+     * @param view the UI Error Handler interface callback.
      */
-    public void logout() {
-        ApplicationService.logoutUser();
-        model.clearModelForLogout();
+    public void createNewTrip(Trip tripRequest,
+                              UIErrorHandler view,
+                              CircularProgressButton submitTripBtn) {
+        ApplicationService.createNewTrip(tripRequest,
+                (resultData, err) -> {
+                    if (err != null) view.onError(err);
+                    else {
+                        Trip tripData =  (Trip) resultData.get("trip");
+                        model.setSessionTrip(tripData);
+                        view.finish();
+                        submitTripBtn.stopAnimation();
+                    }
+                }
+        );
     }
+
     /**
      *  Updates the users location in the model and calls notifyObservers() in the ApplicationModel
      *  @param location the users new location
@@ -130,6 +127,7 @@ public class ApplicationController {
             m.notifyObservers();
         }
     }
+
     /**
      *  Gets the all the trips for the user. And updates the model with the trip list.
      *   @param view the UI Error Handler interface callback.
@@ -239,7 +237,7 @@ public class ApplicationController {
         }));
     }
 
-    /** Controls what happens after rider accept ride offer **/
+    /** Controls what happens after rider accepts thr ride offer **/
     public static void handleNotifyRiderForPickup() {
         Trip currentTrip = App.getModel().getSessionTrip();
         currentTrip.setStatus(Trip.STATUS.DRIVER_ARRIVED);
@@ -271,6 +269,21 @@ public class ApplicationController {
         }));
     }
 
+    /** Complete trip **/
+    public static void completeTrip() {
+        Trip currentTrip = App.getModel().getSessionTrip();
+        currentTrip.setStatus(Trip.STATUS.COMPLETED);
+        ApplicationService.completeTrip(currentTrip.getRiderID(), currentTrip, ((resultData, err) -> {
+            if (err != null) {
+                List<Observer> mapObservers = App.getModel().getObserversMatchingClass(MapActivity.class);
+                for (Observer map : mapObservers) {
+                    ((UIErrorHandler) map).onError(err);
+                }
+            } else {
+                App.getModel().setSessionTrip(currentTrip);
+            }
+        }));
+    }
 
     /**
      * Updates non critical user fields when they are edited by user. On success set the new session user.
@@ -289,6 +302,35 @@ public class ApplicationController {
         }));
     }
 
+    /**
+     * Called from the rating activity. Takes either a thumbs up or thumbs down and adjusts the
+     * rating in the db.
+     * @param view is the rating activity at which this method is called
+     * @param driverID  is the driver that needs to be updated
+     * @param giveThumbsUp  boolean for if thumbs up was pressed or not
+     */
+    public static void updateDriverRating(ratingActivity view, String driverID, boolean giveThumbsUp){
+        App.getDbManager().getDriver(driverID, ((resultData, err) -> {
+            if (err == null) {
+                Driver tmpDriver = (Driver) resultData.get("user");
+                if(giveThumbsUp){
+                    tmpDriver.setNumThumbsUp(tmpDriver.getNumThumbsUp() + 1);
+                }
+                else{
+                    tmpDriver.setNumThumbsDown(tmpDriver.getNumThumbsDown()+1);
+                }
+                //Rating algorithm
+                tmpDriver.setRating((tmpDriver.getNumThumbsUp() / (tmpDriver.getNumThumbsDown() +
+                        tmpDriver.getNumThumbsUp())) * 100);
+                App.getDbManager().updateDriver(driverID,tmpDriver, (resultData1, err1) -> {
+                    if (err1 != null) {
+                        view.finish();
+                    }
+                });
+            }
+
+        }));
+    }
 
     public static void handleViewContactInformation(Activity view, Intent contactIntent, String riderID, String driverID) {
         if (App.getModel().getSessionUser().getType() == RIDER) {
@@ -315,5 +357,13 @@ public class ApplicationController {
                 }
             }));
         }
+    }
+
+    /**
+     * Calls the  ApplicationService class to logout a user. And updates the model
+     */
+    public void logout() {
+        ApplicationService.logoutUser();
+        model.clearModelForLogout();
     }
 }

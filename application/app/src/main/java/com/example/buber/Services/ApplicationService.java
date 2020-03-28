@@ -32,27 +32,6 @@ public class ApplicationService {
     private static final String TAG = "ApplicationService";
 
     /**
-     * Calls the DBManger class to create a trip in Firebase. On success the listener returns
-     * the trip object. On failure the listener returns the exception
-     * @param tripRequest the trip object created
-     * @param controllerListener the listener that gets results from the Firebase call.
-     * @returns listener on successful/failed trip creation.
-     */
-    public static void createNewTrip(Trip tripRequest, EventCompletionListener controllerListener) {
-        App
-                .getDbManager()
-                .createTrip(tripRequest,
-                        (resultData, err) -> {
-                            if (err != null) {
-                                controllerListener.onCompletion(null, new Error(err.getMessage()));
-                                return;
-                            } else {
-                                controllerListener.onCompletion(resultData, null);
-                            }
-                        }, true);
-    }
-
-    /**
      * Calls the DBManger class to create a user in Firebase. On success the listener gets
      * the trip object. On failure the listener returns the exception
      * @param username,password,firstName,lastName,email,phoneNumber,type The users information
@@ -110,10 +89,24 @@ public class ApplicationService {
     }
 
     /**
-     * Calls the AuthDBManager class to logout the user.
+     * Calls the DBManger class to create a trip in Firebase. On success the listener returns
+     * the trip object. On failure the listener returns the exception
+     * @param tripRequest the trip object created
+     * @param controllerListener the listener that gets results from the Firebase call.
+     * @returns listener on successful/failed trip creation.
      */
-    public static void logoutUser() {
-        App.getAuthDBManager().signOut();
+    public static void createNewTrip(Trip tripRequest, EventCompletionListener controllerListener) {
+        App
+                .getDbManager()
+                .createTrip(tripRequest,
+                        (resultData, err) -> {
+                            if (err != null) {
+                                controllerListener.onCompletion(null, new Error(err.getMessage()));
+                                return;
+                            } else {
+                                controllerListener.onCompletion(resultData, null);
+                            }
+                        }, true);
     }
 
     /**
@@ -195,7 +188,6 @@ public class ApplicationService {
         }
     }
 
-
     /**
      * Calls the DBManager class to update the trip selected. On success the listener returns
      * the trip updates. On failure the listener returns the exception.
@@ -245,6 +237,17 @@ public class ApplicationService {
     }
 
     /**
+     * Calls the DBManager class to update the trip selected. On success the listener returns
+     * the trip updates. On failure the listener returns the exception.
+     * @param uid The document id of the trip
+     * @param selectedTrip the trip object selected
+     * @param controllerListener the listener that gets results from the Firebase call.
+     */
+    public static void selectTrip(String uid, Trip selectedTrip, EventCompletionListener controllerListener) {
+        App.getDbManager().updateTrip(uid, selectedTrip, controllerListener, true);
+    }
+
+    /**
      * Begins trip
      * @param uid The document id of the trip
      * @param selectedTrip the trip object selected
@@ -274,8 +277,21 @@ public class ApplicationService {
      * @param selectedTrip the trip object selected
      * @param controllerListener the listener that gets results from the Firebase call.
      */
-    public static void selectTrip(String uid, Trip selectedTrip, EventCompletionListener controllerListener) {
-        App.getDbManager().updateTrip(uid, selectedTrip, controllerListener, true);
+    public static void completeTrip(String uid, Trip selectedTrip, EventCompletionListener controllerListener) {
+        // First: get the Driver ID who wants to pick the rider up!
+        ApplicationService.getSessionTripForUser((resultData, err) -> {
+            if (err != null) {
+                Log.e("Exception: %s", err.getMessage());
+            } else {
+                if (resultData != null && resultData.containsKey("trip")) {
+                    Trip sessionTrip = (Trip) resultData.get("trip");
+                    String tripDriverID = sessionTrip.getDriverID();
+                    selectedTrip.setDriverID(tripDriverID);
+                    // Second: call updateTrip to change the trip status and thus notify the driver!
+                    App.getDbManager().updateTrip(uid, selectedTrip, controllerListener, true);
+                }
+            }
+        });
     }
 
     /**
@@ -329,4 +345,10 @@ public class ApplicationService {
         }
     }
 
+    /**
+     * Calls the AuthDBManager class to logout the user.
+     */
+    public static void logoutUser() {
+        App.getAuthDBManager().signOut();
+    }
 }

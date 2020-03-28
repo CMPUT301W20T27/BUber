@@ -12,6 +12,10 @@ public class Driver extends User {
 
     private double rating;
 
+    private double numThumbsUp;
+
+    private double numThumbsDown;
+
     private boolean driverLoggedOn;
 
     @DocumentId
@@ -34,12 +38,20 @@ public class Driver extends User {
     public Driver(String username, Account account) {
         super(username, account);
         setType(TYPE.DRIVER);
-        rating = 3.0;
+        rating = 0;
+        numThumbsUp = 0;
+        numThumbsDown = 0;
     }
 
     public double getRating() {
         return rating;
     }
+
+    public double getNumThumbsUp(){return numThumbsUp; }
+    public double getNumThumbsDown(){return numThumbsDown;}
+    public void setNumThumbsUp(double up){this.numThumbsUp = up;}
+    public void setNumThumbsDown(double down){this.numThumbsDown = down;}
+
 
     public void setRating(double rating) {
         this.rating = rating;

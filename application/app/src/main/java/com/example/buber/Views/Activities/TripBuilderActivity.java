@@ -55,6 +55,7 @@ public class TripBuilderActivity extends AppCompatActivity implements UIErrorHan
     double minimumFareOffering;
     double riderFareOffering;
     int choosingBtnID;
+    double GEOFENCE_DETECTION_TOLERANCE;
 
     // UI
     ConstraintLayout tripSubmissionLayout;
@@ -78,10 +79,13 @@ public class TripBuilderActivity extends AppCompatActivity implements UIErrorHan
 
         // Set start location parameters from previous map activity
         double[] currentLatLong = getIntent().getDoubleArrayExtra("currentLatLong");
+        GEOFENCE_DETECTION_TOLERANCE = getIntent().getDoubleExtra("GEOFENCE_DETECTION_TOLERANCE", 0.040);
         currentUserLoc = new UserLocation(currentLatLong[0], currentLatLong[1]);
         startLoc = new UserLocation(currentLatLong[0], currentLatLong[1]);
-        geocoder = new Geocoder(this, Locale.getDefault());
+
+        // Initialize locations
         try {
+            geocoder = new Geocoder(this, Locale.getDefault());
             List<Address> addresses = geocoder.getFromLocation(
                     currentLatLong[0],
                     currentLatLong[1],
@@ -198,6 +202,14 @@ public class TripBuilderActivity extends AppCompatActivity implements UIErrorHan
 
     public void handleTripSubmitBtn(View v) {
         submitTripBtn.startAnimation();
+
+        // Edge case: Check if rider is already at location
+        if (currentUserLoc.distanceTo(endLoc) <= GEOFENCE_DETECTION_TOLERANCE) {
+            Toast.makeText(getBaseContext(), "You are already here...", Toast.LENGTH_SHORT).show();
+            this.finish();
+            return;
+        }
+
         String username = App.getModel().getSessionUser().getUsername();
         double offeredFare = Double.valueOf(fareOfferingEditText.getText().toString().trim());
         if (offeredFare >= minimumFareOffering) {

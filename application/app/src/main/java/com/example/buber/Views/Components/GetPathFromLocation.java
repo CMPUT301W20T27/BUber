@@ -1,11 +1,9 @@
 package com.example.buber.Views.Components;
 
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.example.buber.R;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.PolylineOptions;
 
@@ -25,6 +23,8 @@ import static java.security.AccessController.getContext;
 /**
  * GetPathFromLocation class makes an api call to DirectionsAPI. It creates a URL using the start
  * and end locations of the rider trip. Then it parses the route data into the polylines used
+ * Source Citation: https://stackoverflow.com/questions/47492459/how-do-i-draw-a-route-along-an-existing-road-between-two-points
+ * Function calls Direction API and adds route polyline to map
  * to create a driving route on the map*/
 //Source Citation: https://stackoverflow.com/questions/47492459/how-do-i-draw-a-route-along-an-existing-road-between-two-points
 public class GetPathFromLocation extends AsyncTask<String, Void, PolylineOptions> {
