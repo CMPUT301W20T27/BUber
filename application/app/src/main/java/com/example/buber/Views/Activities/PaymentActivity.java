@@ -75,12 +75,7 @@ public class PaymentActivity extends AppCompatActivity implements Observer, ZXin
      *
      */
     private void getCameraPermission() {
-        /*
-         * Request location permission, so that we can get the location of the
-         * device. The result of the permission request is handled by a callback,
-         * onRequestPermissionsResult.
-         * Code reference from Google API docs
-         */
+
         if (ContextCompat.checkSelfPermission(this.getApplicationContext(),
                 android.Manifest.permission.CAMERA)
                 == PackageManager.PERMISSION_GRANTED) {
