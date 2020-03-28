@@ -1,8 +1,11 @@
 package com.example.buber.Views.Activities;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Environment;
@@ -41,6 +44,7 @@ public class PaymentActivity extends AppCompatActivity implements Observer, ZXin
     private QRGEncoder qrEncoder;
     private ZXingScannerView mScannerView;
     private String driverID;  //stored locally before trip is deleted from db
+    private static final int PERMISSIONS_REQUEST_ACCESS_CAMERA = 1233;
 
     /**
      * If we are a rider, generate the qr code and render a view to show that code
@@ -60,9 +64,31 @@ public class PaymentActivity extends AppCompatActivity implements Observer, ZXin
             generateQRCode();
         }
         else if(App.getModel().getSessionUser().getType() == User.TYPE.DRIVER){
+            getCameraPermission();
             scanQRCode();
         }
 
+    }
+
+    /**
+     * If camera is not enabled for the app. ask user for camera permissions
+     *
+     */
+    private void getCameraPermission() {
+        /*
+         * Request location permission, so that we can get the location of the
+         * device. The result of the permission request is handled by a callback,
+         * onRequestPermissionsResult.
+         * Code reference from Google API docs
+         */
+        if (ContextCompat.checkSelfPermission(this.getApplicationContext(),
+                android.Manifest.permission.CAMERA)
+                == PackageManager.PERMISSION_GRANTED) {
+
+        } else {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{android.Manifest.permission.CAMERA},PERMISSIONS_REQUEST_ACCESS_CAMERA );
+        }
     }
 
     /**
