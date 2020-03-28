@@ -1,8 +1,11 @@
 package com.example.buber.Views.Activities;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -69,7 +72,7 @@ public class RequestStatusActivity extends AppCompatActivity implements Observer
                 Driver tmpDriver = (Driver) resultData.get("user");
                 Account tmpAccount = tmpDriver.getAccount();
                 usernameTextView.setText(tmpDriver.getUsername());
-                driverRatingTextView.setText("Current Rating: " + tmpDriver.getRating() + " / 5.0");
+                driverRatingTextView.setText("Current Rating: " + tmpDriver.getRating() + " / 100.0");
             }
             else {
                 Toast.makeText(this, err.getMessage(), Toast.LENGTH_LONG);

@@ -3,6 +3,7 @@ package com.example.buber.Views.Activities;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.content.DialogInterface;
@@ -33,6 +34,7 @@ public class ContactViewerActivity extends AppCompatActivity {
     private TextView userNameTextView;
     private Button phoneButton;
     private Button emailButton;
+    private static final int PERMISSIONS_REQUEST_ACCESS_CALL_PHONE = 1232;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +66,8 @@ public class ContactViewerActivity extends AppCompatActivity {
         userNameTextView.setText(userName);
         userEmailTextView.setText(email);
         userPhoneNumberTextView.setText(phoneNumber);
-        phoneButton.setOnClickListener(v -> this.handlePhoneRequest());
+
+        phoneButton.setOnClickListener(v -> {this.getPhonePermission(); this.handlePhoneRequest();});
         emailButton.setOnClickListener(v -> this.handleEmailRequest());
     }
 
@@ -108,5 +111,17 @@ public class ContactViewerActivity extends AppCompatActivity {
                         }
                     }})
                 .setNegativeButton(android.R.string.no, null).show();
+    }
+
+
+    private void getPhonePermission() {
+        if (ContextCompat.checkSelfPermission(this.getApplicationContext(),
+                android.Manifest.permission.CALL_PHONE)
+                == PackageManager.PERMISSION_GRANTED) {
+            //TODO: what happens if they click no
+        } else {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{android.Manifest.permission.CALL_PHONE},PERMISSIONS_REQUEST_ACCESS_CALL_PHONE );
+        }
     }
 }

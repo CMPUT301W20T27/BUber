@@ -80,8 +80,10 @@ public class TripBuilderActivity extends AppCompatActivity implements UIErrorHan
         GEOFENCE_DETECTION_TOLERANCE = getIntent().getDoubleExtra("GEOFENCE_DETECTION_TOLERANCE", 0.040);
         currentUserLoc = new UserLocation(currentLatLong[0], currentLatLong[1]);
         startLoc = new UserLocation(currentLatLong[0], currentLatLong[1]);
-        geocoder = new Geocoder(this, Locale.getDefault());
+
+        // Initialize locations
         try {
+            geocoder = new Geocoder(this, Locale.getDefault());
             List<Address> addresses = geocoder.getFromLocation(
                     currentLatLong[0],
                     currentLatLong[1],

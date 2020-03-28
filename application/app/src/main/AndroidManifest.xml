@@ -5,6 +5,8 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:name=".App"
@@ -14,7 +16,9 @@
         android:roundIcon="@mipmap/buber_logo_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.NoActionBar">
-        <activity android:name=".Views.Activities.ContactViewerActivity"></activity>
+        <activity android:name=".Views.Activities.ratingActivity"></activity>
+        <activity android:name=".Views.Activities.PaymentActivity" />
+        <activity android:name=".Views.Activities.ContactViewerActivity" />
         <activity android:name=".Views.Activities.RequestStatusActivity" />
         <activity android:name=".Views.Activities.EditAccountActivity" />
 

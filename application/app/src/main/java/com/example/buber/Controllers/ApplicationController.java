@@ -2,6 +2,7 @@ package com.example.buber.Controllers;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.example.buber.App;
@@ -16,6 +17,7 @@ import com.example.buber.Views.Activities.LoginActivity;
 import com.example.buber.Views.Activities.MainActivity;
 import com.example.buber.Views.Activities.MapActivity;
 import com.example.buber.Views.Activities.RequestStatusActivity;
+import com.example.buber.Views.Activities.ratingActivity;
 import com.example.buber.Views.UIErrorHandler;
 
 import java.util.List;
@@ -297,6 +299,36 @@ public class ApplicationController {
             } else {
                 // TODO: Handle Errors
             }
+        }));
+    }
+
+    /**
+     * Called from the rating activity. Takes either a thumbs up or thumbs down and adjusts the
+     * rating in the db.
+     * @param view is the rating activity at which this method is called
+     * @param driverID  is the driver that needs to be updated
+     * @param giveThumbsUp  boolean for if thumbs up was pressed or not
+     */
+    public static void updateDriverRating(ratingActivity view, String driverID, boolean giveThumbsUp){
+        App.getDbManager().getDriver(driverID, ((resultData, err) -> {
+            if (err == null) {
+                Driver tmpDriver = (Driver) resultData.get("user");
+                if(giveThumbsUp){
+                    tmpDriver.setNumThumbsUp(tmpDriver.getNumThumbsUp() + 1);
+                }
+                else{
+                    tmpDriver.setNumThumbsDown(tmpDriver.getNumThumbsDown()+1);
+                }
+                //Rating algorithm
+                tmpDriver.setRating((tmpDriver.getNumThumbsUp() / (tmpDriver.getNumThumbsDown() +
+                        tmpDriver.getNumThumbsUp())) * 100);
+                App.getDbManager().updateDriver(driverID,tmpDriver, (resultData1, err1) -> {
+                    if (err1 != null) {
+                        view.finish();
+                    }
+                });
+            }
+
         }));
     }
 
