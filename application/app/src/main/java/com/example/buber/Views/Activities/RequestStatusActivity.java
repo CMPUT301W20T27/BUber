@@ -42,7 +42,6 @@ public class RequestStatusActivity extends AppCompatActivity implements Observer
     private TextView usernameTextView;
     private TextView driverRatingTextView;
     private Button viewContactButton;
-    private static final int PERMISSIONS_REQUEST_ACCESS_CALL_PHONE = 1232;
 
     /**onCreate method will create the activity when called
      * @param savedInstanceState is a previous saved state for activity if available*/
@@ -84,7 +83,6 @@ public class RequestStatusActivity extends AppCompatActivity implements Observer
 
     /**Fills ride status form with correct user and trip data depending on which user is signed in*/
     public void fillStatusForm(){
-        getPhonePermission();
         User curUser = App.getModel().getSessionUser();
         Trip trip = App.getModel().getSessionTrip();
         if(trip==null){
@@ -121,23 +119,9 @@ public class RequestStatusActivity extends AppCompatActivity implements Observer
         }
     }
 
-     private void getPhonePermission() {
-
-         if (ContextCompat.checkSelfPermission(this.getApplicationContext(),
-                 android.Manifest.permission.CALL_PHONE)
-                 == PackageManager.PERMISSION_GRANTED) {
-             //TODO:: what happens if they click no
-
-         } else {
-             ActivityCompat.requestPermissions(this,
-                     new String[]{android.Manifest.permission.CALL_PHONE},PERMISSIONS_REQUEST_ACCESS_CALL_PHONE );
-         }
-     }
-
     public void handleViewContactButtonClick(View v) {
         // if Rider clicks this, then we want to load the drivers contact info with option to
         // call the driver, else load the riders contact information
-        getPhonePermission();
         Trip trip = App.getModel().getSessionTrip();
         if (trip != null && trip.getDriverID() != null) {
             Intent contactIntent = new Intent(this, ContactViewerActivity.class);
