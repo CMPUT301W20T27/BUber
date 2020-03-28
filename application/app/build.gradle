@@ -68,5 +68,8 @@ dependencies {
     implementation 'androidmads.library.qrgenearator:QRGenearator:1.0.3'
     implementation 'me.dm7.barcodescanner:zxing:1.9'
 
+    //For testing with permissions
+    androidTestImplementation 'androidx.test.uiautomator:uiautomator:2.2.0'
+
 
 }

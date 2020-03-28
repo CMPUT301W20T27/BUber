@@ -1,39 +1,26 @@
 package com.example.buber;
 
-import android.content.Context;
-import android.location.Criteria;
-import android.location.Location;
-import android.location.LocationManager;
-import android.location.LocationProvider;
-import android.os.SystemClock;
-import android.view.View;
+import android.os.Build;
+import android.util.Log;
 import android.widget.EditText;
 
-import androidx.appcompat.widget.AppCompatTextView;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.ActivityTestRule;
+import androidx.test.uiautomator.UiDevice;
+import androidx.test.uiautomator.UiObject;
+import androidx.test.uiautomator.UiObjectNotFoundException;
+import androidx.test.uiautomator.UiSelector;
 
-import com.example.buber.Model.Trip;
-import com.example.buber.Model.User;
-import com.example.buber.Model.UserLocation;
 import com.example.buber.Views.Activities.MainActivity;
 import com.example.buber.Views.Activities.MapActivity;
-import com.example.buber.Views.Activities.RequestStatusActivity;
-import com.example.buber.Views.Activities.TripBuilderActivity;
-import com.example.buber.Views.Activities.TripSearchActivity;
 import com.robotium.solo.Solo;
 
 import org.junit.Before;
+import org.junit.FixMethodOrder;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.List;
-
-import static junit.framework.TestCase.assertFalse;
 import static junit.framework.TestCase.assertTrue;
 
 /**
@@ -45,11 +32,16 @@ import static junit.framework.TestCase.assertTrue;
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class DriverUITests {
-
+    private static final String TAG = "DriverUITests";
     private Solo solo;
-    private Solo driverSolo;
+    private boolean onlyVisible = true;
+    private UiDevice mDevice;
+
     public DriverUITests() {
-        App.getAuthDBManager().signOut();
+
+        // Initialize UiDevice instance
+        mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
+        allowPermissionsIfNeeded();App.getAuthDBManager().signOut();
     }
 
     @Rule
@@ -73,24 +65,99 @@ public class DriverUITests {
         }
     }
 
+
     @Test
-    public void selectTripDRIVER_ACCEPT(){
+    public void viewContactAndSelectTripDRIVER_ACCEPT() throws InterruptedException {
         //select trip with username = tester
-        boolean onlyVisible = true;
+
         if(solo.searchText("Show Active Ride Requests Near You", onlyVisible)) {
             solo.clickOnText("Show Active Ride Requests Near You");
+            solo.clickOnText("tester");
+            //view contact information of the rider before accepting
+            solo.clickOnText("View Contact Details");
+            solo.waitForText("wait", 0, 500);
+
+            //click the back button
+            solo.goBack();
             solo.clickOnText("tester");
             solo.clickOnButton(2);
             }
     }
 
-
     @Test
-    public void viewStatusAndContact() {
+    public void viewDriverContactAndRatingTestPhone() {
         //test calling
-        //view driver rating
+
+        if (solo.searchText("Ride Status", onlyVisible)) {
+            solo.clickOnButton("Ride Status");
+            solo.waitForText("wait", 0, 500);
+
+            if (solo.searchText("View Contact Details", onlyVisible)) {
+                solo.clickOnButton("View Contact Details");
+                // Test phone
+                solo.clickOnText("Phone");
+                solo.waitForDialogToOpen(100);
+                assertTrue(solo.searchText("Do you want to phone this driver", 1));
+                solo.searchText("Do you want to phone this driver", 1);
+                solo.clickOnButton("OK");
+            }
+        }
 
     }
+
+    @Test
+    public void viewDriverContactAndRatingTestEmail() {
+        //Test email
+        if (solo.searchText("Ride Status", onlyVisible)) {
+            solo.clickOnButton("Ride Status");
+            solo.waitForText("wait", 0, 500);
+            if (solo.searchText("View Contact Details", onlyVisible)) {
+                solo.clickOnButton("View Contact Details");
+                solo.clickOnText("Email");
+                solo.waitForDialogToOpen(100);
+                assertTrue(solo.searchText("Do you want to email this driver", 1));
+                solo.searchText("Do you want to email this driver", 1);
+                solo.clickOnButton("OK");
+                solo.waitForText("wait", 0, 500);
+            }
+        }
+
+    }
+
+
+    @Test
+    public void tripStatusCheckforDRIVER_ARRIVED() {
+        //TODO: When luke finishes his EN_ROUTE so that it follows MVC so that the
+        // location in the controller changes when the driver Location changes
+        // So that the rider is notified ONLY based on the location in the MODEl
+
+        //check for message: Notifying rider you have arrived
+    }
+
+
+    @Test
+    public void tripStatusCheckforCOMPLETED() {
+        //TODO: When luke finishes his EN_ROUTE so that it follows MVC so that the
+        // location in the controller changes when the driver Location changes
+        // So that the rider is notified ONLY based on the location in the MODEl
+
+        //check for message: Notifying rider you have arrived
+    }
+
+
+    private void allowPermissionsIfNeeded()  {
+        if (Build.VERSION.SDK_INT >= 23) {
+            UiObject allowPermissions = mDevice.findObject(new UiSelector().text("Allow"));
+            if (allowPermissions.exists()) {
+                try {
+                    allowPermissions.click();
+                } catch (UiObjectNotFoundException e) {
+                    Log.d("DriverUITests", "permissions error" + e);
+                }
+            }
+        }
+    }
+
 
 
 }
