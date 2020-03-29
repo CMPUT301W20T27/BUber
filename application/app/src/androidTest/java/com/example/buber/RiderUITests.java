@@ -137,13 +137,6 @@ public class RiderUITests {
     }
 
 
-
-
-
-
-
-
-
     @Test
     public void tripStatusCheckforDRIVER_PICKING_UP() {
 
@@ -196,8 +189,6 @@ public class RiderUITests {
         }
 
     }
-
-
 
     @Test
     public void testInvalidTripEntry() {
