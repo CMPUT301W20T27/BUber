@@ -31,17 +31,18 @@ import static junit.framework.TestCase.assertTrue;
  * Press run all to run tests
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class DriverUITests {
+public class DriversUITests {
     private static final String TAG = "DriverUITests";
     private Solo solo;
     private boolean onlyVisible = true;
     private UiDevice mDevice;
 
-    public DriverUITests() {
+    public DriversUITests() {
 
         // Initialize UiDevice instance
         mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
-        allowPermissionsIfNeeded();App.getAuthDBManager().signOut();
+        allowPermissionsIfNeeded();
+        App.getAuthDBManager().signOut();
     }
 
     @Rule
@@ -81,7 +82,7 @@ public class DriverUITests {
             solo.goBack();
             solo.clickOnText("tester");
             solo.clickOnButton(2);
-            }
+        }
     }
 
     @Test
