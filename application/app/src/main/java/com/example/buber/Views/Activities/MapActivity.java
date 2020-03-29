@@ -197,7 +197,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
                     }
                     break;
                 case EN_ROUTE:
-                    drawRouteMap();
+                    getDeviceLocation(false,true);
                     break;
                 case COMPLETED:
                     notifManager.notifyOnAllChannels(
@@ -217,7 +217,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
 
     /**updates user location and route if the user's location has changed*/
     public void updateOnLocationChange() {
-        getDeviceLocation(false, isTripOnRoute());
+        getDeviceLocation(false, !isTripOnRoute());
         Trip sessionTrip = App.getModel().getSessionTrip();
         if (sessionTrip != null && mLastKnownUserLocation != null) {
             User.TYPE currentUserType = App.getModel().getSessionUser().getType();
@@ -343,9 +343,20 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
                         }
 
                         Trip sessionTrip = App.getModel().getSessionTrip();
+
                         if (attemptRouteRedraw &&
                             sessionTrip != null && sessionTrip.getStatus() == EN_ROUTE) {
-                            drawRouteMap();
+                            //assigns start location depending on whether trip is ENROUTE or onRoute
+                            LatLng startLoc;
+                            LatLng endLoc = sessionTrip.getEndUserLocation().generateLatLng();
+                            if(isTripOnRoute()){
+                                startLoc = sessionTrip.getStartUserLocation().generateLatLng();
+                            }else {
+                                startLoc = new LatLng(mLastKnownUserLocation.getLatitude(),
+                                        mLastKnownUserLocation.getLongitude());
+                            }
+                            clearMapRoute();
+                            drawRouteMap(startLoc, endLoc);
                         } else {
                             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                                     new LatLng(
@@ -428,14 +439,12 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
     }
 
     /**Draws start/end route polylines on map when requested - also adds markers to start/end location*/
-    public void drawRouteMap(){
+    public void drawRouteMap(LatLng startLoc, LatLng endLoc){
         //Gets a LatLng of the StartUserLocation
         Trip sessionTrip = App.getModel().getSessionTrip();
         if (sessionTrip == null) {
             return;
         }
-        LatLng startLoc = sessionTrip.getStartUserLocation().generateLatLng();
-        LatLng endLoc = sessionTrip.getEndUserLocation().generateLatLng();
 
         new GetPathFromLocation(startLoc, endLoc, polyLine -> {
             routePointList = polyLine.getPoints();
