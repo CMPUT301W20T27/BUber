@@ -29,6 +29,7 @@ import com.example.buber.Model.UserLocation;
 import com.example.buber.R;
 import com.example.buber.Views.Components.BUberMapUIAddOnsManager;
 import com.example.buber.Views.Components.BUberNotificationManager;
+import com.example.buber.Views.Components.DirectionPointListener;
 import com.example.buber.Views.Components.GetPathFromLocation;
 import com.example.buber.Views.UIErrorHandler;
 import com.google.android.gms.common.ConnectionResult;
@@ -41,8 +42,10 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.Task;
 
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -82,6 +85,10 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
 
     // NOTIFICATIONS
     private BUberNotificationManager notifManager;
+
+    //POLYLINE OPTIONS LIST OF LATLNG POINTS FOR CURRENT ROUTE
+    private List<LatLng> routePointList;
+
 
     /**
      * onCreate method creates MapActivity when it is called
@@ -190,7 +197,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
                     }
                     break;
                 case EN_ROUTE:
-                    drawRouteMap();
+                    getDeviceLocation(false,true);
                     break;
                 case COMPLETED:
                     notifManager.notifyOnAllChannels(
@@ -208,8 +215,9 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         }
     }
 
+    /**updates user location and route if the user's location has changed*/
     public void updateOnLocationChange() {
-        getDeviceLocation(false, false);
+        getDeviceLocation(false, !isTripOnRoute());
         Trip sessionTrip = App.getModel().getSessionTrip();
         if (sessionTrip != null && mLastKnownUserLocation != null) {
             User.TYPE currentUserType = App.getModel().getSessionUser().getType();
@@ -235,6 +243,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
                     App.getController().completeTrip();
                 }
             }
+
         }
     }
 
@@ -334,9 +343,20 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
                         }
 
                         Trip sessionTrip = App.getModel().getSessionTrip();
+
                         if (attemptRouteRedraw &&
                             sessionTrip != null && sessionTrip.getStatus() == EN_ROUTE) {
-                            drawRouteMap();
+                            //assigns start location depending on whether trip is ENROUTE or onRoute
+                            LatLng startLoc;
+                            LatLng endLoc = sessionTrip.getEndUserLocation().generateLatLng();
+                            if(isTripOnRoute()){
+                                startLoc = sessionTrip.getStartUserLocation().generateLatLng();
+                            }else {
+                                startLoc = new LatLng(mLastKnownUserLocation.getLatitude(),
+                                        mLastKnownUserLocation.getLongitude());
+                            }
+                            clearMapRoute();
+                            drawRouteMap(startLoc, endLoc);
                         } else {
                             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                                     new LatLng(
@@ -419,16 +439,17 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
     }
 
     /**Draws start/end route polylines on map when requested - also adds markers to start/end location*/
-    public void drawRouteMap(){
+    public void drawRouteMap(LatLng startLoc, LatLng endLoc){
         //Gets a LatLng of the StartUserLocation
         Trip sessionTrip = App.getModel().getSessionTrip();
         if (sessionTrip == null) {
             return;
         }
-        LatLng startLoc = sessionTrip.getStartUserLocation().generateLatLng();
-        LatLng endLoc = sessionTrip.getEndUserLocation().generateLatLng();
 
-        new GetPathFromLocation(startLoc, endLoc, polyLine -> mMap.addPolyline(polyLine)).execute();
+        new GetPathFromLocation(startLoc, endLoc, polyLine -> {
+            routePointList = polyLine.getPoints();
+            mMap.addPolyline(polyLine);
+        }).execute();
         //Adds start and end point markers to map
         mMap.addMarker(new MarkerOptions().position(startLoc).title("Start Location"));
         mMap.addMarker(new MarkerOptions().position(endLoc).title("End Location"));
@@ -445,5 +466,29 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                 new LatLng(mLastKnownUserLocation.getLatitude(), mLastKnownUserLocation.getLongitude()),
                 DEFAULT_ZOOM));
+    }
+
+    /**Returns true or false depending on whether user is following polyline or not*/
+    public boolean isTripOnRoute(){
+        Trip sessionTrip = App.getModel().getSessionTrip();
+        if (sessionTrip == null || routePointList == null || sessionTrip.getStatus() == EN_ROUTE) {
+            return false;
+        }
+
+        //gets user's current location
+        UserLocation currentUserLocation = new UserLocation(mLastKnownUserLocation.getLatitude(),
+                mLastKnownUserLocation.getLongitude());
+
+        //iterates through routePointList and checks if users location aligns with it
+        for(int i = 0; i<routePointList.size(); i++){
+            UserLocation ith_route = new UserLocation(routePointList.get(i).latitude,
+                    routePointList.get(i).longitude);
+            //Checking if current location is on polyline and/or within 40m geofence tolerance
+            if (currentUserLocation.distanceTo(ith_route) <= GEOFENCE_DETECTION_TOLERANCE){
+                return true;
+            }
+        }
+
+        return false;
     }
 }
