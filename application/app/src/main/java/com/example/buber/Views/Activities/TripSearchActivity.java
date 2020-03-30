@@ -94,6 +94,7 @@ public class TripSearchActivity extends AppCompatActivity implements UIErrorHand
     public void onAcceptPressed(TripSearchRecord tripSearchRecord, int position){
         Trip selectedTrip = App.getModel().getSessionTripList().get(position);
         ApplicationController.handleDriverTripSelect(selectedTrip);
+
         // Navigate back to main activity
         this.finish();
     }

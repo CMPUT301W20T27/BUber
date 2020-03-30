@@ -17,11 +17,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.buber.App;
+import com.example.buber.Controllers.EventCompletionListener;
+import com.example.buber.Model.Account;
 import com.example.buber.Model.ApplicationModel;
+import com.example.buber.Model.Driver;
 import com.example.buber.Model.User;
 import com.example.buber.R;
 import com.example.buber.Views.UIErrorHandler;
 
+import java.util.HashMap;
 import java.util.Observer;
 
 public class ContactViewerActivity extends AppCompatActivity {
@@ -29,9 +33,12 @@ public class ContactViewerActivity extends AppCompatActivity {
     private String phoneNumber;
     private String userID;
     private String userName;
+    private String rating;
     private TextView userEmailTextView;
     private TextView userPhoneNumberTextView;
     private TextView userNameTextView;
+    private TextView ratingText;
+    private TextView ratingBanner;
     private Button phoneButton;
     private Button emailButton;
     private static final int PERMISSIONS_REQUEST_ACCESS_CALL_PHONE = 1232;
@@ -50,9 +57,13 @@ public class ContactViewerActivity extends AppCompatActivity {
         userNameTextView = findViewById(R.id.userNameTextView);
         phoneButton = findViewById(R.id.phoneButton);
         emailButton = findViewById(R.id.emailBtn);
+        ratingText = findViewById(R.id.driver_rating_text);
+        ratingBanner = findViewById(R.id.driver_rating_banner);
 
         // Only show contact information if userId == trip.driverId
         ApplicationModel m = App.getModel();
+        User currentUser = App.getModel().getSessionUser();
+
         if (m.getSessionTrip() != null) {
             if (m.getSessionTrip().getDriverID() == userID) {
                 phoneButton.setVisibility(View.VISIBLE);
@@ -61,6 +72,22 @@ public class ContactViewerActivity extends AppCompatActivity {
         } else {
             phoneButton.setVisibility(View.INVISIBLE);
             emailButton.setVisibility(View.INVISIBLE);
+        }
+
+        if (currentUser.getType()== User.TYPE.RIDER){
+            ratingText.setVisibility(View.VISIBLE);
+            ratingBanner.setVisibility(View.VISIBLE);
+            String driverID = m.getSessionTrip().getDriverID();
+            App.getDbManager().getDriver(driverID, (resultData, err) -> {
+                if(resultData != null){
+                    Driver driver = (Driver) resultData.get("user");
+                    Account driverAccount = driver.getAccount();
+                    ratingText.setText(driver.getRating()+"/ 100.0");
+                }
+            });
+        }else{
+            ratingText.setVisibility(View.INVISIBLE);
+            ratingBanner.setVisibility(View.INVISIBLE);
         }
 
         userNameTextView.setText(userName);

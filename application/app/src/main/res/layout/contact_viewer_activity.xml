@@ -7,8 +7,8 @@
     tools:context=".Views.Activities.ContactViewerActivity">
 
     <LinearLayout
-        android:layout_width="364dp"
-        android:layout_height="519dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -20,24 +20,69 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="User Name"
-            android:textAlignment="center"
+            android:gravity="bottom|center"
+            android:textColor="#c0c0c0"
             android:textSize="30sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:background="#c0c0c0"
+            android:textColor="#000000"
+            android:text="Username" />
 
         <TextView
             android:id="@+id/userEmailTextView"
             android:layout_width="match_parent"
             android:layout_height="120px"
             android:text="User Email"
-            android:textAlignment="center"
-            android:textSize="18sp" />
-
+            android:gravity="bottom|center"
+            android:textColor="#3c0046"
+            android:textSize="24sp" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Email"
+            android:background="#3c0046"
+            android:gravity="bottom|center" />
         <TextView
             android:id="@+id/userPhoneTextView"
             android:layout_width="match_parent"
             android:layout_height="120px"
             android:text="User Phone"
-            android:textAlignment="center"
-            android:textSize="18sp" />
+            android:textColor="#5a0028"
+            android:gravity="bottom|center"
+            android:textSize="24sp" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Phone Number"
+            android:background="#5a0028"
+            android:textAlignment="center" />
+
+        <TextView
+            android:id="@+id/driver_rating_text"
+            android:layout_width="match_parent"
+            android:layout_height="120px"
+            android:gravity="bottom|center"
+            android:text="Driver Rating"
+            android:textColor="#FF7597"
+            android:visibility="invisible"
+            android:textSize="24sp" />
+        <TextView
+            android:id="@+id/driver_rating_banner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Driver Rating"
+            android:background="#FF7597"
+            android:textColor="#000000"
+            android:visibility="invisible"
+            android:textAlignment="center"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="200px"/>
+
 
         <Button
             android:id="@+id/phoneButton"

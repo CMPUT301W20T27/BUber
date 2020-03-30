@@ -17,13 +17,13 @@
             android:layout_width="80dp"
             android:layout_height="match_parent"
             android:layout_gravity="start"
-            android:gravity="center"
-            android:text="Rider Name" />
+            android:gravity="left|center"
+            android:text="Rider" />
 
         <TextView
             android:layout_width="160dp"
             android:layout_height="match_parent"
-            android:gravity="center"
+            android:gravity="left|center"
             android:text="Start/End Address"
              />
 
@@ -31,16 +31,16 @@
         <TextView
             android:layout_width="80dp"
             android:layout_height="match_parent"
-            android:gravity="center"
-            android:text="Trip Cost ($)"
+            android:gravity="left|center"
+            android:text="Cost\n($)"
             />
 
         <TextView
             android:layout_width="80dp"
             android:layout_height="match_parent"
             android:layout_gravity="end"
-            android:gravity="center"
-            android:text="Distance (KM)"
+            android:gravity="left|center"
+            android:text="Dist.\n(KM)"
             />
 
     </LinearLayout>
