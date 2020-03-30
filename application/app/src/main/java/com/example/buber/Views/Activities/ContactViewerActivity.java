@@ -43,6 +43,8 @@ public class ContactViewerActivity extends AppCompatActivity {
     private Button emailButton;
     private static final int PERMISSIONS_REQUEST_ACCESS_CALL_PHONE = 1232;
 
+    /**onCreate used to create the ContactViewerActivity when called
+     * @param savedInstanceState is a saved state instance*/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,6 +76,7 @@ public class ContactViewerActivity extends AppCompatActivity {
             emailButton.setVisibility(View.INVISIBLE);
         }
 
+        //If user is a RIDER they will be able to view Drivers Ratings
         if (currentUser.getType()== User.TYPE.RIDER){
             ratingText.setVisibility(View.VISIBLE);
             ratingBanner.setVisibility(View.VISIBLE);
@@ -98,6 +101,8 @@ public class ContactViewerActivity extends AppCompatActivity {
         emailButton.setOnClickListener(v -> this.handleEmailRequest());
     }
 
+    /**handlePhoneRequest function handles user interaction with the phone button
+     * it allows user to call another users phone number*/
     public void handlePhoneRequest() {
         new AlertDialog.Builder(this)
                 .setTitle("Phone User")
@@ -118,7 +123,8 @@ public class ContactViewerActivity extends AppCompatActivity {
                 .setNegativeButton(android.R.string.no, null).show();
     }
 
-
+    /**handleEmailRequest function allows the user to email another user when the email button
+     * in the ContactViewer is pressed*/
     public void handleEmailRequest() {
         new AlertDialog.Builder(this)
                 .setTitle("Email User")
@@ -140,7 +146,7 @@ public class ContactViewerActivity extends AppCompatActivity {
                 .setNegativeButton(android.R.string.no, null).show();
     }
 
-
+    /**getPhonePermission asks allows BUber to ask for a users permission to use their phone*/
     private void getPhonePermission() {
         if (ContextCompat.checkSelfPermission(this.getApplicationContext(),
                 android.Manifest.permission.CALL_PHONE)
