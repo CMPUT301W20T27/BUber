@@ -54,8 +54,8 @@ public class TripSearchActivity extends AppCompatActivity implements UIErrorHand
         tripSearchList.setOnItemClickListener((parent, view, position, id) ->
                 new AcceptTripRequestFragment(tripDataList.get(position),
                         position,
-                        TripSearchActivity.this).show(getSupportFragmentManager(),
-                        "VIEW_RECORD"));
+                        TripSearchActivity.this)
+                        .show(getSupportFragmentManager(), "VIEW_RECORD"));
 
         ApplicationController.getTripsForUser(this);
     }

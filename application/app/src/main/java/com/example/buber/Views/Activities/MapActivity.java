@@ -50,6 +50,7 @@ import java.util.Observable;
 import java.util.Observer;
 
 import static com.example.buber.Model.Trip.STATUS.COMPLETED;
+import static com.example.buber.Model.Trip.STATUS.DRIVER_ACCEPT;
 import static com.example.buber.Model.Trip.STATUS.DRIVER_PICKING_UP;
 import static com.example.buber.Model.Trip.STATUS.EN_ROUTE;
 import static com.example.buber.Model.User.TYPE.DRIVER;
@@ -162,7 +163,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
             uiAddOnsManager.showActiveMainActionButton();
         }
         // Handles Forward State Transitions regarding Trip Progress
-        else if (sessionTrip.getStatus() != currentTripStatus) {
+        else if (sessionTrip.getStatus() != this.currentTripStatus) {
             this.currentTripStatus = sessionTrip.getStatus();
             switch (sessionTrip.getStatus()) {
                 case DRIVER_ACCEPT:
@@ -209,7 +210,13 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
             }
             uiAddOnsManager.showActiveMainActionButton();
         }
-        // Unknown states
+        // States that wanted a refresh
+        else if (sessionTrip.getStatus() == this.currentTripStatus) {
+            if (this.currentTripStatus == DRIVER_ACCEPT) {
+                uiAddOnsManager.showActiveMainActionButton();
+            }
+        }
+        // Edge states
         else {
             Log.e("%s", "Unknown state has been encountered!");
         }

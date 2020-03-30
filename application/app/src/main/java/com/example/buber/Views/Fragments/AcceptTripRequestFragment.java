@@ -84,8 +84,6 @@ public class AcceptTripRequestFragment extends DialogFragment {
         driverDistance = view.findViewById(R.id.fragment_distance);
         viewContactButton = view.findViewById(R.id.viewContactButton);
 
-
-
         if (tripSearchRecord != null){
             estimatedCost.setText(tripSearchRecord.getEstimatedCost());
             startAdd.setText(tripSearchRecord.getStartAddress());
@@ -97,21 +95,18 @@ public class AcceptTripRequestFragment extends DialogFragment {
             });
         }
 
-
-
         final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        return builder.
-                setView(view)
+        return builder
+                .setView(view)
                 .setTitle("View Trip")
                 .setNegativeButton("Ignore", null)
                 .setPositiveButton("Fair enough, offer ride", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                       listener.onAcceptPressed(tripSearchRecord, position);
+                        listener.onAcceptPressed(tripSearchRecord, position);
                     }
-                }).create();
-
-
+                })
+                .create();
     }
 
     public void handleViewRiderContact(String riderID) {
