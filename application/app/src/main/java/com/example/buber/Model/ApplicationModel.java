@@ -1,5 +1,7 @@
 package com.example.buber.Model;
 
+import com.example.buber.App;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.ListenerRegistration;
 
 import java.util.ArrayList;
@@ -128,5 +130,40 @@ public class ApplicationModel extends Observable {
         this.sessionUser = null;
         this.tripListener = null;
         this.sessionTrip = null;
+    }
+
+    public void handleTripStatusChanges(DocumentSnapshot documentSnapshot) {
+        if (documentSnapshot != null) {
+            Trip trip = documentSnapshot.toObject(Trip.class);
+            if (trip != null) {
+                Trip.STATUS newStatus = trip.getStatus();
+                if (trip.nextStatusValid(newStatus)) {
+                    Trip newTrip = App.getModel().getSessionTrip();
+                    newTrip.setStatus(newStatus);
+                    setSessionTrip(newTrip);
+                }
+            } else {
+                User sessionUser = App.getModel().getSessionUser();
+                if (sessionUser != null && sessionUser.getType() == User.TYPE.DRIVER) {
+                    // If driver profile is loaded, get the next session trip
+                    // from the queue
+                    Driver driverSessionUser = (Driver) sessionUser;
+                    List<String> tripIds = driverSessionUser.getAcceptedTripIds();
+                    if (tripIds != null && tripIds.size() > 0) {
+                        String nxtTripID = tripIds.get(0);
+                        App.getDbManager().getTrip(nxtTripID, (resultData, err) -> {
+                            if (resultData != null) {
+                                Trip nxtTrip = (Trip) resultData.get("trip");
+                                nxtTrip.setDriverID(App.getAuthDBManager().getCurrentUserID());
+                                nxtTrip.setStatus(Trip.STATUS.DRIVER_ACCEPT);
+                                App.getDbManager().updateTrip(nxtTripID, nxtTrip, ((resultData1, err1) -> {}), true);
+                            }
+                        }, false);
+                    } else {
+                        setSessionTrip(null);
+                    }
+                }
+            }
+        }
     }
 }

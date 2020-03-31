@@ -3,7 +3,11 @@ package com.example.buber.Model;
 import com.google.firebase.firestore.DocumentId;
 import com.google.firebase.firestore.ServerTimestamp;
 
+import java.util.Arrays;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
 
 /**
  * A simple Driver class that holds the Driver properties and is the link to Fb "Diver" collection
@@ -17,6 +21,8 @@ public class Driver extends User {
     private double numThumbsDown;
 
     private boolean driverLoggedOn;
+
+    private List<String> acceptedTripIds;
 
     @DocumentId
     private String docID;
@@ -41,6 +47,7 @@ public class Driver extends User {
         rating = 0;
         numThumbsUp = 0;
         numThumbsDown = 0;
+        acceptedTripIds = new LinkedList<>();
     }
 
     public double getRating() {
@@ -79,5 +86,13 @@ public class Driver extends User {
 
     public void setLoggedOn(boolean loggedOn) {
         driverLoggedOn = loggedOn;
+    }
+
+    public List<String> getAcceptedTripIds() {
+        return acceptedTripIds;
+    }
+
+    public void setAcceptedTripIds(List<String> acceptedTripIds) {
+        this.acceptedTripIds = acceptedTripIds;
     }
 }

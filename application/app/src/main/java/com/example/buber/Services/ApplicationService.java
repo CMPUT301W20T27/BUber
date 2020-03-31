@@ -167,23 +167,22 @@ public class ApplicationService {
                 }), true);
             } else {
                 // Query trips db based on driverId
-                tripsReference.whereEqualTo("driverID", userUID).get().addOnSuccessListener(queryDocumentSnapshots -> {
-                    List<DocumentSnapshot> docs = queryDocumentSnapshots.getDocuments();
-                    if (docs.size() == 1) {
-                        Trip sessionTrip = docs.get(0).toObject(Trip.class);
-                        HashMap<String, Trip> res = new HashMap<>();
-                        res.put("trip", sessionTrip);
-                        controllerListener.onCompletion(res, null);
-                    } else if (docs.size() == 0) {
-                        // No current Trip
-                        controllerListener.onCompletion(null, null);
-                    } else {
-                        // Throw an error, we got issues
-                        controllerListener.onCompletion(null, new Error("Driver has more than 1 trip assigned"));
-                    }
-                }).addOnFailureListener(e -> {
-                    controllerListener.onCompletion(null, new Error(e.getMessage()));
-                });
+                Driver sessionDriver = (Driver) sessionUser;
+                List<String> acceptedTripIds = sessionDriver.getAcceptedTripIds();
+                if (acceptedTripIds == null || acceptedTripIds.size() == 0) {
+                    // No current Trip
+                    controllerListener.onCompletion(null, null);
+                } else {
+                    // get the first trip
+                    App.getDbManager().getTrip(acceptedTripIds.get(0), (resultData, err) -> {
+                        if (resultData != null) {
+                            Trip sessionTrip = (Trip) resultData.get("trip");
+                            HashMap<String, Trip> res = new HashMap<>();
+                            res.put("trip", sessionTrip);
+                            controllerListener.onCompletion(res, null);
+                        }
+                    }, true);
+                }
             }
         }
     }
@@ -244,7 +243,14 @@ public class ApplicationService {
      * @param controllerListener the listener that gets results from the Firebase call.
      */
     public static void selectTrip(String uid, Trip selectedTrip, EventCompletionListener controllerListener) {
-        App.getDbManager().updateTrip(uid, selectedTrip, controllerListener, true);
+        App.getDbManager().updateTrip(uid, selectedTrip, ((resultData, err) -> {
+            if (err == null) {
+                // now that we have updated the trip, add to driver selected trip ids
+                Driver currentDriver = (Driver) App.getModel().getSessionUser();
+                currentDriver.getAcceptedTripIds().add(uid);
+                App.getDbManager().updateDriver(App.getAuthDBManager().getCurrentUserID(), currentDriver, controllerListener);
+            }
+        }), true);
     }
 
     /**
@@ -296,11 +302,33 @@ public class ApplicationService {
 
     /**
      * Calls the DBManager class to deletes current trip for rider. On success the listener returns.
-     *  @param uid The document id of the trip to delete
+     *  @param trip The document id of the trip to delete
      *  @param controllerListener the listener that gets results from the Firebase call.
      */
-    public static void deleteRiderCurrentTrip(String uid, EventCompletionListener controllerListener) {
-        App.getDbManager().deleteTrip(uid, controllerListener);
+    public static void deleteCurrentTrip(Trip trip, EventCompletionListener controllerListener) {
+        // First, delete the trip from the DB
+        App.getDbManager().deleteTrip(trip.getRiderID(), ((resultData, err) -> {
+            if (err == null) {
+                // Next, find the driver (if one) that is assigned to this trip and remove that from
+                // the drivers trip queue
+                String driverID = trip.getDriverID();
+                if (driverID != null) {
+                    App.getDbManager().getDriver(driverID, ((resultData1, err1) -> {
+                        if (resultData1 != null) {
+                            Driver assignedDriver = (Driver) resultData1.get("user");
+                            // remove the trip id from the drivers queue
+                            assignedDriver.getAcceptedTripIds().remove(trip.getRiderID());
+                            // finally, update the driver and complete
+                            App.getDbManager().updateDriver(
+                                    assignedDriver.getDocID(),
+                                    assignedDriver,
+                                    controllerListener
+                            );
+                        }
+                    }));
+                }
+            }
+        }));
     }
 
     /**

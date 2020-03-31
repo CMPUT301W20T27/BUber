@@ -16,7 +16,7 @@
         android:roundIcon="@mipmap/buber_logo_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.NoActionBar">
-        <activity android:name=".Views.Activities.ratingActivity"></activity>
+        <activity android:name=".Views.Activities.RatingActivity"></activity>
         <activity android:name=".Views.Activities.PaymentActivity" />
         <activity android:name=".Views.Activities.ContactViewerActivity"></activity>
         <activity android:name=".Views.Activities.RequestStatusActivity" />

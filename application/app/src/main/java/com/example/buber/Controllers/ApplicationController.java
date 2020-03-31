@@ -2,7 +2,6 @@ package com.example.buber.Controllers;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.example.buber.App;
@@ -16,17 +15,14 @@ import com.example.buber.Services.ApplicationService;
 import com.example.buber.Views.Activities.LoginActivity;
 import com.example.buber.Views.Activities.MainActivity;
 import com.example.buber.Views.Activities.MapActivity;
-import com.example.buber.Views.Activities.RequestStatusActivity;
-import com.example.buber.Views.Activities.ratingActivity;
+import com.example.buber.Views.Activities.RatingActivity;
 import com.example.buber.Views.UIErrorHandler;
 
 import java.util.List;
 import java.util.Observer;
-import java.util.concurrent.TimeUnit;
 
 import br.com.simplepass.loadingbutton.customViews.CircularProgressButton;
 
-import static com.example.buber.Model.User.TYPE.DRIVER;
 import static com.example.buber.Model.User.TYPE.RIDER;
 
 /**
@@ -203,7 +199,7 @@ public class ApplicationController {
      */
     public static void deleteRiderCurrentTrip(UIErrorHandler view){
         ApplicationModel m = App.getModel();
-        ApplicationService.deleteRiderCurrentTrip(m.getSessionTrip().getRiderID(), (resultData, err) -> {
+        ApplicationService.deleteCurrentTrip(m.getSessionTrip(), (resultData, err) -> {
             if (err != null) view.onError(err);
             else {
                 m.setSessionTrip(null);
@@ -322,7 +318,7 @@ public class ApplicationController {
      * @param driverID  is the driver that needs to be updated
      * @param giveThumbsUp  boolean for if thumbs up was pressed or not
      */
-    public static void updateDriverRating(ratingActivity view, String driverID, boolean giveThumbsUp){
+    public static void updateDriverRating(RatingActivity view, String driverID, boolean giveThumbsUp){
         App.getDbManager().getDriver(driverID, ((resultData, err) -> {
             if (err == null) {
                 Driver tmpDriver = (Driver) resultData.get("user");
