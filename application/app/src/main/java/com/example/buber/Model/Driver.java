@@ -3,11 +3,9 @@ package com.example.buber.Model;
 import com.google.firebase.firestore.DocumentId;
 import com.google.firebase.firestore.ServerTimestamp;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
 
 /**
  * A simple Driver class that holds the Driver properties and is the link to Fb "Diver" collection

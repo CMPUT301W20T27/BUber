@@ -132,7 +132,7 @@ public class ApplicationModel extends Observable {
         this.sessionTrip = null;
     }
 
-    public void handleTripStatusChanges(DocumentSnapshot documentSnapshot) {
+    public void handleTripStatusChanges(String riderID, DocumentSnapshot documentSnapshot) {
         if (documentSnapshot != null) {
             Trip trip = documentSnapshot.toObject(Trip.class);
             if (trip != null) {
@@ -148,14 +148,21 @@ public class ApplicationModel extends Observable {
                     // If driver profile is loaded, get the next session trip from the queue
                     Driver driverSessionUser = (Driver) sessionUser;
                     List<String> tripIds = driverSessionUser.getAcceptedTripIds();
+                    // Trip is null, so a user has just cancelled. So need to remove from local trip queue.
+                    tripIds.remove(riderID);
+
                     if (tripIds != null && tripIds.size() > 0) {
                         String nxtTripID = tripIds.get(0);
                         App.getDbManager().getTrip(nxtTripID, (resultData, err) -> {
                             if (resultData != null) {
                                 Trip nxtTrip = (Trip) resultData.get("trip");
-                                nxtTrip.setDriverID(App.getAuthDBManager().getCurrentUserID());
-                                nxtTrip.setStatus(Trip.STATUS.DRIVER_ACCEPT);
-                                App.getDbManager().updateTrip(nxtTripID, nxtTrip, ((resultData1, err1) -> {}), true);
+                                if (nxtTrip != null) { // Edge case: last rider in queue cancels offer
+                                    nxtTrip.setDriverID(App.getAuthDBManager().getCurrentUserID());
+                                    nxtTrip.setStatus(Trip.STATUS.DRIVER_ACCEPT);
+                                    App.getDbManager().updateTrip(nxtTripID, nxtTrip, ((resultData1, err1) -> {}), true);
+                                } else {
+                                    setSessionTrip(null);
+                                }
                             }
                         }, false);
                     } else {

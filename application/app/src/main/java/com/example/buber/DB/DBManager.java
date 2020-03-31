@@ -210,7 +210,9 @@ public class DBManager {
                 ListenerRegistration lr =
                 collectionTrip
                         .document(t.getRiderID())
-                        .addSnapshotListener((documentSnapshot1, e) -> App.getModel().handleTripStatusChanges(documentSnapshot1));
+                        .addSnapshotListener((documentSnapshot1, e) ->
+                            App.getModel().handleTripStatusChanges(t.getRiderID(), documentSnapshot1)
+                        );
                 App.getModel().setTripListener(lr);
             }
 
@@ -311,7 +313,9 @@ public class DBManager {
                         ListenerRegistration lr =
                         collectionTrip
                                 .document(updatedTrip.getRiderID())
-                                .addSnapshotListener((documentSnapshot1, e) -> App.getModel().handleTripStatusChanges(documentSnapshot1));
+                                .addSnapshotListener((documentSnapshot1, e) ->
+                                        App.getModel().handleTripStatusChanges(updatedTrip.getRiderID(), documentSnapshot1)
+                                );
                         App.getModel().setTripListener(lr);
                     }
                     listener.onCompletion(null, null);
