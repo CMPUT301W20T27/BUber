@@ -40,7 +40,6 @@ public class TripSearchActivity extends AppCompatActivity implements UIErrorHand
      * @param savedInstanceState calls the previous saved state if there is one*/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.trip_search_activity);
         tripSearchList = findViewById(R.id.trip_search_list);
@@ -50,18 +49,14 @@ public class TripSearchActivity extends AppCompatActivity implements UIErrorHand
 
         //Activate the custom array adapter (CustomTripList)
         tripSearchRecordArrayAdapter = new CustomTripList(this, tripDataList);
+        //Activate the custom array adapter (CustomTripList)
         tripSearchList.setAdapter(tripSearchRecordArrayAdapter);
-
         tripSearchList.setOnItemClickListener((parent, view, position, id) ->
                 new AcceptTripRequestFragment(tripDataList.get(position),
                         position,
-                        TripSearchActivity.this).show(getSupportFragmentManager(),
-                        "VIEW_RECORD"));
-        updateTripList();
-    }
+                        TripSearchActivity.this)
+                        .show(getSupportFragmentManager(), "VIEW_RECORD"));
 
-    /**updateTripList updates the trips but getting trips for the User*/
-    public void updateTripList() {
         ApplicationController.getTripsForUser(this);
     }
 
@@ -76,15 +71,26 @@ public class TripSearchActivity extends AppCompatActivity implements UIErrorHand
      * @param o,arg are used to ensure the correct updates are made*/
     @Override
     public void update(Observable o, Object arg) {
-        ApplicationModel m = (ApplicationModel) o;
+        transferTripDataFromListToArrayList();
+    }
+
+    /** Converts List from Application model to ArrayList**/
+    private void transferTripDataFromListToArrayList() {
+        ApplicationModel m = App.getModel();
         User sessionUser = m.getSessionUser();
         List<Trip> tripList = m.getSessionTripList();
         if (tripList != null) {
-            tripDataList.clear();
+            if (tripDataList != null) {
+                tripDataList.clear();
+            }
+
             for (Trip t : tripList) {
                 tripDataList.add(new TripSearchRecord(t, sessionUser.getCurrentUserLocation()));
             }
-            tripSearchRecordArrayAdapter.notifyDataSetChanged();
+
+            if (tripSearchRecordArrayAdapter != null) {
+                tripSearchRecordArrayAdapter.notifyDataSetChanged();
+            }
         }
     }
 
@@ -94,6 +100,7 @@ public class TripSearchActivity extends AppCompatActivity implements UIErrorHand
     public void onAcceptPressed(TripSearchRecord tripSearchRecord, int position){
         Trip selectedTrip = App.getModel().getSessionTripList().get(position);
         ApplicationController.handleDriverTripSelect(selectedTrip);
+
         // Navigate back to main activity
         this.finish();
     }

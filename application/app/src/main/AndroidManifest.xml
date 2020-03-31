@@ -18,7 +18,7 @@
         android:theme="@style/Theme.AppCompat.NoActionBar">
         <activity android:name=".Views.Activities.ratingActivity"></activity>
         <activity android:name=".Views.Activities.PaymentActivity" />
-        <activity android:name=".Views.Activities.ContactViewerActivity" />
+        <activity android:name=".Views.Activities.ContactViewerActivity"></activity>
         <activity android:name=".Views.Activities.RequestStatusActivity" />
         <activity android:name=".Views.Activities.EditAccountActivity" />
 

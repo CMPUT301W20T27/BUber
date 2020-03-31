@@ -246,6 +246,20 @@ public class DBManager {
                 tripData.add(snapshot.toObject(Trip.class));
             }
             toReturn.put("all-trips", tripData);
+
+            collectionTrip.addSnapshotListener(
+                (queryDocumentSnapshots1, e) -> {
+                    if (queryDocumentSnapshots1 != null) {
+                        tripData.clear();
+                        toReturn.clear();
+                        for (DocumentSnapshot snapshot : queryDocumentSnapshots1) {
+                            tripData.add(snapshot.toObject(Trip.class));
+                        }
+                        toReturn.put("all-trips", tripData);
+                        listener.onCompletion(toReturn, null);
+                    }
+                });
+
             listener.onCompletion(toReturn, null);
         }).addOnFailureListener(e -> {
             listener.onCompletion(null, new Error(e.getMessage()));
