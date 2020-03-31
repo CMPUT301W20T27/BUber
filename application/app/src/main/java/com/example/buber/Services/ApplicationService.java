@@ -326,6 +326,8 @@ public class ApplicationService {
                             );
                         }
                     }));
+                } else {  // Edge case: rider cancels a trip before a driver accepts
+                    controllerListener.onCompletion(null, null);
                 }
             }
         }));

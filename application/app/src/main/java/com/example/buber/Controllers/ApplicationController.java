@@ -203,7 +203,6 @@ public class ApplicationController {
             if (err != null) view.onError(err);
             else {
                 m.setSessionTrip(null);
-                m.detachTripListener();
             }
         });
     }

@@ -145,8 +145,7 @@ public class ApplicationModel extends Observable {
             } else {
                 User sessionUser = App.getModel().getSessionUser();
                 if (sessionUser != null && sessionUser.getType() == User.TYPE.DRIVER) {
-                    // If driver profile is loaded, get the next session trip
-                    // from the queue
+                    // If driver profile is loaded, get the next session trip from the queue
                     Driver driverSessionUser = (Driver) sessionUser;
                     List<String> tripIds = driverSessionUser.getAcceptedTripIds();
                     if (tripIds != null && tripIds.size() > 0) {
