@@ -35,6 +35,8 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.libraries.places.api.model.Place;
+import com.rtchagas.pingplacepicker.PingPlacePicker;
 
 import java.util.List;
 
@@ -72,6 +74,7 @@ public class AcceptTripRequestFragment extends DialogFragment {
         void onAcceptPressed(TripSearchRecord tripSearchRecord, int position);
     }
 
+    /**onAttach handles the listener when the fragment is attached*/
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -99,7 +102,7 @@ public class AcceptTripRequestFragment extends DialogFragment {
         driverDistance = view.findViewById(R.id.fragment_distance);
         viewContactButton = view.findViewById(R.id.viewContactButton);
 
-
+        //If the trip search record exists add information to the fragment
         if (tripSearchRecord != null){
             estimatedCost.setText(tripSearchRecord.getEstimatedCost());
             startAdd.setText(tripSearchRecord.getStartAddress());
@@ -110,15 +113,16 @@ public class AcceptTripRequestFragment extends DialogFragment {
                 handleViewRiderContact(tripSearchRecord.getRiderID());
             });
 
-
+            //finds and initializes the mapView fragment
             MapView mapView = view.findViewById(R.id.lite_map);
             MapsInitializer.initialize(getActivity());
             mapView.onCreate(savedInstanceState);
             mapView.onResume();
+
+            //Gets the mapAsync and overlays the route polyline and start/end markers
             mapView.getMapAsync(googleMap -> {
-                //test latlng
-                LatLng origin = new LatLng(53.5232,-113.5263);
-                LatLng destination = new LatLng(53.5225, -113.6242);
+                LatLng origin = tripSearchRecord.getStartLatLng();
+                LatLng destination = tripSearchRecord.getEndLatLng();
                 new GetPathFromLocation(origin, destination, polyLine -> {
                     routePointList = polyLine.getPoints();
                     googleMap.addPolyline(polyLine);
@@ -126,19 +130,16 @@ public class AcceptTripRequestFragment extends DialogFragment {
                 googleMap.addMarker(new MarkerOptions().position(origin).title("start"));
                 googleMap.addMarker(new MarkerOptions().position(destination).title("end"));
                 LatLngBounds.Builder boundsBuilder = new LatLngBounds.Builder();
-                //for (LatLng routePoint : routePointList)
                 boundsBuilder.include(origin);
                 boundsBuilder.include(destination);
                 int routePadding = 120;
                 LatLngBounds latLngBounds = boundsBuilder.build();
                 googleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds,routePadding));
-                //googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(destination,15f));
             });
 
         }
 
-
-
+        //builds the dialog
         final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         return builder.
                 setView(view)
@@ -150,16 +151,17 @@ public class AcceptTripRequestFragment extends DialogFragment {
                        listener.onAcceptPressed(tripSearchRecord, position);
                     }
                 }).create();
-
-
     }
 
+    /**Handles the user clicking the View Contact Details button
+     * @param riderID is the riderID - it is used to pull the correct information*/
     public void handleViewRiderContact(String riderID) {
         Intent contactIntent = new Intent(parentActivity, ContactViewerActivity.class);
         App.getController().handleViewContactInformation(parentActivity, contactIntent, riderID, null);
     }
 
-
+    /**Destroys the map when the dialog fragment is closed. It prevents the app from
+     * crashing when new maps are drawn*/
     @Override
     public void onDestroyView() {
         super.onDestroyView();
