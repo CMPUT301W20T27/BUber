@@ -3,7 +3,9 @@ package com.example.buber.Views.Components;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -15,6 +17,7 @@ import com.example.buber.Model.Trip;
 import com.example.buber.Model.User;
 import com.example.buber.Model.UserLocation;
 import com.example.buber.R;
+import com.example.buber.Views.Activities.ContactViewerActivity;
 import com.example.buber.Views.Activities.EditAccountActivity;
 import com.example.buber.Views.Activities.LoginActivity;
 import com.example.buber.Views.Activities.MapActivity;
@@ -41,6 +44,7 @@ public class BUberMapUIAddOnsManager {
     // DRIVER MAIN ACTION BUTTON(s)
     private Button driverShowRequestsMainBtn;
     private Button driverQRPaymentAcceptBtn;
+    private Boolean showRiderAcceptDriverOfferDialogue;
 
     // RIDER/DRIVER BUTTON(s)
     private Button cancelRideInProgress;
@@ -70,6 +74,7 @@ public class BUberMapUIAddOnsManager {
         // INSTANTIATE DRIVER MAIN ACTION BUTTONS
         this.driverShowRequestsMainBtn = map.findViewById(R.id.driver_show_requests_btn);
         this.driverQRPaymentAcceptBtn = map.findViewById(R.id.driver_qrpaymentaccept_btn);
+        this.showRiderAcceptDriverOfferDialogue = false;
 
         // INSTANTIATE RIDER/DRIVER BUTTON(s)
         this.cancelRideInProgress = map.findViewById(R.id.cancel_ride_in_progess);
@@ -264,7 +269,13 @@ public class BUberMapUIAddOnsManager {
                     break;
                 case DRIVER_ACCEPT:
                     if (currentUserType == RIDER) {
-                        handleRiderOfferAccept();
+                        String driverID = App.getModel().getSessionTrip().getDriverID();
+                        if (driverID == null) {
+                            App.getController().getSessionTrip();
+                        } else if (!showRiderAcceptDriverOfferDialogue) {
+                            showRiderAcceptDriverOfferDialogue = true;
+                            handleRiderOfferAccept(driverID);
+                        }
                     }
                     break;
                 case DRIVER_PICKING_UP:
@@ -292,10 +303,18 @@ public class BUberMapUIAddOnsManager {
     }
 
     /** Handles user interaction with rider accept button **/
-    public void handleRiderOfferAccept() {
+    public void handleRiderOfferAccept(String driverID) {
         if (map.currentTripStatus != Trip.STATUS.DRIVER_ACCEPT) {
             return;
         }
+
+        View view = LayoutInflater.from(map).inflate(R.layout.accept_trip_offer_fragment, null);
+        Button viewContactButton = view.findViewById(R.id.viewContactButton);
+        viewContactButton.setOnClickListener(v -> {
+            String riderID = App.getModel().getSessionTrip().getRiderID();
+            Intent contactIntent = new Intent(map, ContactViewerActivity.class);
+            App.getController().handleViewContactInformation(map, contactIntent, riderID, driverID);
+        });
 
         // can't modify local vars in Java, so a thread-safe AtomicBoolean wrapper is used
         final AtomicBoolean userHasConfirmed = new AtomicBoolean(false); // constructor defaults to false
@@ -316,15 +335,20 @@ public class BUberMapUIAddOnsManager {
         AlertDialog.Builder builder = new AlertDialog.Builder(map);
         builder.setMessage("A driver has accepted! Proceed?")
                 .setPositiveButton("Yes", dialogClickListener)
-                .setNegativeButton("No", dialogClickListener);
+                .setNegativeButton("No", dialogClickListener)
+                .setView(view);
 
         // This builder MUST persist because the USER has to be sure they are on their way!
         builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialog) {
+                if (view.getParent() != null) {
+                    ((ViewGroup) view.getParent()).removeView(view);
+                }
                 if (!userHasConfirmed.get()) {
                     builder.show();
                 }
+                showRiderAcceptDriverOfferDialogue = false;
             }
         });
 

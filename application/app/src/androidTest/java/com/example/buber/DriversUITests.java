@@ -2,7 +2,6 @@ package com.example.buber;
 
 import android.os.Build;
 import android.util.Log;
-import android.view.View;
 import android.widget.EditText;
 
 import androidx.test.platform.app.InstrumentationRegistry;
@@ -14,7 +13,6 @@ import androidx.test.uiautomator.UiSelector;
 
 import com.example.buber.Views.Activities.MainActivity;
 import com.example.buber.Views.Activities.MapActivity;
-import com.example.buber.Views.Activities.TripBuilderActivity;
 import com.robotium.solo.Solo;
 
 import org.junit.Before;
@@ -23,22 +21,23 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
-import static junit.framework.TestCase.assertFalse;
 import static junit.framework.TestCase.assertTrue;
 
 /**
- * Rider tests for testing login, ride creation, correct views, ride cancellation, and
- * notification popups. Also veryfying correctness of ride status page.
+ * Testing Driver logging on, rendering the correct views, and accepting a ride
+ * NOTE: make sure there is the following ride before running this test:
+ * Use Start location : current location (default)
+ * Use End location : Cupertino Library
  * Press run all to run tests
- *
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class RiderUITests {
+public class DriversUITests {
+    private static final String TAG = "DriverUITests";
     private Solo solo;
     private boolean onlyVisible = true;
     private UiDevice mDevice;
-    private static final String TAG = "RiderUITests";
-    public RiderUITests() {
+
+    public DriversUITests() {
 
         // Initialize UiDevice instance
         mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
@@ -48,106 +47,42 @@ public class RiderUITests {
 
     @Rule
     public ActivityTestRule<MainActivity> rule = new ActivityTestRule<>(MainActivity.class, true, true);
-
     @Before
     public void setUp() throws Exception {
         solo = new Solo(InstrumentationRegistry.getInstrumentation(),rule.getActivity());
-        runLogin();
+        //runLoginRider();  //make request first for driver
+        //testRideCreation();
+        runLoginDriver();
     }
 
-    public void runLogin() {
+    public void runLoginDriver() {
         solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
         if (!solo.waitForActivity(MapActivity.class, 1000)) {
-            String email = "tester@tester.tester";
+            String email = "tester2@tester.tester";
             String password = "123456";
             solo.enterText((EditText) solo.getView(R.id.loginEmailEditText), email);
             solo.enterText((EditText) solo.getView(R.id.loginPasswordEditText), password);
-            solo.clickOnButton("Login as Rider");
-        }
-    }
-    @Test
-    public void cleanUp() {
-        // Remove trip from firebase
-
-            if(solo.searchText("Cancel Your Current Ride Request", onlyVisible)){
-            solo.clickOnButton("Cancel Your Current Ride Request");
-            solo.clickOnText("Yes");
-        }
-
-        if (solo.searchText("Trip accepted! Cancel driver pick-up?", onlyVisible)) {
-            solo.clickOnButton("Trip accepted! Cancel driver pick-up?");
-        }
-
-     }
-
-    @Test
-    public void cancelTripBeforDriverPicksUp() {
-        //check for popup
-        if(solo.searchText("Your ride is here", onlyVisible)){
-            solo.waitForDialogToOpen(5000);
-            assertTrue(solo.searchText("Your ride is here", 1));
-            //click "NO, IAM CANCELLING"
-            solo.clickOnButton(0);
-            solo.waitForActivity(MapActivity.class, 5000);
-        }
-
-    }
-
-
-    @Test
-    public void createTrip(){
-
-        if(solo.searchText("Request a Ride", onlyVisible)) {
-            solo.clickOnButton("Request a Ride");
-
-            //select start point
-            solo.clickOnButton("Select Start Point");
-            solo.clickOnText("Search");
-            solo.typeText(0, "Megan Johnson High-Walkability Path");
-            solo.clickOnText("Megan Johnson High-Walkability Path", 2);
-            solo.clickOnText("OK");
-
-            //Select end point
-            solo.clickOnButton("Select End Point");
-            solo.clickOnText("Search");
-            solo.typeText(0, "1842 N Shoreline Blvd");
-            solo.clickOnText("1842 N Shoreline Blvd", 2);
-            solo.clickOnText("OK");
-
-            //Submit Trip Request
-            solo.clickOnButton("Submit Trip Request");
-
-
-            solo.waitForActivity(MapActivity.class, 1000000000);
+            solo.clickOnText("Login As Driver");
         }
     }
 
-    @Test
-    public void tripStatusCheckforEN_ROUTE() {
-        //check for popup
-
-        if(solo.searchText("Your ride is here", onlyVisible)){
-            solo.waitForDialogToOpen(5000);
-            assertTrue(solo.searchText("Your ride is here", 1));
-            //click YES
-            solo.clickOnButton(1);
-            solo.waitForActivity(MapActivity.class, 5000);
-        }
-
-    }
-
 
     @Test
-    public void tripStatusCheckforDRIVER_PICKING_UP() {
+    public void viewContactAndSelectTripDRIVER_ACCEPT() throws InterruptedException {
+        //select trip with username = tester
 
-        if(solo.searchText("A driver has accepted! Proceed?", onlyVisible)){
-            solo.waitForDialogToOpen(5000);
-            assertTrue(solo.searchText("A driver has accepted! Proceed?", 1));
-            solo.searchText("A driver has accepted! Proceed?", 1);
-            solo.clickOnButton(1);
-            solo.waitForActivity(MapActivity.class, 5000);
+        if(solo.searchText("Show Active Ride Requests Near You", onlyVisible)) {
+            solo.clickOnText("Show Active Ride Requests Near You");
+            solo.clickOnText("tester");
+            //view contact information of the rider before accepting
+            solo.clickOnText("View Contact Details");
+            solo.waitForText("wait", 0, 500);
+
+            //click the back button
+            solo.goBack();
+            solo.clickOnText("tester");
+            solo.clickOnButton(2);
         }
-
     }
 
     @Test
@@ -190,16 +125,26 @@ public class RiderUITests {
 
     }
 
-    @Test
-    public void testInvalidTripEntry() {
 
-        if(solo.searchText("Request a Ride", onlyVisible)){
-            solo.assertCurrentActivity("Wrong activity", MapActivity.class);
-            solo.clickOnButton("Request a Ride");
-            assertTrue(solo.waitForActivity(TripBuilderActivity.class, 1000));
-            assertFalse(solo.getView(R.id.submitTripBtn).getVisibility() == View.INVISIBLE);
-        }
+    @Test
+    public void tripStatusCheckforDRIVER_ARRIVED() {
+        //TODO: When luke finishes his EN_ROUTE so that it follows MVC so that the
+        // location in the controller changes when the driver Location changes
+        // So that the rider is notified ONLY based on the location in the MODEl
+
+        //check for message: Notifying rider you have arrived
     }
+
+
+    @Test
+    public void tripStatusCheckforCOMPLETED() {
+        //TODO: When luke finishes his EN_ROUTE so that it follows MVC so that the
+        // location in the controller changes when the driver Location changes
+        // So that the rider is notified ONLY based on the location in the MODEl
+
+        //check for message: Notifying rider you have arrived
+    }
+
 
     private void allowPermissionsIfNeeded()  {
         if (Build.VERSION.SDK_INT >= 23) {
@@ -208,10 +153,12 @@ public class RiderUITests {
                 try {
                     allowPermissions.click();
                 } catch (UiObjectNotFoundException e) {
-                    Log.d("RiderUITests", "permissions error" + e);
+                    Log.d("DriverUITests", "permissions error" + e);
                 }
             }
         }
     }
+
+
 
 }

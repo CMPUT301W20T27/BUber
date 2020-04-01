@@ -141,14 +141,14 @@ public class AcceptTripRequestFragment extends DialogFragment {
 
         //builds the dialog
         final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        return builder.
-                setView(view)
+        return builder
+                .setView(view)
                 .setTitle("View Trip")
                 .setNegativeButton("Ignore", null)
                 .setPositiveButton("Fair enough, offer ride", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                       listener.onAcceptPressed(tripSearchRecord, position);
+                        listener.onAcceptPressed(tripSearchRecord, position);
                     }
                 }).create();
     }
