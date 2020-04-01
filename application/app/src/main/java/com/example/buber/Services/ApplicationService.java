@@ -14,6 +14,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -167,6 +168,7 @@ public class ApplicationService {
                 List<String> filterTripIds = new ArrayList<>();
                 String currentUid = App.getAuthDBManager().getCurrentUserID();
                 if (tripData != null && tripData.size() > 0) {
+                    // First, get only DRIVER_ACCEPTs
                     for (Trip t : tripData) {
                         if (
                                 t.getStatus() == DRIVER_ACCEPT &&
@@ -177,6 +179,13 @@ public class ApplicationService {
                             filterTripIds.add(t.getRiderID());
                         }
                     }
+
+                    // Second, sort by driver queue
+                    User sessionUser = App.getModel().getSessionUser();
+                    Driver driverSessionUser = (Driver) sessionUser;
+                    filterTrips.sort(Comparator.comparing(
+                            v -> driverSessionUser.getAcceptedTripIds().indexOf(v.getRiderID())
+                    ));
 
                     HashMap<String, List> filteredTripsData = new HashMap<>();
                     filteredTripsData.put("filtered-trips", filterTrips);
@@ -341,6 +350,7 @@ public class ApplicationService {
                     Trip sessionTrip = (Trip) resultData.get("trip");
                     String tripDriverID = sessionTrip.getDriverID();
                     selectedTrip.setDriverID(tripDriverID);
+                    selectedTrip.setStatus(Trip.STATUS.COMPLETED);
                     // Second: call updateTrip to change the trip status and thus notify the driver!
                     App.getDbManager().updateTrip(uid, selectedTrip, controllerListener, true);
                 }

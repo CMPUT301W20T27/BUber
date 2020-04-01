@@ -243,8 +243,11 @@ public class ApplicationController {
                     ((UIErrorHandler) map).onError(err);
                 }
             } else {
-                m.setSessionTrip(selectedTrip);
-                m.setSessionTripList(null);
+                // Edge case: don't override current active trip if there is one
+                if (m.getSessionTrip() != null) {
+                    m.setSessionTrip(selectedTrip);
+                    m.setSessionTripList(null);
+                }
             }
         }));
     }
@@ -294,15 +297,12 @@ public class ApplicationController {
     /** Complete trip **/
     public static void completeTrip() {
         Trip currentTrip = App.getModel().getSessionTrip();
-        currentTrip.setStatus(Trip.STATUS.COMPLETED);
         ApplicationService.completeTrip(currentTrip.getRiderID(), currentTrip, ((resultData, err) -> {
             if (err != null) {
                 List<Observer> mapObservers = App.getModel().getObserversMatchingClass(MapActivity.class);
                 for (Observer map : mapObservers) {
                     ((UIErrorHandler) map).onError(err);
                 }
-            } else {
-                App.getModel().setSessionTrip(currentTrip);
             }
         }));
     }

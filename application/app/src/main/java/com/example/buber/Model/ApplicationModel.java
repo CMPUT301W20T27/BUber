@@ -201,8 +201,7 @@ public class ApplicationModel extends Observable {
                                 } else {
                                     setSessionTrip(null);
                                 }
-                            }
-                        }, false);
+                            }}, false);
                     } else {
                         setSessionTrip(null);
                     }
