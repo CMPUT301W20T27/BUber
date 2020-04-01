@@ -15,6 +15,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
 
 import com.example.buber.App;
 import com.example.buber.Model.Trip;
@@ -22,7 +23,20 @@ import com.example.buber.R;
 import com.example.buber.Views.Activities.ContactViewerActivity;
 import com.example.buber.Views.Activities.TripBuilderActivity;
 import com.example.buber.Views.Activities.TripSearchActivity;
+import com.example.buber.Views.Components.GetPathFromLocation;
 import com.example.buber.Views.Components.TripSearchRecord;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.MapsInitializer;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.MarkerOptions;
+
+import java.util.List;
 
 /**
  * Fragment used to accept a trip. Generates a modal that shows trip details and allows a user to
@@ -40,6 +54,7 @@ public class AcceptTripRequestFragment extends DialogFragment {
     private OnFragmentInteractionListener listener;
     private TripSearchRecord tripSearchRecord;
     private int position;
+    private List<LatLng> routePointList;
 
     /**
      * Constructor for AcceptTripRequestFragment
@@ -85,7 +100,6 @@ public class AcceptTripRequestFragment extends DialogFragment {
         viewContactButton = view.findViewById(R.id.viewContactButton);
 
 
-
         if (tripSearchRecord != null){
             estimatedCost.setText(tripSearchRecord.getEstimatedCost());
             startAdd.setText(tripSearchRecord.getStartAddress());
@@ -95,6 +109,32 @@ public class AcceptTripRequestFragment extends DialogFragment {
             viewContactButton.setOnClickListener(v -> {
                 handleViewRiderContact(tripSearchRecord.getRiderID());
             });
+
+
+            MapView mapView = view.findViewById(R.id.lite_map);
+            MapsInitializer.initialize(getActivity());
+            mapView.onCreate(savedInstanceState);
+            mapView.onResume();
+            mapView.getMapAsync(googleMap -> {
+                //test latlng
+                LatLng origin = new LatLng(53.5232,-113.5263);
+                LatLng destination = new LatLng(53.5225, -113.6242);
+                new GetPathFromLocation(origin, destination, polyLine -> {
+                    routePointList = polyLine.getPoints();
+                    googleMap.addPolyline(polyLine);
+                }).execute();
+                googleMap.addMarker(new MarkerOptions().position(origin).title("start"));
+                googleMap.addMarker(new MarkerOptions().position(destination).title("end"));
+                LatLngBounds.Builder boundsBuilder = new LatLngBounds.Builder();
+                //for (LatLng routePoint : routePointList)
+                boundsBuilder.include(origin);
+                boundsBuilder.include(destination);
+                int routePadding = 120;
+                LatLngBounds latLngBounds = boundsBuilder.build();
+                googleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds,routePadding));
+                //googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(destination,15f));
+            });
+
         }
 
 
@@ -118,4 +158,17 @@ public class AcceptTripRequestFragment extends DialogFragment {
         Intent contactIntent = new Intent(parentActivity, ContactViewerActivity.class);
         App.getController().handleViewContactInformation(parentActivity, contactIntent, riderID, null);
     }
+
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        MapFragment f = (MapFragment) getActivity()
+                .getFragmentManager()
+                .findFragmentById(R.id.lite_map);
+        if (f != null)
+            getActivity().getFragmentManager().beginTransaction()
+                    .remove(f).commit();
+    }
+
 }
