@@ -41,6 +41,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.Task;
@@ -454,11 +455,13 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         mMap.addMarker(new MarkerOptions().position(startLoc).title("Start Location"));
         mMap.addMarker(new MarkerOptions().position(endLoc).title("End Location"));
         //Changes camera to endlocation
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
-                // can be left as driver/rider current location cause they're together when EN_ROUTE
-                new LatLng(mLastKnownUserLocation.getLatitude(), mLastKnownUserLocation.getLongitude()),
-                DEFAULT_ZOOM));
-    }
+        LatLngBounds.Builder boundsBuilder = new LatLngBounds.Builder();
+        boundsBuilder.include(startLoc);
+        boundsBuilder.include(endLoc);
+        int routePadding = 120;
+        LatLngBounds latLngBounds = boundsBuilder.build();
+        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds,routePadding));
+}
 
     /**Clears map of polylines and markers - also resets camera to userlocation*/
     public void clearMapRoute(){
