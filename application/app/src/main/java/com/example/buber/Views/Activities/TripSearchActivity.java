@@ -3,6 +3,7 @@ package com.example.buber.Views.Activities;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -22,6 +23,9 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
+import static com.example.buber.Model.Trip.STATUS.DRIVER_ACCEPT;
+import static com.example.buber.Model.Trip.STATUS.PENDING;
+
 /**
  * Main Driver activity for searching for and selecting a trip. Activity loads trips and uses
  * the model to display a list of trips that are filtered based on the users current radius.
@@ -33,6 +37,7 @@ public class TripSearchActivity extends AppCompatActivity implements UIErrorHand
     ListView tripSearchList;
     ArrayAdapter<TripSearchRecord> tripSearchRecordArrayAdapter;
     ArrayList<TripSearchRecord> tripDataList;
+    private boolean showAcceptedPendingRides;
 
     private static final String TAG = "TripSearchActivity";
 
@@ -46,9 +51,8 @@ public class TripSearchActivity extends AppCompatActivity implements UIErrorHand
         App.getModel().addObserver(this);
 
         tripDataList = new ArrayList<>();
-
-        //Activate the custom array adapter (CustomTripList)
         tripSearchRecordArrayAdapter = new CustomTripList(this, tripDataList);
+
         //Activate the custom array adapter (CustomTripList)
         tripSearchList.setAdapter(tripSearchRecordArrayAdapter);
         tripSearchList.setOnItemClickListener((parent, view, position, id) ->
@@ -57,7 +61,17 @@ public class TripSearchActivity extends AppCompatActivity implements UIErrorHand
                         TripSearchActivity.this)
                         .show(getSupportFragmentManager(), "VIEW_RECORD"));
 
-        ApplicationController.getTripsForUser(this);
+        if (App.getModel().getSessionUser().getCurrentUserLocation() == null) {
+            Toast.makeText(getBaseContext(), "Couldn't fetch your location. Try restarting the app.", Toast.LENGTH_SHORT).show();
+            this.finish();
+        } else {
+            showAcceptedPendingRides = getIntent().getBooleanExtra("ShowAcceptedPendingRidesFlag", false);
+            if (showAcceptedPendingRides) {
+                ApplicationController.getPendingTripsForDriver(this);
+            } else {
+                ApplicationController.getTripsForUser(this);
+            }
+        }
     }
 
     /**onError function is used to handle incoming UI errors in tripSearchActivity
@@ -78,13 +92,29 @@ public class TripSearchActivity extends AppCompatActivity implements UIErrorHand
     private void transferTripDataFromListToArrayList() {
         ApplicationModel m = App.getModel();
         User sessionUser = m.getSessionUser();
+
         List<Trip> tripList = m.getSessionTripList();
-        if (tripList != null) {
+        if (tripList != null && !showAcceptedPendingRides) {
             if (tripDataList != null) {
                 tripDataList.clear();
             }
 
             for (Trip t : tripList) {
+                tripDataList.add(new TripSearchRecord(t, sessionUser.getCurrentUserLocation()));
+            }
+
+            if (tripSearchRecordArrayAdapter != null) {
+                tripSearchRecordArrayAdapter.notifyDataSetChanged();
+            }
+        }
+
+        List<Trip> driverAcceptedPendingRides = m.getDriverAcceptedPendingRides();
+        if (driverAcceptedPendingRides != null && showAcceptedPendingRides) {
+            if (tripDataList != null) {
+                tripDataList.clear();
+            }
+
+            for (Trip t : driverAcceptedPendingRides) {
                 tripDataList.add(new TripSearchRecord(t, sessionUser.getCurrentUserLocation()));
             }
 

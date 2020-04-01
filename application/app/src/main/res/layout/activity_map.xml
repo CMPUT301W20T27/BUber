@@ -35,7 +35,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!--  RIDER MAIN ACTION BUTTONS  -->
+    <!-- ONLY RIDER MAIN ACTION BUTTONS  -->
     <Button
         android:id="@+id/rider_request_btn"
         android:layout_width="0dp"
@@ -80,7 +80,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <!--  DRIVER MAIN ACTION BUTTONS  -->
+    <!-- ONLY DRIVER MAIN ACTION BUTTONS  -->
     <Button
         android:id="@+id/driver_show_requests_btn"
         android:layout_width="0dp"
@@ -103,7 +103,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <!--  RIDER / DRIVER MAIN ACTION BUTTONS  -->
+    <!-- BOTH RIDER / DRIVER MAIN ACTION BUTTONS  -->
     <Button
         android:id="@+id/cancel_ride_in_progess"
         android:layout_width="0dp"
@@ -147,12 +147,14 @@
             android:id="@+id/account_button"
             android:layout_width="0dp"
             android:layout_height="50dp"
+            android:layout_marginTop="540dp"
             android:background="@android:color/transparent"
             android:text="Account"
             app:layout_constraintBottom_toTopOf="@+id/logout_button"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <Button
             android:id="@+id/logout_button"
@@ -164,21 +166,46 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <Button
-        android:id="@+id/rideStatus"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="286dp"
-        android:layout_marginEnd="16dp"
-        android:text="Ride Status"
-        android:visibility="invisible"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="379dp"
+        android:layout_height="60dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.6"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.918" />
+        app:layout_constraintTop_toTopOf="@+id/map"
+        app:layout_constraintVertical_bias="0.917">
+
+        <Button
+            android:id="@+id/driver_show_accepted_requests_btn"
+            android:layout_width="155dp"
+            android:layout_height="49dp"
+            android:layout_marginStart="4dp"
+            android:text="Pending Rides"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.727" />
+
+        <Button
+            android:id="@+id/rideStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="7dp"
+            android:layout_marginBottom="4dp"
+            android:text="Active Ride Status"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

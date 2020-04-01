@@ -44,6 +44,7 @@ public class BUberMapUIAddOnsManager {
     // DRIVER MAIN ACTION BUTTON(s)
     private Button driverShowRequestsMainBtn;
     private Button driverQRPaymentAcceptBtn;
+    private Button driverShowAcceptedPendingRequestsBtn;
     private Boolean showRiderAcceptDriverOfferDialogue;
 
     // RIDER/DRIVER BUTTON(s)
@@ -74,6 +75,7 @@ public class BUberMapUIAddOnsManager {
         // INSTANTIATE DRIVER MAIN ACTION BUTTONS
         this.driverShowRequestsMainBtn = map.findViewById(R.id.driver_show_requests_btn);
         this.driverQRPaymentAcceptBtn = map.findViewById(R.id.driver_qrpaymentaccept_btn);
+        this.driverShowAcceptedPendingRequestsBtn = map.findViewById(R.id.driver_show_accepted_requests_btn);
         this.showRiderAcceptDriverOfferDialogue = false;
 
         // INSTANTIATE RIDER/DRIVER BUTTON(s)
@@ -148,6 +150,19 @@ public class BUberMapUIAddOnsManager {
             map.startActivity(new Intent(map, TripSearchActivity.class));
         });
 
+
+        /**
+         * Handles interaction with driverShowAcceptedPendingRequestsBtn button
+         *
+         * @param v is the view instance
+         */
+        driverShowAcceptedPendingRequestsBtn.setOnClickListener((View v) -> {
+            Intent intent = new Intent(map, TripSearchActivity.class);
+            intent.putExtra("ShowAcceptedPendingRidesFlag", true);
+            map.startActivity(intent);
+        });
+
+
         /**
          * Handles ride-in-progress
          *
@@ -201,7 +216,6 @@ public class BUberMapUIAddOnsManager {
              map.startActivity(paymentIntent);
              //map.finish();
         });
-
 
 
         /** Shows settings sidebar panel when necessary **/
@@ -276,16 +290,25 @@ public class BUberMapUIAddOnsManager {
                             showRiderAcceptDriverOfferDialogue = true;
                             handleRiderOfferAccept(driverID);
                         }
+                    } else if (currentUserType == DRIVER) {
+                        driverShowAcceptedPendingRequestsBtn.setVisibility(View.VISIBLE);
+                        driverShowRequestsMainBtn.setVisibility(View.VISIBLE);
                     }
                     break;
                 case DRIVER_PICKING_UP:
                     if (currentUserType == RIDER) {
                         riderCancelPickupBtn.setVisibility(View.VISIBLE);
+                    } else if (currentUserType == DRIVER) {
+                        driverShowAcceptedPendingRequestsBtn.setVisibility(View.VISIBLE);
+                        driverShowRequestsMainBtn.setVisibility(View.VISIBLE);
                     }
                     break;
                 case DRIVER_ARRIVED:
                     if (currentUserType == RIDER) {
                         ensureRiderHasBoardedRide();
+                    } else if (currentUserType == DRIVER) {
+                        driverShowAcceptedPendingRequestsBtn.setVisibility(View.VISIBLE);
+                        driverShowRequestsMainBtn.setVisibility(View.VISIBLE);
                     }
                     break;
                 case EN_ROUTE:
@@ -400,15 +423,16 @@ public class BUberMapUIAddOnsManager {
      * Hides main action buttons when necessary
      */
     public void hideMainActionButtons() {
-        riderRequestMainBtn.setVisibility(View.INVISIBLE);
-        riderRequestCancelMainBtn.setVisibility(View.INVISIBLE);
-        riderCancelPickupBtn.setVisibility(View.INVISIBLE);
-        riderQRPaymentBtn.setVisibility(View.INVISIBLE);
+        riderRequestMainBtn.setVisibility(View.GONE);
+        riderRequestCancelMainBtn.setVisibility(View.GONE);
+        riderCancelPickupBtn.setVisibility(View.GONE);
+        riderQRPaymentBtn.setVisibility(View.GONE);
 
-        driverShowRequestsMainBtn.setVisibility(View.INVISIBLE);
-        driverQRPaymentAcceptBtn.setVisibility(View.INVISIBLE);
+        driverShowRequestsMainBtn.setVisibility(View.GONE);
+        driverQRPaymentAcceptBtn.setVisibility(View.GONE);
+        driverShowAcceptedPendingRequestsBtn.setVisibility(View.GONE);
 
-        cancelRideInProgress.setVisibility(View.INVISIBLE);
+        cancelRideInProgress.setVisibility(View.GONE);
     }
 
     /**

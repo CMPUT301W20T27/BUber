@@ -2,6 +2,7 @@ package com.example.buber.Controllers;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.example.buber.App;
@@ -132,13 +133,31 @@ public class ApplicationController {
         ApplicationModel m = App.getModel();
         UserLocation sessionUserLocation = m.getSessionUser().getCurrentUserLocation();
         ApplicationService.getFilteredTrips(sessionUserLocation, (resultData, err) -> {
-            if (err != null && view != null) view.onError(err);
-            else {
+            if (err != null && view != null) {
+                view.onError(err);
+            } else {
                 List<Trip> sessionTripList = (List<Trip>) resultData.get("filtered-trips");
                 m.setSessionTripList(sessionTripList);
             }
         });
     }
+
+    /**
+     *  Gets the all the trips for the user. And updates the model with the trip list.
+     *   @param view the UI Error Handler interface callback.
+     */
+    public static void getPendingTripsForDriver(UIErrorHandler view) {
+        ApplicationModel m = App.getModel();
+        ApplicationService.getFilteredPendingTripsForDriver((resultData, err) -> {
+            if (err != null && view != null) {
+                view.onError(err);
+            } else {
+                List<Trip> driverAcceptedPendingRides = (List<Trip>) resultData.get("filtered-trips");
+                m.setDriverAcceptedPendingRides(driverAcceptedPendingRides);
+            }
+        });
+    }
+
 
     /**
      * Updates the model to hold the riders current trip request. On success start the new activity. On failure send exception to MainActivity

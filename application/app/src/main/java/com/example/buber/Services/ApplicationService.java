@@ -18,6 +18,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
+import static com.example.buber.Model.Trip.STATUS.DRIVER_ACCEPT;
+import static com.example.buber.Model.Trip.STATUS.DRIVER_PICKING_UP;
 import static com.example.buber.Model.User.TYPE.DRIVER;
 import static com.example.buber.Model.User.TYPE.RIDER;
 
@@ -118,8 +120,9 @@ public class ApplicationService {
     public static void getFilteredTrips(UserLocation driverLocation, EventCompletionListener controllerListener) {
         Double RADIUS = 6.0; // TODO: Make this dynamic based on map bounds
         App.getDbManager().getTrips((resultData, err) -> {
-            if (err != null) controllerListener.onCompletion(null, err);
-            else {
+            if (err != null) {
+                controllerListener.onCompletion(null, err);
+            } else {
                 List<Trip> filterTrips = new LinkedList<>();
                 List<Trip> tripData = (List<Trip>) resultData.get("all-trips");
                 List<String> filterTripIds = new ArrayList<>();
@@ -127,7 +130,11 @@ public class ApplicationService {
                 if (tripData != null && tripData.size() > 0) {
                     for (Trip t : tripData) {
                         double distance = driverLocation.distanceTo(t.getStartUserLocation());
-                        if (distance <= RADIUS && t.getStatus() == Trip.STATUS.PENDING && !t.getRiderID().equals(currentUid)) {
+                        if (
+                                distance <= RADIUS &&
+                                t.getStatus() == Trip.STATUS.PENDING &&
+                                !t.getRiderID().equals(currentUid)
+                        ) {
                             filterTrips.add(t);
                             filterTripIds.add(t.getRiderID());
                         }
@@ -143,6 +150,45 @@ public class ApplicationService {
             }
         });
     }
+
+
+    /**
+     * Calls the DBManager class to get the trips filtered by geolocation. On success the listener returns
+     * a list of filteredTripsData. On failure the listener returns the exception.
+     * @param controllerListener the listener that gets results from the Firebase call.
+     */
+    public static void getFilteredPendingTripsForDriver(EventCompletionListener controllerListener) {
+        App.getDbManager().getTrips((resultData, err) -> {
+            if (err != null) {
+                controllerListener.onCompletion(null, err);
+            } else {
+                List<Trip> filterTrips = new LinkedList<>();
+                List<Trip> tripData = (List<Trip>) resultData.get("all-trips");
+                List<String> filterTripIds = new ArrayList<>();
+                String currentUid = App.getAuthDBManager().getCurrentUserID();
+                if (tripData != null && tripData.size() > 0) {
+                    for (Trip t : tripData) {
+                        if (
+                                (t.getStatus() == DRIVER_ACCEPT || t.getStatus() == DRIVER_PICKING_UP) &&
+                                t.getDriverID().equals(currentUid) &&
+                                !t.getRiderID().equals(currentUid)
+                        ) {
+                            filterTrips.add(t);
+                            filterTripIds.add(t.getRiderID());
+                        }
+                    }
+
+                    HashMap<String, List> filteredTripsData = new HashMap<>();
+                    filteredTripsData.put("filtered-trips", filterTrips);
+                    controllerListener.onCompletion(filteredTripsData, null);
+
+                } else {
+                    controllerListener.onCompletion(null, new Error("Could not find trips"));
+                }
+            }
+        });
+    }
+
 
     /**
      * Calls the DBManager class to get the Users current trip session. On success the listener returns

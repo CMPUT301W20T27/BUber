@@ -18,15 +18,19 @@ public class ApplicationModel extends Observable {
     private User sessionUser;
     private Trip sessionTrip;
     private List<Trip> sessionTripList;
+    private List<Trip> driverAcceptedPendingRides;
     private List<Observer> obs = new ArrayList<>();
     private Double mapBounds[];
     private ListenerRegistration tripListener;
+
+
     /**
      * Getting the current sessions list of trips
      */
     public List<Trip> getSessionTripList() {
         return sessionTripList;
     }
+
     /**
      * Setting the current sessions list of trips
      * @param sessionTripList the new list of trips
@@ -36,12 +40,31 @@ public class ApplicationModel extends Observable {
         setChanged();
         notifyObservers();
     }
+
+    /**
+     * Getting driverAcceptedPendingRides
+     */
+    public List<Trip> getDriverAcceptedPendingRides() {
+        return driverAcceptedPendingRides;
+    }
+
+    /**
+     * Setting driverAcceptedPendingRides
+     * @param driverAcceptedPendingRides the new list of trips
+     */
+    public void setDriverAcceptedPendingRides(List<Trip> driverAcceptedPendingRides) {
+        this.driverAcceptedPendingRides = driverAcceptedPendingRides;
+        setChanged();
+        notifyObservers();
+    }
+
     /**
      * Getting the sessions user
      */
     public User getSessionUser() {
         return sessionUser;
     }
+
     /**
      * Setting the sessions user and notifying all the views
      * @param sessionUser the session user
@@ -51,12 +74,14 @@ public class ApplicationModel extends Observable {
         setChanged();
         notifyObservers();
     }
+
     /**
      * Getting the current sessions user
      */
     public Trip getSessionTrip() {
         return sessionTrip;
     }
+
     /**
      * Setting the sessions Trip and notifying all the views
      * @param sessionTrip the session trip
@@ -83,6 +108,7 @@ public class ApplicationModel extends Observable {
         }
         return res;
     }
+
     /**
      * Adding an observer to the list of observers of the model
      * @param observer the new observer
@@ -92,6 +118,7 @@ public class ApplicationModel extends Observable {
         this.obs.add(observer);
         super.addObserver(observer);
     }
+
     /**
      * Removing an observer from the list of observers of the model
      */
@@ -100,12 +127,14 @@ public class ApplicationModel extends Observable {
         this.obs.remove(o);
         super.deleteObserver(o);
     }
+
     /**
      * Getting a trip listener to listen to a trip status change
      */
     public ListenerRegistration getTripListener() {
         return tripListener;
     }
+
     /**
      *  Setting a trip listener to a trip
      * @param tripListener the listener for the trip
@@ -113,6 +142,7 @@ public class ApplicationModel extends Observable {
     public void setTripListener(ListenerRegistration tripListener) {
         this.tripListener = tripListener;
     }
+
     /**
      * Removing the Trip listener
      */
@@ -123,6 +153,7 @@ public class ApplicationModel extends Observable {
             this.setTripListener(null);
         }
     }
+
     /**
      * Set session Trip/User/Listener to null on user logout
      */
