@@ -121,24 +121,8 @@ public class DBManager {
                         collectionTrip
                                 .document(tripRequest.getRiderID())
                                 .addSnapshotListener((documentSnapshot, e) -> {
-                                    if (documentSnapshot != null) {
-                                        Trip newTrip = documentSnapshot.toObject(Trip.class);
-
-                                        if (newTrip == null) {
-                                            return;
-                                        }
-                                        Trip.STATUS newStatus = newTrip.getStatus();
-
-                                        if (tripRequest.nextStatusValid(newStatus)) {
-                                            Log.d(TAG, newTrip.getStatus().toString());
-
-                                        }
-                                        Trip sessionTrip = App.getModel().getSessionTrip();
-                                        if (sessionTrip != null) {
-                                            sessionTrip.setStatus(newStatus);
-                                            App.getModel().setSessionTrip(sessionTrip);
-                                        }
-                                    }});
+                                    App.getModel().handleTripStatusChanges(tripRequest.getRiderID(), documentSnapshot);
+                                });
                        App.getModel().setTripListener(lr);
                     }
                 })

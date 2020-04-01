@@ -170,8 +170,13 @@ public class ApplicationModel extends Observable {
                 Trip.STATUS newStatus = trip.getStatus();
                 if (trip.nextStatusValid(newStatus)) {
                     Trip newTrip = App.getModel().getSessionTrip();
-                    newTrip.setStatus(newStatus);
-                    setSessionTrip(newTrip);
+                    if (newTrip != null) {
+                        if (App.getModel().getSessionUser().getType() == User.TYPE.RIDER && newStatus == Trip.STATUS.DRIVER_ACCEPT) {
+                            newTrip.setDriverID(trip.getDriverID());
+                        }
+                        newTrip.setStatus(newStatus);
+                        setSessionTrip(newTrip);
+                    }
                 }
             } else {
                 User sessionUser = App.getModel().getSessionUser();
@@ -190,7 +195,9 @@ public class ApplicationModel extends Observable {
                                 if (nxtTrip != null) { // Edge case: last rider in queue cancels offer
                                     nxtTrip.setDriverID(App.getAuthDBManager().getCurrentUserID());
                                     nxtTrip.setStatus(Trip.STATUS.DRIVER_ACCEPT);
-                                    App.getDbManager().updateTrip(nxtTripID, nxtTrip, ((resultData1, err1) -> {}), true);
+                                    App.getDbManager().updateTrip(nxtTripID, nxtTrip, ((resultData1, err1) -> {
+                                        // TODO: set session trip
+                                    }), true);
                                 } else {
                                     setSessionTrip(null);
                                 }
@@ -199,6 +206,8 @@ public class ApplicationModel extends Observable {
                     } else {
                         setSessionTrip(null);
                     }
+                } else { // Edge case: driver has cancelled the trip
+                    setSessionTrip(null);
                 }
             }
         }

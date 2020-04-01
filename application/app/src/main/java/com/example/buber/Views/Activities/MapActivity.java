@@ -210,12 +210,6 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
             }
             uiAddOnsManager.showActiveMainActionButton();
         }
-        // States that wanted a refresh
-        else if (sessionTrip.getStatus() == this.currentTripStatus) {
-            if (this.currentTripStatus == DRIVER_ACCEPT) {
-                uiAddOnsManager.showActiveMainActionButton();
-            }
-        }
         // Edge states
         else {
             Log.e("%s", "Unknown state has been encountered!");

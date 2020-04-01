@@ -250,6 +250,7 @@ public class ApplicationService {
                     Trip sessionTrip = (Trip) resultData.get("trip");
                     String tripDriverID = sessionTrip.getDriverID();
                     selectedTrip.setDriverID(tripDriverID);
+                    selectedTrip.setStatus(Trip.STATUS.DRIVER_PICKING_UP);
                     // Second: call updateTrip to change the trip status and thus notify the driver!
                     App.getDbManager().updateTrip(uid, selectedTrip, controllerListener, true);
                 }
@@ -274,6 +275,7 @@ public class ApplicationService {
                     Trip sessionTrip = (Trip) resultData.get("trip");
                     String tripDriverID = sessionTrip.getDriverID();
                     selectedTrip.setDriverID(tripDriverID);
+                    selectedTrip.setStatus(Trip.STATUS.DRIVER_ARRIVED);
                     // Second: call updateTrip to change the trip status and thus notify the driver!
                     App.getDbManager().updateTrip(uid, selectedTrip, controllerListener, true);
                 }
@@ -397,11 +399,13 @@ public class ApplicationService {
                                 if (err1 == null) {
                                     Driver correspondingDriver = (Driver) driver.get("user");
                                     if (correspondingDriver == null) { // Edge case: no corresponding driver account
+                                        if (!loggingIn) logoutUser();
                                         listener.onCompletion(null, null);
                                     } else {
                                         correspondingDriver.setLoggedOn(false);
                                         App.getDbManager().updateDriver(uID, correspondingDriver, (driver2, err2) -> {
                                             if (err2 == null) {
+                                                if (!loggingIn) logoutUser();
                                                 listener.onCompletion(null, null);
                                             }
                                         });
@@ -420,11 +424,13 @@ public class ApplicationService {
                                 if (err1 == null) {
                                     Rider correspondingRider = (Rider) rider.get("user");
                                     if (correspondingRider == null) { // Edge case: no corresponding rider account
+                                        if (!loggingIn) logoutUser();
                                         listener.onCompletion(null, null);
                                     } else {
                                         correspondingRider.setRiderLoggedOn(false);
                                         App.getDbManager().updateRider(uID, correspondingRider, (rider2, err2) -> {
                                             if (err2 == null) {
+                                                if (!loggingIn) logoutUser();
                                                 listener.onCompletion(null, null);
                                             }
                                         });

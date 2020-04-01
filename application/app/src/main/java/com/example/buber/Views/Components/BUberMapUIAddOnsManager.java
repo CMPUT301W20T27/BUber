@@ -45,7 +45,6 @@ public class BUberMapUIAddOnsManager {
     private Button driverShowRequestsMainBtn;
     private Button driverQRPaymentAcceptBtn;
     private Button driverShowAcceptedPendingRequestsBtn;
-    private Boolean showRiderAcceptDriverOfferDialogue;
 
     // RIDER/DRIVER BUTTON(s)
     private Button cancelRideInProgress;
@@ -76,7 +75,6 @@ public class BUberMapUIAddOnsManager {
         this.driverShowRequestsMainBtn = map.findViewById(R.id.driver_show_requests_btn);
         this.driverQRPaymentAcceptBtn = map.findViewById(R.id.driver_qrpaymentaccept_btn);
         this.driverShowAcceptedPendingRequestsBtn = map.findViewById(R.id.driver_show_accepted_requests_btn);
-        this.showRiderAcceptDriverOfferDialogue = false;
 
         // INSTANTIATE RIDER/DRIVER BUTTON(s)
         this.cancelRideInProgress = map.findViewById(R.id.cancel_ride_in_progess);
@@ -282,11 +280,9 @@ public class BUberMapUIAddOnsManager {
                     if (currentUserType == RIDER) {
                         String driverID = App.getModel().getSessionTrip().getDriverID();
                         if (driverID == null) {
-                            App.getController().getSessionTrip();
-                        } else if (!showRiderAcceptDriverOfferDialogue) {
-                            showRiderAcceptDriverOfferDialogue = true;
-                            handleRiderOfferAccept(driverID);
+                            return;
                         }
+                        handleRiderOfferAccept(driverID);
                     } else if (currentUserType == DRIVER) {
                         driverShowAcceptedPendingRequestsBtn.setVisibility(View.VISIBLE);
                         driverShowRequestsMainBtn.setVisibility(View.VISIBLE);
@@ -368,7 +364,6 @@ public class BUberMapUIAddOnsManager {
                 if (!userHasConfirmed.get()) {
                     builder.show();
                 }
-                showRiderAcceptDriverOfferDialogue = false;
             }
         });
 
