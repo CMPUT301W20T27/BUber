@@ -98,7 +98,7 @@ public class AuthDBManager {
                     listener.onCompletion(null, err);
                 } else {
                     Driver driverProfile = (Driver) resultData.get("user");
-                    if (driverProfile.getDriverLoggedOn()) {
+                    if (driverProfile != null && driverProfile.getDriverLoggedOn()) {
                         listener.onCompletion(resultData, null);
                     } else {
                         // Get the rider

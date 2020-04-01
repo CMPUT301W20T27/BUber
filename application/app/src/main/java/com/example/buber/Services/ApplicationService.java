@@ -169,7 +169,7 @@ public class ApplicationService {
                 if (tripData != null && tripData.size() > 0) {
                     for (Trip t : tripData) {
                         if (
-                                (t.getStatus() == DRIVER_ACCEPT || t.getStatus() == DRIVER_PICKING_UP) &&
+                                t.getStatus() == DRIVER_ACCEPT &&
                                 t.getDriverID().equals(currentUid) &&
                                 !t.getRiderID().equals(currentUid)
                         ) {
@@ -387,16 +387,18 @@ public class ApplicationService {
     public static void manageLoggedStateAcrossTwoUserCollections(boolean loggingIn, User updateSessionUser, User.TYPE userType, EventCompletionListener listener) {
         String uID = App.getAuthDBManager().getCurrentUserID();
         if(updateSessionUser != null) {
-            if (loggingIn) {
-                switch (userType) {
-                    case RIDER:  // Logging in as a rider
-                        Rider currRider = (Rider) updateSessionUser;
-                        currRider.setRiderLoggedOn(true);
-                        App.getDbManager().updateRider(uID, currRider, (resultData, err) -> {
-                            if (err == null) {
-                                App.getDbManager().getDriver(uID, (driver, err1) -> {
-                                    if (err1 == null) {
-                                        Driver correspondingDriver = (Driver) driver.get("user");
+            switch (userType) {
+                case RIDER:
+                    Rider currRider = (Rider) updateSessionUser;
+                    currRider.setRiderLoggedOn(loggingIn);
+                    App.getDbManager().updateRider(uID, currRider, (resultData, err) -> {
+                        if (err == null) {
+                            App.getDbManager().getDriver(uID, (driver, err1) -> {
+                                if (err1 == null) {
+                                    Driver correspondingDriver = (Driver) driver.get("user");
+                                    if (correspondingDriver == null) { // Edge case: no corresponding driver account
+                                        listener.onCompletion(null, null);
+                                    } else {
                                         correspondingDriver.setLoggedOn(false);
                                         App.getDbManager().updateDriver(uID, correspondingDriver, (driver2, err2) -> {
                                             if (err2 == null) {
@@ -404,18 +406,22 @@ public class ApplicationService {
                                             }
                                         });
                                     }
-                                });
-                            }
-                        });
-                        break;
-                    case DRIVER:  // Logging in as a driver
-                        Driver currDriver = (Driver) updateSessionUser;
-                        currDriver.setLoggedOn(true);
-                        App.getDbManager().updateDriver(uID, currDriver, (resultData, err) -> {
-                            if (err == null) {
-                                App.getDbManager().getRider(uID, (rider, err1) -> {
-                                    if (err1 == null) {
-                                        Rider correspondingRider = (Rider) rider.get("user");
+                                }
+                            });
+                        }
+                    });
+                    break;
+                case DRIVER:
+                    Driver currDriver = (Driver) updateSessionUser;
+                    currDriver.setLoggedOn(loggingIn);
+                    App.getDbManager().updateDriver(uID, currDriver, (resultData, err) -> {
+                        if (err == null) {
+                            App.getDbManager().getRider(uID, (rider, err1) -> {
+                                if (err1 == null) {
+                                    Rider correspondingRider = (Rider) rider.get("user");
+                                    if (correspondingRider == null) { // Edge case: no corresponding rider account
+                                        listener.onCompletion(null, null);
+                                    } else {
                                         correspondingRider.setRiderLoggedOn(false);
                                         App.getDbManager().updateRider(uID, correspondingRider, (rider2, err2) -> {
                                             if (err2 == null) {
@@ -423,34 +429,11 @@ public class ApplicationService {
                                             }
                                         });
                                     }
-                                });
-                            }
-                        });
-                        break;
-                }
-            } else {  // Logging out
-                App.getDbManager().getRider(uID, (rider, err) -> {
-                    if (err == null) {
-                        Rider correspondingRider = (Rider) rider.get("user");
-                        correspondingRider.setRiderLoggedOn(false); // Set rider version to logged out
-                        App.getDbManager().updateRider(uID, correspondingRider, (rider1, err1) -> {
-                            if (err1 == null) {
-                                App.getDbManager().getDriver(uID, (driver, err2) -> {
-                                    if (err2 == null) {
-                                        Driver correspondingDriver = (Driver) driver.get("user");
-                                        correspondingDriver.setLoggedOn(false); // Set driver version to logged out
-                                        App.getDbManager().updateDriver(uID, correspondingDriver, (driver2, err3) -> {
-                                            if (err3 == null) {
-                                                logoutUser();
-                                                listener.onCompletion(null, null);
-                                            }
-                                        });
-                                    }
-                                });
-                            }
-                        });
-                    }
-                });
+                                }
+                            });
+                        }
+                    });
+                    break;
             }
         }
     }
