@@ -25,6 +25,7 @@ import com.example.buber.Views.Activities.TripBuilderActivity;
 import com.example.buber.Views.Activities.TripSearchActivity;
 import com.example.buber.Views.Components.GetPathFromLocation;
 import com.example.buber.Views.Components.TripSearchRecord;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -132,9 +133,8 @@ public class AcceptTripRequestFragment extends DialogFragment {
                 LatLngBounds.Builder boundsBuilder = new LatLngBounds.Builder();
                 boundsBuilder.include(origin);
                 boundsBuilder.include(destination);
-                int routePadding = 120;
                 LatLngBounds latLngBounds = boundsBuilder.build();
-                googleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds,routePadding));
+                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLngBounds.getCenter(),10));
             });
 
         }
