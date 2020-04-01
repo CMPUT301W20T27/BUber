@@ -384,40 +384,74 @@ public class ApplicationService {
      *  @param updateSessionUser The current logged in user
      *  @param listener the listener that gets results from the Firebase call.
      */
-    public static void updateUser(User updateSessionUser, EventCompletionListener listener) {
+    public static void manageLoggedStateAcrossTwoUserCollections(boolean loggingIn, User updateSessionUser, User.TYPE userType, EventCompletionListener listener) {
         String uID = App.getAuthDBManager().getCurrentUserID();
-        Driver tmpDriver = new Driver(updateSessionUser.getUsername(),updateSessionUser.getAccount());
-        Rider tmpRider = new Rider(updateSessionUser.getUsername(),updateSessionUser.getAccount());
-        if(updateSessionUser.getType()==RIDER){
-            tmpDriver.setLoggedOn(false);
-            tmpRider.setRiderLoggedOn(true);
-        }
-        else if(updateSessionUser.getType()==DRIVER){
-            tmpDriver.setLoggedOn(true);
-            tmpRider.setRiderLoggedOn(false);
-        }
-        else{  //logging out
-            tmpDriver.setLoggedOn(false);
-            tmpRider.setRiderLoggedOn(false);
-        }
-
-        if (tmpRider != null && uID != null) {
-            App.getDbManager().updateRider(uID, tmpRider, (resultData, err) -> {
-                if (err == null) {
-                    App.getDbManager().updateDriver(uID,tmpDriver, (resultData1, err1) -> {
-                        if (err1 == null) {
-                            listener.onCompletion(null, null);
-                        }
-                    });
+        if(updateSessionUser != null) {
+            if (loggingIn) {
+                switch (userType) {
+                    case RIDER:  // Logging in as a rider
+                        Rider currRider = (Rider) updateSessionUser;
+                        currRider.setRiderLoggedOn(true);
+                        App.getDbManager().updateRider(uID, currRider, (resultData, err) -> {
+                            if (err == null) {
+                                App.getDbManager().getDriver(uID, (driver, err1) -> {
+                                    if (err1 == null) {
+                                        Driver correspondingDriver = (Driver) driver.get("user");
+                                        correspondingDriver.setLoggedOn(false);
+                                        App.getDbManager().updateDriver(uID, correspondingDriver, (driver2, err2) -> {
+                                            if (err2 == null) {
+                                                listener.onCompletion(null, null);
+                                            }
+                                        });
+                                    }
+                                });
+                            }
+                        });
+                        break;
+                    case DRIVER:  // Logging in as a driver
+                        Driver currDriver = (Driver) updateSessionUser;
+                        currDriver.setLoggedOn(true);
+                        App.getDbManager().updateDriver(uID, currDriver, (resultData, err) -> {
+                            if (err == null) {
+                                App.getDbManager().getRider(uID, (rider, err1) -> {
+                                    if (err1 == null) {
+                                        Rider correspondingRider = (Rider) rider.get("user");
+                                        correspondingRider.setRiderLoggedOn(false);
+                                        App.getDbManager().updateRider(uID, correspondingRider, (rider2, err2) -> {
+                                            if (err2 == null) {
+                                                listener.onCompletion(null, null);
+                                            }
+                                        });
+                                    }
+                                });
+                            }
+                        });
+                        break;
                 }
-            });
-            App.getDbManager().updateDriver(uID,tmpDriver, (resultData1, err1) -> {
-                if (err1 == null) {
-                    listener.onCompletion(null, null);
-                }
-            });
-        } else {
-            listener.onCompletion(null, new Error("Current session user does not exist"));
+            } else {  // Logging out
+                App.getDbManager().getRider(uID, (rider, err) -> {
+                    if (err == null) {
+                        Rider correspondingRider = (Rider) rider.get("user");
+                        correspondingRider.setRiderLoggedOn(false); // Set rider version to logged out
+                        App.getDbManager().updateRider(uID, correspondingRider, (rider1, err1) -> {
+                            if (err1 == null) {
+                                App.getDbManager().getDriver(uID, (driver, err2) -> {
+                                    if (err2 == null) {
+                                        Driver correspondingDriver = (Driver) driver.get("user");
+                                        correspondingDriver.setLoggedOn(false); // Set driver version to logged out
+                                        App.getDbManager().updateDriver(uID, correspondingDriver, (driver2, err3) -> {
+                                            if (err3 == null) {
+                                                logoutUser();
+                                                listener.onCompletion(null, null);
+                                            }
+                                        });
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+            }
         }
     }
 
@@ -425,6 +459,7 @@ public class ApplicationService {
      * Calls the AuthDBManager class to logout the user.
      */
     public static void logoutUser() {
+        App.getModel().clearModelForLogout();
         App.getAuthDBManager().signOut();
     }
 }

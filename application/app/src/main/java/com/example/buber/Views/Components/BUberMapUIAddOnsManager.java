@@ -248,11 +248,8 @@ public class BUberMapUIAddOnsManager {
         /** Logs user out of app when log out button is clicked **/
         logoutButton.setOnClickListener((View v) -> {
             User curUser = App.getModel().getSessionUser();
-            curUser.setType(null);
             Log.d("APPSERVICE", "map logging out");
-            App.getController().updateNonCriticalUserFields(curUser, map);
-
-            App.getController().logout();
+            App.getController().updateNonCriticalUserFields(false, curUser, curUser.getType(), map);
             map.startActivity(new Intent(map, LoginActivity.class));
             map.finish();
         });

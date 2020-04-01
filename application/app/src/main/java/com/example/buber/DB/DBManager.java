@@ -182,16 +182,19 @@ public class DBManager {
      * @param listener the listener that waits for the asynchronous Firebase call to finish
      */
     public void getDriver(String docID, EventCompletionListener listener) {
-        collectionDriver.document(docID)
-                .get().addOnSuccessListener(documentSnapshot -> {
-            HashMap<String, Driver> toReturn = new HashMap<>();
-            toReturn.put("user", documentSnapshot.toObject(Driver.class));
-            listener.onCompletion(toReturn, null);
-        }).addOnFailureListener((@NonNull Exception e) -> {
-            Log.d(TAG, e.getMessage());
-            listener.onCompletion(null, new Error("Login failed. Please try again," +
-                    "if the issue persists, close and restart the app."));
-        });
+        collectionDriver
+                .document(docID)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    HashMap<String, Driver> toReturn = new HashMap<>();
+                    toReturn.put("user", documentSnapshot.toObject(Driver.class));
+                    listener.onCompletion(toReturn, null);
+                    })
+                .addOnFailureListener((@NonNull Exception e) -> {
+                    Log.d(TAG, e.getMessage());
+                    listener.onCompletion(null, new Error("Login failed. Please try again," +
+                            "if the issue persists, close and restart the app."));
+                });
     }
     /**
      * Get a Trip object from Firebase. If it was not successful the listener passed in will handel the exception.
