@@ -133,8 +133,9 @@ public class AcceptTripRequestFragment extends DialogFragment {
                 LatLngBounds.Builder boundsBuilder = new LatLngBounds.Builder();
                 boundsBuilder.include(origin);
                 boundsBuilder.include(destination);
+                int routePadding = 120;
                 LatLngBounds latLngBounds = boundsBuilder.build();
-                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLngBounds.getCenter(),10));
+                googleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds,routePadding));
             });
 
         }
