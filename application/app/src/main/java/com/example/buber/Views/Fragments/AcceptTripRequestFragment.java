@@ -15,6 +15,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
 
 import com.example.buber.App;
 import com.example.buber.Model.Trip;
@@ -22,7 +23,23 @@ import com.example.buber.R;
 import com.example.buber.Views.Activities.ContactViewerActivity;
 import com.example.buber.Views.Activities.TripBuilderActivity;
 import com.example.buber.Views.Activities.TripSearchActivity;
+import com.example.buber.Views.Components.GetPathFromLocation;
 import com.example.buber.Views.Components.TripSearchRecord;
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.MapsInitializer;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.libraries.places.api.model.Place;
+import com.rtchagas.pingplacepicker.PingPlacePicker;
+
+import java.util.List;
 
 /**
  * Fragment used to accept a trip. Generates a modal that shows trip details and allows a user to
@@ -40,6 +57,7 @@ public class AcceptTripRequestFragment extends DialogFragment {
     private OnFragmentInteractionListener listener;
     private TripSearchRecord tripSearchRecord;
     private int position;
+    private List<LatLng> routePointList;
 
     /**
      * Constructor for AcceptTripRequestFragment
@@ -57,6 +75,7 @@ public class AcceptTripRequestFragment extends DialogFragment {
         void onAcceptPressed(TripSearchRecord tripSearchRecord, int position);
     }
 
+    /**onAttach handles the listener when the fragment is attached*/
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -84,6 +103,7 @@ public class AcceptTripRequestFragment extends DialogFragment {
         driverDistance = view.findViewById(R.id.fragment_distance);
         viewContactButton = view.findViewById(R.id.viewContactButton);
 
+        //If the trip search record exists add information to the fragment
         if (tripSearchRecord != null){
             estimatedCost.setText(tripSearchRecord.getEstimatedCost());
             startAdd.setText(tripSearchRecord.getStartAddress());
@@ -93,24 +113,65 @@ public class AcceptTripRequestFragment extends DialogFragment {
             viewContactButton.setOnClickListener(v -> {
                 handleViewRiderContact(tripSearchRecord.getRiderID());
             });
+
+            //finds and initializes the mapView fragment
+            MapView mapView = view.findViewById(R.id.lite_map);
+            MapsInitializer.initialize(getActivity());
+            mapView.onCreate(savedInstanceState);
+            mapView.onResume();
+
+            //Gets the mapAsync and overlays the route polyline and start/end markers
+            mapView.getMapAsync(googleMap -> {
+                LatLng origin = tripSearchRecord.getStartLatLng();
+                LatLng destination = tripSearchRecord.getEndLatLng();
+                new GetPathFromLocation(origin, destination, polyLine -> {
+                    routePointList = polyLine.getPoints();
+                    googleMap.addPolyline(polyLine);
+                }).execute();
+                googleMap.addMarker(new MarkerOptions().position(origin).title("start"));
+                googleMap.addMarker(new MarkerOptions().position(destination).title("end"));
+                LatLngBounds.Builder boundsBuilder = new LatLngBounds.Builder();
+                boundsBuilder.include(origin);
+                boundsBuilder.include(destination);
+                int routePadding = 120;
+                LatLngBounds latLngBounds = boundsBuilder.build();
+                googleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds,routePadding));
+            });
+
         }
 
+        //builds the dialog
         final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        return builder
-                .setView(view)
+        return builder.
+                setView(view)
                 .setTitle("View Trip")
                 .setNegativeButton("Ignore", null)
                 .setPositiveButton("Fair enough, offer ride", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        listener.onAcceptPressed(tripSearchRecord, position);
+                       listener.onAcceptPressed(tripSearchRecord, position);
                     }
-                })
-                .create();
+                }).create();
     }
 
+    /**Handles the user clicking the View Contact Details button
+     * @param riderID is the riderID - it is used to pull the correct information*/
     public void handleViewRiderContact(String riderID) {
         Intent contactIntent = new Intent(parentActivity, ContactViewerActivity.class);
         App.getController().handleViewContactInformation(parentActivity, contactIntent, riderID, null);
     }
+
+    /**Destroys the map when the dialog fragment is closed. It prevents the app from
+     * crashing when new maps are drawn*/
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        MapFragment f = (MapFragment) getActivity()
+                .getFragmentManager()
+                .findFragmentById(R.id.lite_map);
+        if (f != null)
+            getActivity().getFragmentManager().beginTransaction()
+                    .remove(f).commit();
+    }
+
 }
