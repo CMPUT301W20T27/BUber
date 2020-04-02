@@ -16,17 +16,14 @@ import com.example.buber.Services.ApplicationService;
 import com.example.buber.Views.Activities.LoginActivity;
 import com.example.buber.Views.Activities.MainActivity;
 import com.example.buber.Views.Activities.MapActivity;
-import com.example.buber.Views.Activities.RequestStatusActivity;
-import com.example.buber.Views.Activities.ratingActivity;
+import com.example.buber.Views.Activities.RatingActivity;
 import com.example.buber.Views.UIErrorHandler;
 
 import java.util.List;
 import java.util.Observer;
-import java.util.concurrent.TimeUnit;
 
 import br.com.simplepass.loadingbutton.customViews.CircularProgressButton;
 
-import static com.example.buber.Model.User.TYPE.DRIVER;
 import static com.example.buber.Model.User.TYPE.RIDER;
 
 /**
@@ -86,8 +83,9 @@ public class ApplicationController {
             if (err != null) view.onError(err);
             else {
                 User u = (User) resultData.get("user");
-                updateNonCriticalUserFields(u,view);
+                updateNonCriticalUserFields(true, u, type, view);
                 Toast.makeText(view.getApplicationContext(), "You are NOW logged in.", Toast.LENGTH_SHORT).show();
+                u.setType(type);
                 model.setSessionUser(u);
                 ApplicationController.loadSessionTrip(intent, view);
             }
@@ -136,8 +134,9 @@ public class ApplicationController {
         ApplicationModel m = App.getModel();
         UserLocation sessionUserLocation = m.getSessionUser().getCurrentUserLocation();
         ApplicationService.getFilteredTrips(sessionUserLocation, (resultData, err) -> {
-            if (err != null && view != null) view.onError(err);
-            else {
+            if (err != null && view != null) {
+                view.onError(err);
+            } else {
                 List<Trip> sessionTripList = (List<Trip>) resultData.get("filtered-trips");
                 m.setSessionTripList(sessionTripList);
             }
@@ -145,17 +144,21 @@ public class ApplicationController {
     }
 
     /**
-     * Updates the model to hold the riders current trip request. On success start the new activity. On failure send exception to MainActivity
+     *  Gets the all the trips for the user. And updates the model with the trip list.
+     *   @param view the UI Error Handler interface callback.
      */
-    public static void getSessionTrip(){
+    public static void getPendingTripsForDriver(UIErrorHandler view) {
         ApplicationModel m = App.getModel();
-        ApplicationService.getSessionTripForUser((resultData, err) -> {
-            if (resultData != null && resultData.containsKey("trip")) {
-                Trip sessionTrip = (Trip) resultData.get("trip");
-                m.setSessionTrip(sessionTrip);
+        ApplicationService.getFilteredPendingTripsForDriver((resultData, err) -> {
+            if (err != null && view != null) {
+                view.onError(err);
+            } else {
+                List<Trip> driverAcceptedPendingRides = (List<Trip>) resultData.get("filtered-trips");
+                m.setDriverAcceptedPendingRides(driverAcceptedPendingRides);
             }
         });
     }
+
 
     /**
      * Updates the model to hold the riders current trip request. On success start the new activity. On failure send exception to MainActivity
@@ -203,12 +206,8 @@ public class ApplicationController {
      */
     public static void deleteRiderCurrentTrip(UIErrorHandler view){
         ApplicationModel m = App.getModel();
-        ApplicationService.deleteRiderCurrentTrip(m.getSessionTrip().getRiderID(), (resultData, err) -> {
+        ApplicationService.deleteCurrentTrip(m.getSessionTrip(), (resultData, err) -> {
             if (err != null) view.onError(err);
-            else {
-                m.setSessionTrip(null);
-                m.detachTripListener();
-            }
         });
     }
 
@@ -228,8 +227,11 @@ public class ApplicationController {
                     ((UIErrorHandler) map).onError(err);
                 }
             } else {
-                m.setSessionTrip(selectedTrip);
-                m.setSessionTripList(null);
+                // Edge case: don't override current active trip if there is one
+                if (m.getSessionTrip() == null) {
+                    m.setSessionTrip(selectedTrip);
+                    m.setSessionTripList(null);
+                }
             }
         }));
     }
@@ -237,15 +239,12 @@ public class ApplicationController {
     /** Controls what happens after rider accept ride offer **/
     public static void handleNotifyDriverForPickup() {
         Trip currentTrip = App.getModel().getSessionTrip();
-        currentTrip.setStatus(Trip.STATUS.DRIVER_PICKING_UP);
         ApplicationService.notifyDriverForPickup(currentTrip.getRiderID(), currentTrip, ((resultData, err) -> {
             if (err != null) {
                 List<Observer> mapObservers = App.getModel().getObserversMatchingClass(MapActivity.class);
                 for (Observer map : mapObservers) {
                     ((UIErrorHandler) map).onError(err);
                 }
-            } else {
-                App.getModel().setSessionTrip(currentTrip);
             }
         }));
     }
@@ -253,15 +252,12 @@ public class ApplicationController {
     /** Controls what happens after rider accepts thr ride offer **/
     public static void handleNotifyRiderForPickup() {
         Trip currentTrip = App.getModel().getSessionTrip();
-        currentTrip.setStatus(Trip.STATUS.DRIVER_ARRIVED);
         ApplicationService.notifyRiderForPickup(currentTrip.getRiderID(), currentTrip, ((resultData, err) -> {
             if (err != null) {
                 List<Observer> mapObservers = App.getModel().getObserversMatchingClass(MapActivity.class);
                 for (Observer map : mapObservers) {
                     ((UIErrorHandler) map).onError(err);
                 }
-            } else {
-                App.getModel().setSessionTrip(currentTrip);
             }
         }));
     }
@@ -285,34 +281,62 @@ public class ApplicationController {
     /** Complete trip **/
     public static void completeTrip() {
         Trip currentTrip = App.getModel().getSessionTrip();
-        currentTrip.setStatus(Trip.STATUS.COMPLETED);
         ApplicationService.completeTrip(currentTrip.getRiderID(), currentTrip, ((resultData, err) -> {
             if (err != null) {
                 List<Observer> mapObservers = App.getModel().getObserversMatchingClass(MapActivity.class);
                 for (Observer map : mapObservers) {
                     ((UIErrorHandler) map).onError(err);
                 }
-            } else {
-                App.getModel().setSessionTrip(currentTrip);
             }
         }));
     }
 
     /**
-     * Updates non critical user fields when they are edited by user. On success set the new session user.
+     * manageLoggedStateAcrossTwoUserCollections
      * @param updatedSessionUser the updated user object
      * @param view the UI Error Handler interface callback.
      */
     /**/
-    public static void updateNonCriticalUserFields(User updatedSessionUser, UIErrorHandler view) {
-        ApplicationService.updateUser(updatedSessionUser,((resultData, err) -> {
-            if (err == null) {
-                App.getModel().setSessionUser(updatedSessionUser);
-                view.finish();
-            } else {
-                // TODO: Handle Errors
-            }
-        }));
+    public static void manageLoggedStateAcrossTwoUserCollections(boolean loggingIn,
+                                                   User updatedSessionUser,
+                                                   User.TYPE userType,
+                                                   UIErrorHandler view) {
+        ApplicationService.manageLoggedStateAcrossTwoUserCollections(
+                loggingIn,
+                updatedSessionUser,
+                userType,
+                ((resultData, err) -> {
+                    if (err == null) {
+                        App.getModel().setSessionUser(updatedSessionUser);
+                        view.finish();
+                    } else {
+                        // TODO: Handle Errors
+                    }
+                }));
+    }
+
+    /**
+     * updateNonCriticalUserFields
+     * @param updatedSessionUser the updated user object
+     * @param view the UI Error Handler interface callback.
+     */
+    /**/
+    public static void updateNonCriticalUserFields(boolean loggingIn,
+                                                   User updatedSessionUser,
+                                                   User.TYPE userType,
+                                                   UIErrorHandler view) {
+        ApplicationService.manageLoggedStateAcrossTwoUserCollections(
+                loggingIn,
+                updatedSessionUser,
+                userType,
+                ((resultData, err) -> {
+                    if (err == null) {
+                        App.getModel().setSessionUser(updatedSessionUser);
+                        view.finish();
+                    } else {
+                        // TODO: Handle Errors
+                    }
+                }));
     }
 
     /**
@@ -322,7 +346,7 @@ public class ApplicationController {
      * @param driverID  is the driver that needs to be updated
      * @param giveThumbsUp  boolean for if thumbs up was pressed or not
      */
-    public static void updateDriverRating(ratingActivity view, String driverID, boolean giveThumbsUp){
+    public static void updateDriverRating(RatingActivity view, String driverID, boolean giveThumbsUp){
         App.getDbManager().getDriver(driverID, ((resultData, err) -> {
             if (err == null) {
                 Driver tmpDriver = (Driver) resultData.get("user");
@@ -370,13 +394,5 @@ public class ApplicationController {
                 }
             }));
         }
-    }
-
-    /**
-     * Calls the  ApplicationService class to logout a user. And updates the model
-     */
-    public void logout() {
-        ApplicationService.logoutUser();
-        model.clearModelForLogout();
     }
 }

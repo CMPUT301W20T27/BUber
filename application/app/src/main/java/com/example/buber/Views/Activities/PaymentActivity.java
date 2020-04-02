@@ -8,22 +8,17 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.Log;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.buber.App;
 import com.example.buber.Controllers.ApplicationController;
 import com.example.buber.Model.ApplicationModel;
-import com.example.buber.Model.Rider;
 import com.example.buber.Model.Trip;
 import com.example.buber.Model.User;
 import com.example.buber.R;
 import com.example.buber.Views.UIErrorHandler;
-import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Result;
 import com.google.zxing.WriterException;
 
@@ -172,7 +167,7 @@ public class PaymentActivity extends AppCompatActivity implements Observer, ZXin
 
         if(currentUserType == User.TYPE.RIDER){
             if(sessionTrip == null){
-                Intent intent = new Intent(this, ratingActivity.class);// New activity
+                Intent intent = new Intent(this, RatingActivity.class);// New activity
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 intent.putExtra("driverID",driverID);
                 startActivity(intent);

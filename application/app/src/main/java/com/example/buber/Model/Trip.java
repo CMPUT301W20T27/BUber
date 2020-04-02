@@ -115,6 +115,10 @@ public class Trip {
      * @param newStatus the new status of a trip request
      */
     public boolean nextStatusValid(Trip.STATUS newStatus) {
+        if (this.getStatus() == newStatus) {
+            return true;
+        }
+
         if (this.getStatus() == Trip.STATUS.PENDING) {
             if (newStatus == Trip.STATUS.DRIVER_ACCEPT) {
                 return true;
@@ -135,8 +139,6 @@ public class Trip {
             if (newStatus == STATUS.COMPLETED || newStatus == STATUS.PENDING) {
                 return true;
             }
-        } else if (this.getStatus() == newStatus) {
-            return true;
         }
         return false;
     }

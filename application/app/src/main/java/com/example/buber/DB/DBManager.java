@@ -9,6 +9,7 @@ import com.example.buber.Controllers.EventCompletionListener;
 import com.example.buber.Model.Driver;
 import com.example.buber.Model.Rider;
 import com.example.buber.Model.Trip;
+import com.example.buber.Model.User;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -120,24 +121,8 @@ public class DBManager {
                         collectionTrip
                                 .document(tripRequest.getRiderID())
                                 .addSnapshotListener((documentSnapshot, e) -> {
-                                    if (documentSnapshot != null) {
-                                        Trip newTrip = documentSnapshot.toObject(Trip.class);
-
-                                        if (newTrip == null) {
-                                            return;
-                                        }
-                                        Trip.STATUS newStatus = newTrip.getStatus();
-
-                                        if (tripRequest.nextStatusValid(newStatus)) {
-                                            Log.d(TAG, newTrip.getStatus().toString());
-
-                                        }
-                                        Trip sessionTrip = App.getModel().getSessionTrip();
-                                        if (sessionTrip != null) {
-                                            sessionTrip.setStatus(newStatus);
-                                            App.getModel().setSessionTrip(sessionTrip);
-                                        }
-                                    }});
+                                    App.getModel().handleTripStatusChanges(tripRequest.getRiderID(), documentSnapshot);
+                                });
                        App.getModel().setTripListener(lr);
                     }
                 })
@@ -181,16 +166,19 @@ public class DBManager {
      * @param listener the listener that waits for the asynchronous Firebase call to finish
      */
     public void getDriver(String docID, EventCompletionListener listener) {
-        collectionDriver.document(docID)
-                .get().addOnSuccessListener(documentSnapshot -> {
-            HashMap<String, Driver> toReturn = new HashMap<>();
-            toReturn.put("user", documentSnapshot.toObject(Driver.class));
-            listener.onCompletion(toReturn, null);
-        }).addOnFailureListener((@NonNull Exception e) -> {
-            Log.d(TAG, e.getMessage());
-            listener.onCompletion(null, new Error("Login failed. Please try again," +
-                    "if the issue persists, close and restart the app."));
-        });
+        collectionDriver
+                .document(docID)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    HashMap<String, Driver> toReturn = new HashMap<>();
+                    toReturn.put("user", documentSnapshot.toObject(Driver.class));
+                    listener.onCompletion(toReturn, null);
+                    })
+                .addOnFailureListener((@NonNull Exception e) -> {
+                    Log.d(TAG, e.getMessage());
+                    listener.onCompletion(null, new Error("Login failed. Please try again," +
+                            "if the issue persists, close and restart the app."));
+                });
     }
     /**
      * Get a Trip object from Firebase. If it was not successful the listener passed in will handel the exception.
@@ -209,19 +197,9 @@ public class DBManager {
                 ListenerRegistration lr =
                 collectionTrip
                         .document(t.getRiderID())
-                        .addSnapshotListener((documentSnapshot1, e) -> {
-                            if (documentSnapshot1 != null) {
-                                Trip trip = documentSnapshot1.toObject(Trip.class);
-                                if (trip != null) {
-                                    Trip.STATUS newStatus = trip.getStatus();
-                                    if (trip.nextStatusValid(newStatus)) {
-                                        Trip newTrip = App.getModel().getSessionTrip();
-                                        newTrip.setStatus(newStatus);
-                                        App.getModel().setSessionTrip(newTrip);
-                                    }
-                                }
-                            }
-                    });
+                        .addSnapshotListener((documentSnapshot1, e) ->
+                            App.getModel().handleTripStatusChanges(t.getRiderID(), documentSnapshot1)
+                        );
                 App.getModel().setTripListener(lr);
             }
 
@@ -295,7 +273,6 @@ public class DBManager {
      * @param listener the listener that waits for the asynchronous Firebase call to finish
      */
     public void updateDriver(String docID, Driver updatedDriver, EventCompletionListener listener) {
-        Log.d("DBMANAGER","Updating driver");
         collectionDriver.document(docID)
                 .set(updatedDriver, SetOptions.merge())
                 .addOnSuccessListener(documentSnapshot -> {
@@ -323,21 +300,9 @@ public class DBManager {
                         ListenerRegistration lr =
                         collectionTrip
                                 .document(updatedTrip.getRiderID())
-                                .addSnapshotListener((documentSnapshot1, e) -> {
-                                    if (documentSnapshot1 != null) {
-                                        Trip trip = documentSnapshot1.toObject(Trip.class);
-                                        if (trip != null && updatedTrip != null) {
-                                            Trip.STATUS newStatus = trip.getStatus();
-                                            Trip newTrip = App.getModel().getSessionTrip();
-                                            if (updatedTrip.nextStatusValid(newStatus) && newTrip != null) {
-                                                newTrip.setStatus(newStatus);
-                                                App.getModel().setSessionTrip(newTrip);
-                                            }
-                                        } else {
-                                            App.getModel().setSessionTrip(null);
-                                        }
-                                    }
-                                });
+                                .addSnapshotListener((documentSnapshot1, e) ->
+                                        App.getModel().handleTripStatusChanges(updatedTrip.getRiderID(), documentSnapshot1)
+                                );
                         App.getModel().setTripListener(lr);
                     }
                     listener.onCompletion(null, null);

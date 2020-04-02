@@ -141,7 +141,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
                     case DRIVER_ACCEPT:
                         if (currentUserType == DRIVER) {
                             notifManager.notifyOnDriverChannel(
-                                    1,"Unfortunately, the rider has declined your offer.",
+                                    1,"Unfortunately, a rider has declined your offer.",
                                     "", Color.RED);
                         }
                         break;
@@ -210,12 +210,6 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
                     break;
             }
             uiAddOnsManager.showActiveMainActionButton();
-        }
-        // States that wanted a refresh
-        else if (sessionTrip.getStatus() == this.currentTripStatus) {
-            if (this.currentTripStatus == DRIVER_ACCEPT) {
-                uiAddOnsManager.showActiveMainActionButton();
-            }
         }
         // Edge states
         else {

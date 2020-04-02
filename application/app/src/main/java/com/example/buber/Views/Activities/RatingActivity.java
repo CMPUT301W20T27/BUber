@@ -15,7 +15,7 @@ import com.example.buber.R;
 import java.util.Observable;
 import java.util.Observer;
 
-public class ratingActivity extends AppCompatActivity implements Observer {
+public class RatingActivity extends AppCompatActivity implements Observer {
     private Button btnThumbsUp;
     private Button btnThumbsDown;
     private Button btnSkip;

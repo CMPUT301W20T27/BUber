@@ -59,13 +59,16 @@ public class AcceptTripRequestFragment extends DialogFragment {
     private int position;
     private List<LatLng> routePointList;
 
+    private boolean showAcceptedPendingRides;
+
     /**
      * Constructor for AcceptTripRequestFragment
      * @param tripSearchRecord,position the tripSearchRecord and its position in the tripSearch list*/
-    public AcceptTripRequestFragment(TripSearchRecord tripSearchRecord, int position, TripSearchActivity parentActivity){
+    public AcceptTripRequestFragment(TripSearchRecord tripSearchRecord, int position, TripSearchActivity parentActivity, boolean showAcceptedPendingRides){
         this.tripSearchRecord = tripSearchRecord;
         this.position = position;
         this.parentActivity = parentActivity;
+        this.showAcceptedPendingRides = showAcceptedPendingRides;
     }
 
     /**
@@ -142,16 +145,20 @@ public class AcceptTripRequestFragment extends DialogFragment {
 
         //builds the dialog
         final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        return builder.
-                setView(view)
-                .setTitle("View Trip")
-                .setNegativeButton("Ignore", null)
-                .setPositiveButton("Fair enough, offer ride", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                       listener.onAcceptPressed(tripSearchRecord, position);
-                    }
-                }).create();
+        if (showAcceptedPendingRides) {
+            return builder.setView(view).setTitle("View Trip")
+                    .create();
+        } else {
+            return builder.setView(view).setTitle("View Trip")
+                    .setNegativeButton("Ignore", null)
+                    .setPositiveButton("Fair enough, offer ride", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            listener.onAcceptPressed(tripSearchRecord, position);
+                        }
+                    })
+                    .create();
+        }
     }
 
     /**Handles the user clicking the View Contact Details button

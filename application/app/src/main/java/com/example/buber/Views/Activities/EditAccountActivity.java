@@ -126,8 +126,8 @@ public class EditAccountActivity extends AppCompatActivity implements Observer, 
             sessionUserAccount.setFirstName(newFirstName);
             sessionUserAccount.setLastName(newLastName);
             sessionUserAccount.setPhoneNumber(newPhoneNumber);
-
-            App.getController().updateNonCriticalUserFields(sessionUser, this);
+            // TODO: fix this
+//            App.getController().updateNonCriticalUserFields(false, sessionUser, this);
         }
     }
 

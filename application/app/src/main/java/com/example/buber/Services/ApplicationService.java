@@ -14,10 +14,13 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
+import static com.example.buber.Model.Trip.STATUS.DRIVER_ACCEPT;
+import static com.example.buber.Model.Trip.STATUS.DRIVER_PICKING_UP;
 import static com.example.buber.Model.User.TYPE.DRIVER;
 import static com.example.buber.Model.User.TYPE.RIDER;
 
@@ -118,8 +121,9 @@ public class ApplicationService {
     public static void getFilteredTrips(UserLocation driverLocation, EventCompletionListener controllerListener) {
         Double RADIUS = 6.0; // TODO: Make this dynamic based on map bounds
         App.getDbManager().getTrips((resultData, err) -> {
-            if (err != null) controllerListener.onCompletion(null, err);
-            else {
+            if (err != null) {
+                controllerListener.onCompletion(null, err);
+            } else {
                 List<Trip> filterTrips = new LinkedList<>();
                 List<Trip> tripData = (List<Trip>) resultData.get("all-trips");
                 List<String> filterTripIds = new ArrayList<>();
@@ -127,7 +131,11 @@ public class ApplicationService {
                 if (tripData != null && tripData.size() > 0) {
                     for (Trip t : tripData) {
                         double distance = driverLocation.distanceTo(t.getStartUserLocation());
-                        if (distance <= RADIUS && t.getStatus() == Trip.STATUS.PENDING && !t.getRiderID().equals(currentUid)) {
+                        if (
+                                distance <= RADIUS &&
+                                t.getStatus() == Trip.STATUS.PENDING &&
+                                !t.getRiderID().equals(currentUid)
+                        ) {
                             filterTrips.add(t);
                             filterTripIds.add(t.getRiderID());
                         }
@@ -143,6 +151,53 @@ public class ApplicationService {
             }
         });
     }
+
+
+    /**
+     * Calls the DBManager class to get the trips filtered by geolocation. On success the listener returns
+     * a list of filteredTripsData. On failure the listener returns the exception.
+     * @param controllerListener the listener that gets results from the Firebase call.
+     */
+    public static void getFilteredPendingTripsForDriver(EventCompletionListener controllerListener) {
+        App.getDbManager().getTrips((resultData, err) -> {
+            if (err != null) {
+                controllerListener.onCompletion(null, err);
+            } else {
+                List<Trip> filterTrips = new LinkedList<>();
+                List<Trip> tripData = (List<Trip>) resultData.get("all-trips");
+                List<String> filterTripIds = new ArrayList<>();
+                String currentUid = App.getAuthDBManager().getCurrentUserID();
+                if (tripData != null && tripData.size() > 0) {
+                    // First, get only DRIVER_ACCEPTs
+                    for (Trip t : tripData) {
+                        if (
+                                (t.getStatus() == DRIVER_ACCEPT || t.getStatus() == DRIVER_PICKING_UP) &&
+                                t.getDriverID().equals(currentUid) &&
+                                !t.getRiderID().equals(currentUid)
+                        ) {
+                            filterTrips.add(t);
+                            filterTripIds.add(t.getRiderID());
+                        }
+                    }
+
+                    // Second, sort by driver queue
+                    User sessionUser = App.getModel().getSessionUser();
+                    Driver driverSessionUser = (Driver) sessionUser;
+                    filterTrips.sort(Comparator.comparing(
+                            v -> driverSessionUser.getAcceptedTripIds().indexOf(v.getRiderID())
+                    ));
+
+                    HashMap<String, List> filteredTripsData = new HashMap<>();
+                    filteredTripsData.put("filtered-trips", filterTrips);
+                    controllerListener.onCompletion(filteredTripsData, null);
+
+                } else {
+                    controllerListener.onCompletion(null, new Error("Could not find trips"));
+                }
+            }
+        });
+    }
+
 
     /**
      * Calls the DBManager class to get the Users current trip session. On success the listener returns
@@ -167,23 +222,22 @@ public class ApplicationService {
                 }), true);
             } else {
                 // Query trips db based on driverId
-                tripsReference.whereEqualTo("driverID", userUID).get().addOnSuccessListener(queryDocumentSnapshots -> {
-                    List<DocumentSnapshot> docs = queryDocumentSnapshots.getDocuments();
-                    if (docs.size() == 1) {
-                        Trip sessionTrip = docs.get(0).toObject(Trip.class);
-                        HashMap<String, Trip> res = new HashMap<>();
-                        res.put("trip", sessionTrip);
-                        controllerListener.onCompletion(res, null);
-                    } else if (docs.size() == 0) {
-                        // No current Trip
-                        controllerListener.onCompletion(null, null);
-                    } else {
-                        // Throw an error, we got issues
-                        controllerListener.onCompletion(null, new Error("Driver has more than 1 trip assigned"));
-                    }
-                }).addOnFailureListener(e -> {
-                    controllerListener.onCompletion(null, new Error(e.getMessage()));
-                });
+                Driver sessionDriver = (Driver) sessionUser;
+                List<String> acceptedTripIds = sessionDriver.getAcceptedTripIds();
+                if (acceptedTripIds == null || acceptedTripIds.size() == 0) {
+                    // No current Trip
+                    controllerListener.onCompletion(null, null);
+                } else {
+                    // get the first trip
+                    App.getDbManager().getTrip(acceptedTripIds.get(0), (resultData, err) -> {
+                        if (resultData != null) {
+                            Trip sessionTrip = (Trip) resultData.get("trip");
+                            HashMap<String, Trip> res = new HashMap<>();
+                            res.put("trip", sessionTrip);
+                            controllerListener.onCompletion(res, null);
+                        }
+                    }, true);
+                }
             }
         }
     }
@@ -205,6 +259,7 @@ public class ApplicationService {
                     Trip sessionTrip = (Trip) resultData.get("trip");
                     String tripDriverID = sessionTrip.getDriverID();
                     selectedTrip.setDriverID(tripDriverID);
+                    selectedTrip.setStatus(Trip.STATUS.DRIVER_PICKING_UP);
                     // Second: call updateTrip to change the trip status and thus notify the driver!
                     App.getDbManager().updateTrip(uid, selectedTrip, controllerListener, true);
                 }
@@ -229,6 +284,7 @@ public class ApplicationService {
                     Trip sessionTrip = (Trip) resultData.get("trip");
                     String tripDriverID = sessionTrip.getDriverID();
                     selectedTrip.setDriverID(tripDriverID);
+                    selectedTrip.setStatus(Trip.STATUS.DRIVER_ARRIVED);
                     // Second: call updateTrip to change the trip status and thus notify the driver!
                     App.getDbManager().updateTrip(uid, selectedTrip, controllerListener, true);
                 }
@@ -244,7 +300,14 @@ public class ApplicationService {
      * @param controllerListener the listener that gets results from the Firebase call.
      */
     public static void selectTrip(String uid, Trip selectedTrip, EventCompletionListener controllerListener) {
-        App.getDbManager().updateTrip(uid, selectedTrip, controllerListener, true);
+        App.getDbManager().updateTrip(uid, selectedTrip, ((resultData, err) -> {
+            if (err == null) {
+                // now that we have updated the trip, add to driver selected trip ids
+                Driver currentDriver = (Driver) App.getModel().getSessionUser();
+                currentDriver.getAcceptedTripIds().add(uid);
+                App.getDbManager().updateDriver(App.getAuthDBManager().getCurrentUserID(), currentDriver, controllerListener);
+            }
+        }), true);
     }
 
     /**
@@ -287,6 +350,7 @@ public class ApplicationService {
                     Trip sessionTrip = (Trip) resultData.get("trip");
                     String tripDriverID = sessionTrip.getDriverID();
                     selectedTrip.setDriverID(tripDriverID);
+                    selectedTrip.setStatus(Trip.STATUS.COMPLETED);
                     // Second: call updateTrip to change the trip status and thus notify the driver!
                     App.getDbManager().updateTrip(uid, selectedTrip, controllerListener, true);
                 }
@@ -296,11 +360,35 @@ public class ApplicationService {
 
     /**
      * Calls the DBManager class to deletes current trip for rider. On success the listener returns.
-     *  @param uid The document id of the trip to delete
+     *  @param trip The document id of the trip to delete
      *  @param controllerListener the listener that gets results from the Firebase call.
      */
-    public static void deleteRiderCurrentTrip(String uid, EventCompletionListener controllerListener) {
-        App.getDbManager().deleteTrip(uid, controllerListener);
+    public static void deleteCurrentTrip(Trip trip, EventCompletionListener controllerListener) {
+        // First, delete the trip from the DB
+        App.getDbManager().deleteTrip(trip.getRiderID(), ((resultData, err) -> {
+            if (err == null) {
+                // Next, find the driver (if one) that is assigned to this trip and remove that from
+                // the drivers trip queue
+                String driverID = trip.getDriverID();
+                if (driverID != null) {
+                    App.getDbManager().getDriver(driverID, ((resultData1, err1) -> {
+                        if (resultData1 != null) {
+                            Driver assignedDriver = (Driver) resultData1.get("user");
+                            // remove the trip id from the drivers queue
+                            assignedDriver.getAcceptedTripIds().remove(trip.getRiderID());
+                            // finally, update the driver and complete
+                            App.getDbManager().updateDriver(
+                                    assignedDriver.getDocID(),
+                                    assignedDriver,
+                                    controllerListener
+                            );
+                        }
+                    }));
+                } else {  // Edge case: rider cancels a trip before a driver accepts
+                    controllerListener.onCompletion(null, null);
+                }
+            }
+        }));
     }
 
     /**
@@ -308,40 +396,61 @@ public class ApplicationService {
      *  @param updateSessionUser The current logged in user
      *  @param listener the listener that gets results from the Firebase call.
      */
-    public static void updateUser(User updateSessionUser, EventCompletionListener listener) {
+    public static void manageLoggedStateAcrossTwoUserCollections(boolean loggingIn, User updateSessionUser, User.TYPE userType, EventCompletionListener listener) {
         String uID = App.getAuthDBManager().getCurrentUserID();
-        Driver tmpDriver = new Driver(updateSessionUser.getUsername(),updateSessionUser.getAccount());
-        Rider tmpRider = new Rider(updateSessionUser.getUsername(),updateSessionUser.getAccount());
-        if(updateSessionUser.getType()==RIDER){
-            tmpDriver.setLoggedOn(false);
-            tmpRider.setRiderLoggedOn(true);
-        }
-        else if(updateSessionUser.getType()==DRIVER){
-            tmpDriver.setLoggedOn(true);
-            tmpRider.setRiderLoggedOn(false);
-        }
-        else{  //logging out
-            tmpDriver.setLoggedOn(false);
-            tmpRider.setRiderLoggedOn(false);
-        }
-
-        if (tmpRider != null && uID != null) {
-            App.getDbManager().updateRider(uID, tmpRider, (resultData, err) -> {
-                if (err == null) {
-                    App.getDbManager().updateDriver(uID,tmpDriver, (resultData1, err1) -> {
-                        if (err1 == null) {
-                            listener.onCompletion(null, null);
+        if(updateSessionUser != null) {
+            switch (userType) {
+                case RIDER:
+                    Rider currRider = (Rider) updateSessionUser;
+                    currRider.setRiderLoggedOn(loggingIn);
+                    App.getDbManager().updateRider(uID, currRider, (resultData, err) -> {
+                        if (err == null) {
+                            App.getDbManager().getDriver(uID, (driver, err1) -> {
+                                if (err1 == null) {
+                                    Driver correspondingDriver = (Driver) driver.get("user");
+                                    if (correspondingDriver == null) { // Edge case: no corresponding driver account
+                                        if (!loggingIn) logoutUser();
+                                        listener.onCompletion(null, null);
+                                    } else {
+                                        correspondingDriver.setLoggedOn(false);
+                                        App.getDbManager().updateDriver(uID, correspondingDriver, (driver2, err2) -> {
+                                            if (err2 == null) {
+                                                if (!loggingIn) logoutUser();
+                                                listener.onCompletion(null, null);
+                                            }
+                                        });
+                                    }
+                                }
+                            });
                         }
                     });
-                }
-            });
-            App.getDbManager().updateDriver(uID,tmpDriver, (resultData1, err1) -> {
-                if (err1 == null) {
-                    listener.onCompletion(null, null);
-                }
-            });
-        } else {
-            listener.onCompletion(null, new Error("Current session user does not exist"));
+                    break;
+                case DRIVER:
+                    Driver currDriver = (Driver) updateSessionUser;
+                    currDriver.setLoggedOn(loggingIn);
+                    App.getDbManager().updateDriver(uID, currDriver, (resultData, err) -> {
+                        if (err == null) {
+                            App.getDbManager().getRider(uID, (rider, err1) -> {
+                                if (err1 == null) {
+                                    Rider correspondingRider = (Rider) rider.get("user");
+                                    if (correspondingRider == null) { // Edge case: no corresponding rider account
+                                        if (!loggingIn) logoutUser();
+                                        listener.onCompletion(null, null);
+                                    } else {
+                                        correspondingRider.setRiderLoggedOn(false);
+                                        App.getDbManager().updateRider(uID, correspondingRider, (rider2, err2) -> {
+                                            if (err2 == null) {
+                                                if (!loggingIn) logoutUser();
+                                                listener.onCompletion(null, null);
+                                            }
+                                        });
+                                    }
+                                }
+                            });
+                        }
+                    });
+                    break;
+            }
         }
     }
 
@@ -349,6 +458,7 @@ public class ApplicationService {
      * Calls the AuthDBManager class to logout the user.
      */
     public static void logoutUser() {
+        App.getModel().clearModelForLogout();
         App.getAuthDBManager().signOut();
     }
 }
