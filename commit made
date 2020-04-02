@@ -1,0 +1,76 @@
+[1mdiff --cc application/app/src/main/java/com/example/buber/Views/Fragments/AcceptTripRequestFragment.java[m
+[1mindex bea57fa,aef8815..0000000[m
+[1m--- a/application/app/src/main/java/com/example/buber/Views/Fragments/AcceptTripRequestFragment.java[m
+[1m+++ b/application/app/src/main/java/com/example/buber/Views/Fragments/AcceptTripRequestFragment.java[m
+[36m@@@ -102,7 -84,6 +102,10 @@@[m [mpublic class AcceptTripRequestFragment [m
+          driverDistance = view.findViewById(R.id.fragment_distance);[m
+          viewContactButton = view.findViewById(R.id.viewContactButton);[m
+  [m
+[32m++<<<<<<< HEAD[m
+[32m +        //If the trip search record exists add information to the fragment[m
+[32m++=======[m
+[32m++>>>>>>> master[m
+          if (tripSearchRecord != null){[m
+              estimatedCost.setText(tripSearchRecord.getEstimatedCost());[m
+              startAdd.setText(tripSearchRecord.getStartAddress());[m
+[36m@@@ -112,49 -93,22 +115,57 @@@[m
+              viewContactButton.setOnClickListener(v -> {[m
+                  handleViewRiderContact(tripSearchRecord.getRiderID());[m
+              });[m
+[32m +[m
+[32m++<<<<<<< HEAD[m
+[32m +            //finds and initializes the mapView fragment[m
+[32m +            MapView mapView = view.findViewById(R.id.lite_map);[m
+[32m +            MapsInitializer.initialize(getActivity());[m
+[32m +            mapView.onCreate(savedInstanceState);[m
+[32m +            mapView.onResume();[m
+[32m +[m
+[32m +            //Gets the mapAsync and overlays the route polyline and start/end markers[m
+[32m +            mapView.getMapAsync(googleMap -> {[m
+[32m +                LatLng origin = tripSearchRecord.getStartLatLng();[m
+[32m +                LatLng destination = tripSearchRecord.getEndLatLng();[m
+[32m +                new GetPathFromLocation(origin, destination, polyLine -> {[m
+[32m +                    routePointList = polyLine.getPoints();[m
+[32m +                    googleMap.addPolyline(polyLine);[m
+[32m +                }).execute();[m
+[32m +                googleMap.addMarker(new MarkerOptions().position(origin).title("start"));[m
+[32m +                googleMap.addMarker(new MarkerOptions().position(destination).title("end"));[m
+[32m +                LatLngBounds.Builder boundsBuilder = new LatLngBounds.Builder();[m
+[32m +                boundsBuilder.include(origin);[m
+[32m +                boundsBuilder.include(destination);[m
+[32m +                int routePadding = 120;[m
+[32m +                LatLngBounds latLngBounds = boundsBuilder.build();[m
+[32m +                googleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds,routePadding));[m
+[32m +            });[m
+[32m +[m
+          }[m
+  [m
+[32m +        //builds the dialog[m
+[32m++=======[m
+[32m++>>>>>>> master[m
+          final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());[m
+[31m-         return builder.[m
+[31m-                 setView(view)[m
+[32m+         return builder[m
+[32m+                 .setView(view)[m
+                  .setTitle("View Trip")[m
+                  .setNegativeButton("Ignore", null)[m
+                  .setPositiveButton("Fair enough, offer ride", new DialogInterface.OnClickListener() {[m
+                      @Override[m
+                      public void onClick(DialogInterface dialog, int which) {[m
+[31m-                        listener.onAcceptPressed(tripSearchRecord, position);[m
+[32m+                         listener.onAcceptPressed(tripSearchRecord, position);[m
+                      }[m
+[32m++<<<<<<< HEAD[m
+[32m +                }).create();[m
+[32m++=======[m
+[32m+                 })[m
+[32m+                 .create();[m
+[32m++>>>>>>> master[m
+      }[m
+  [m
+[32m +    /**Handles the user clicking the View Contact Details button[m
+[32m +     * @param riderID is the riderID - it is used to pull the correct information*/[m
+      public void handleViewRiderContact(String riderID) {[m
+          Intent contactIntent = new Intent(parentActivity, ContactViewerActivity.class);[m
+          App.getController().handleViewContactInformation(parentActivity, contactIntent, riderID, null);[m
