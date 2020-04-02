@@ -144,7 +144,13 @@ public class RiderUITests {
             solo.waitForDialogToOpen(5000);
             assertTrue(solo.searchText("A driver has accepted! Proceed?", 1));
             solo.searchText("A driver has accepted! Proceed?", 1);
-            solo.clickOnButton(1);
+
+            //view driver information
+            solo.clickOnButton(0);
+            solo.waitForText("wait", 0, 5000);
+            solo.goBack();
+
+            solo.clickOnButton(2);
             solo.waitForActivity(MapActivity.class, 5000);
         }
 
@@ -176,7 +182,7 @@ public class RiderUITests {
         //Test email
         if (solo.searchText("Ride Status", onlyVisible)) {
             solo.clickOnButton("Ride Status");
-            solo.waitForText("wait", 0, 500);
+            solo.waitForText("wait", 0, 5000);
             if (solo.searchText("View Contact Details", onlyVisible)) {
                 solo.clickOnButton("View Contact Details");
                 solo.clickOnText("Email");
@@ -200,7 +206,7 @@ public class RiderUITests {
             assertFalse(solo.getView(R.id.submitTripBtn).getVisibility() == View.INVISIBLE);
         }
     }
-
+//    Code Source: https://medium.com/exploring-android/handling-android-runtime-permissions-in-ui-tests-981f9dc11a4e
     private void allowPermissionsIfNeeded()  {
         if (Build.VERSION.SDK_INT >= 23) {
             UiObject allowPermissions = mDevice.findObject(new UiSelector().text("Allow"));

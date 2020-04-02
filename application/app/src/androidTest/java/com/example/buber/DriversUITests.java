@@ -66,27 +66,73 @@ public class DriversUITests {
         }
     }
 
-
+//    -----------------------------SELECT MULTIPLE TRIPS-------------------------------------------
     @Test
-    public void viewContactAndSelectTripDRIVER_ACCEPT() throws InterruptedException {
+    public void viewContactAndSelectTripDRIVER_ACCEPT() {
         //select trip with username = tester
 
         if(solo.searchText("Show Active Ride Requests Near You", onlyVisible)) {
             solo.clickOnText("Show Active Ride Requests Near You");
-            solo.clickOnText("tester");
-            //view contact information of the rider before accepting
-            solo.clickOnText("View Contact Details");
-            solo.waitForText("wait", 0, 500);
 
-            //click the back button
-            solo.goBack();
-            solo.clickOnText("tester");
-            solo.clickOnButton(2);
+             // First trip
+            if(solo.searchText("tester", onlyVisible)) {
+                solo.clickOnText("tester");
+
+                //view contact information of the rider before accepting
+                solo.clickOnText("View Contact Details");
+                solo.waitForText("wait", 0, 500);
+
+                //click the back button
+                solo.goBack();
+                solo.clickOnText("tester");
+                solo.clickOnButton(2);
+            }
+
+            // Second trip
+            if(solo.searchText("Madeeha", onlyVisible)) {
+                solo.clickOnText("Madeeha");
+
+                //view contact information of the rider before accepting
+                solo.clickOnText("View Contact Details");
+                solo.waitForText("wait", 0, 500);
+
+                //click the back button
+                solo.goBack();
+                solo.clickOnText("Madeeha");
+                solo.clickOnButton(2);
+            }
+
+            // Third trip
+            if(solo.searchText("Evan", onlyVisible)) {
+                solo.clickOnText("Evan");
+
+                //view contact information of the rider before accepting
+                solo.clickOnText("View Contact Details");
+                solo.waitForText("wait", 0, 500);
+
+                //click the back button
+                solo.goBack();
+                solo.clickOnText("Evan");
+                solo.clickOnButton(2);
+            }
         }
     }
+//    ----------------------------------------------------------------------------------------------
 
     @Test
-    public void viewDriverContactAndRatingTestPhone() {
+    public void viewPendingTrips() {
+
+        if (solo.searchText("Pending Rides", onlyVisible)) {
+            solo.clickOnButton("Pending Rides");
+            solo.waitForText("wait", 0, 500);
+            solo.goBack();
+        }
+
+    }
+
+
+    @Test
+    public void viewRiderContactAndRatingTestPhone() {
         //test calling
 
         if (solo.searchText("Ride Status", onlyVisible)) {
