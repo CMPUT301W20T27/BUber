@@ -292,7 +292,31 @@ public class ApplicationController {
     }
 
     /**
-     * Updates non critical user fields when they are edited by user. On success set the new session user.
+     * manageLoggedStateAcrossTwoUserCollections
+     * @param updatedSessionUser the updated user object
+     * @param view the UI Error Handler interface callback.
+     */
+    /**/
+    public static void manageLoggedStateAcrossTwoUserCollections(boolean loggingIn,
+                                                   User updatedSessionUser,
+                                                   User.TYPE userType,
+                                                   UIErrorHandler view) {
+        ApplicationService.manageLoggedStateAcrossTwoUserCollections(
+                loggingIn,
+                updatedSessionUser,
+                userType,
+                ((resultData, err) -> {
+                    if (err == null) {
+                        App.getModel().setSessionUser(updatedSessionUser);
+                        view.finish();
+                    } else {
+                        // TODO: Handle Errors
+                    }
+                }));
+    }
+
+    /**
+     * updateNonCriticalUserFields
      * @param updatedSessionUser the updated user object
      * @param view the UI Error Handler interface callback.
      */
