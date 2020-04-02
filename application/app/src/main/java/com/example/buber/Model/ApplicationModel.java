@@ -165,17 +165,24 @@ public class ApplicationModel extends Observable {
 
     public void handleTripStatusChanges(String riderID, DocumentSnapshot documentSnapshot) {
         if (documentSnapshot != null) {
-            Trip trip = documentSnapshot.toObject(Trip.class);
-            if (trip != null) {
-                Trip.STATUS newStatus = trip.getStatus();
-                if (trip.nextStatusValid(newStatus)) {
-                    Trip newTrip = App.getModel().getSessionTrip();
-                    if (newTrip != null) {
-                        if (App.getModel().getSessionUser().getType() == User.TYPE.RIDER && newStatus == Trip.STATUS.DRIVER_ACCEPT) {
-                            newTrip.setDriverID(trip.getDriverID());
+            Trip updatedTrip = documentSnapshot.toObject(Trip.class);
+            if (updatedTrip != null) {
+                Trip.STATUS newStatus = updatedTrip.getStatus();
+                if (updatedTrip.nextStatusValid(newStatus)) {
+                    Trip currentTrip = App.getModel().getSessionTrip();
+                    if (currentTrip != null) {
+                        if (App.getModel().getSessionUser().getType() == User.TYPE.RIDER) {
+                            if (newStatus == Trip.STATUS.DRIVER_ACCEPT) {
+                                currentTrip.setDriverID(updatedTrip.getDriverID());
+                            }
+                            currentTrip.setStatus(newStatus);
+                            setSessionTrip(currentTrip);
+                        } else if (App.getModel().getSessionUser().getType() == User.TYPE.DRIVER) {
+                            // Only modify driver status if currentTrip is what got updated in FB
+                            if (updatedTrip.getRiderID().equals(currentTrip.getRiderID())) {
+                                setSessionTrip(updatedTrip);
+                            }
                         }
-                        newTrip.setStatus(newStatus);
-                        setSessionTrip(newTrip);
                     }
                 }
             } else {
@@ -192,16 +199,11 @@ public class ApplicationModel extends Observable {
                         App.getDbManager().getTrip(nxtTripID, (resultData, err) -> {
                             if (resultData != null) {
                                 Trip nxtTrip = (Trip) resultData.get("trip");
-                                if (nxtTrip != null) { // Edge case: last rider in queue cancels offer
-                                    nxtTrip.setDriverID(App.getAuthDBManager().getCurrentUserID());
-                                    nxtTrip.setStatus(Trip.STATUS.DRIVER_ACCEPT);
-                                    App.getDbManager().updateTrip(nxtTripID, nxtTrip, ((resultData1, err1) -> {
-                                        // TODO: set session trip
-                                    }), true);
-                                } else {
+                                if (nxtTrip != null) {
+                                    App.getModel().setSessionTrip(nxtTrip);
+                                } else { // Edge case: last rider in queue cancels offer
                                     setSessionTrip(null);
-                                }
-                            }}, false);
+                                }}}, false);
                     } else {
                         setSessionTrip(null);
                     }

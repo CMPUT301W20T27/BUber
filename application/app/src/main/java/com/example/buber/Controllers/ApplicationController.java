@@ -162,19 +162,6 @@ public class ApplicationController {
 
     /**
      * Updates the model to hold the riders current trip request. On success start the new activity. On failure send exception to MainActivity
-     */
-    public static void getSessionTrip(){
-        ApplicationModel m = App.getModel();
-        ApplicationService.getSessionTripForUser((resultData, err) -> {
-            if (resultData != null && resultData.containsKey("trip")) {
-                Trip sessionTrip = (Trip) resultData.get("trip");
-                m.setSessionTrip(sessionTrip);
-            }
-        });
-    }
-
-    /**
-     * Updates the model to hold the riders current trip request. On success start the new activity. On failure send exception to MainActivity
      * @param completionIntent Start the MapActivity  after successful retrieval of session trip
      * @param view the MainActivity view
      */
@@ -221,9 +208,6 @@ public class ApplicationController {
         ApplicationModel m = App.getModel();
         ApplicationService.deleteCurrentTrip(m.getSessionTrip(), (resultData, err) -> {
             if (err != null) view.onError(err);
-            else {
-                m.setSessionTrip(null);
-            }
         });
     }
 
@@ -244,7 +228,7 @@ public class ApplicationController {
                 }
             } else {
                 // Edge case: don't override current active trip if there is one
-                if (m.getSessionTrip() != null) {
+                if (m.getSessionTrip() == null) {
                     m.setSessionTrip(selectedTrip);
                     m.setSessionTripList(null);
                 }

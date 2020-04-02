@@ -194,12 +194,8 @@ public class BUberMapUIAddOnsManager {
          * @param v is the view instance
          */
         riderQRPaymentBtn.setOnClickListener((View v) -> {
-            //Toast.makeText(map, "Payment not implemented yet...resetting trip", Toast.LENGTH_SHORT).show();
-            ///ApplicationController.deleteRiderCurrentTrip(map);
-
              Intent paymentIntent = new Intent(map, PaymentActivity.class);
              map.startActivity(paymentIntent);
-             //map.finish();
         });
 
 
@@ -208,11 +204,8 @@ public class BUberMapUIAddOnsManager {
          * @param v is the view instance
          */
         driverQRPaymentAcceptBtn.setOnClickListener((View v) -> {
-            //Toast.makeText(map, "Payment not implemented yet...resetting trip", Toast.LENGTH_SHORT).show();
-            //ApplicationController.deleteRiderCurrentTrip(map);
              Intent paymentIntent = new Intent(map, PaymentActivity.class);
              map.startActivity(paymentIntent);
-             //map.finish();
         });
 
 

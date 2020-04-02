@@ -171,7 +171,7 @@ public class ApplicationService {
                     // First, get only DRIVER_ACCEPTs
                     for (Trip t : tripData) {
                         if (
-                                t.getStatus() == DRIVER_ACCEPT &&
+                                (t.getStatus() == DRIVER_ACCEPT || t.getStatus() == DRIVER_PICKING_UP) &&
                                 t.getDriverID().equals(currentUid) &&
                                 !t.getRiderID().equals(currentUid)
                         ) {
