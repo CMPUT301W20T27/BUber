@@ -53,19 +53,21 @@ public class TripSearchActivity extends AppCompatActivity implements UIErrorHand
         tripDataList = new ArrayList<>();
         tripSearchRecordArrayAdapter = new CustomTripList(this, tripDataList);
 
-        //Activate the custom array adapter (CustomTripList)
-        tripSearchList.setAdapter(tripSearchRecordArrayAdapter);
-        tripSearchList.setOnItemClickListener((parent, view, position, id) ->
-                new AcceptTripRequestFragment(tripDataList.get(position),
-                        position,
-                        TripSearchActivity.this)
-                        .show(getSupportFragmentManager(), "VIEW_RECORD"));
 
         if (App.getModel().getSessionUser().getCurrentUserLocation() == null) {
             Toast.makeText(getBaseContext(), "Couldn't fetch your location. Try restarting the app.", Toast.LENGTH_SHORT).show();
             this.finish();
         } else {
             showAcceptedPendingRides = getIntent().getBooleanExtra("ShowAcceptedPendingRidesFlag", false);
+            //Activate the custom array adapter (CustomTripList)
+            tripSearchList.setAdapter(tripSearchRecordArrayAdapter);
+            tripSearchList.setOnItemClickListener((parent, view, position, id) ->
+                    new AcceptTripRequestFragment(tripDataList.get(position),
+                            position,
+                            TripSearchActivity.this,
+                            showAcceptedPendingRides)
+                            .show(getSupportFragmentManager(), "VIEW_RECORD"));
+
             if (showAcceptedPendingRides) {
                 ApplicationController.getPendingTripsForDriver(this);
             } else {
