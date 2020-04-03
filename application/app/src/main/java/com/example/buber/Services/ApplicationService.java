@@ -11,7 +11,6 @@ import com.example.buber.Model.Trip;
 import com.example.buber.Model.User;
 import com.example.buber.Model.UserLocation;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -21,7 +20,6 @@ import java.util.List;
 
 import static com.example.buber.Model.Trip.STATUS.DRIVER_ACCEPT;
 import static com.example.buber.Model.Trip.STATUS.DRIVER_PICKING_UP;
-import static com.example.buber.Model.User.TYPE.DRIVER;
 import static com.example.buber.Model.User.TYPE.RIDER;
 
 

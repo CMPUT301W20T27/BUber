@@ -9,7 +9,6 @@ import com.example.buber.Controllers.EventCompletionListener;
 import com.example.buber.Model.Driver;
 import com.example.buber.Model.Rider;
 import com.example.buber.Model.Trip;
-import com.example.buber.Model.User;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
