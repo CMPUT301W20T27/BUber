@@ -14,12 +14,12 @@ Usage instructions in our **video demo [here](https://photos.app.goo.gl/gK63vDJ7
     
 3. Are you really better than Uber?
 
-    _We'll let you be the judge. 🙂_
+    _We will let you be the judge. 🙂_
     
 4. Will this be available in the Google Play Store soon?
 
     _Glad you're liking the app so far. Most likely not, this project is only meant to be for our learning experience._
     
-5. I have found a bug and would like to contribute?
+5. I have found a bug and would like to contribute. What should I do?
     
     _Please contact one of the [contributors](https://github.com/CMPUT301W20T27/BUber/graphs/contributors) or create [GitHub issue post here](https://github.com/CMPUT301W20T27/BUber/issues)._
