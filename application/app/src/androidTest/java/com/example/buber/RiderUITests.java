@@ -165,7 +165,7 @@ public class RiderUITests {
             if (solo.searchText("View Contact Details", onlyVisible)) {
                 solo.clickOnButton("View Contact Details");
                 // Test phone
-                solo.clickOnText("Phone");
+                solo.clickOnButton(2);
                 solo.waitForDialogToOpen(100);
                 assertTrue(solo.searchText("Do you want to phone this driver", 1));
                 solo.searchText("Do you want to phone this driver", 1);
@@ -175,6 +175,16 @@ public class RiderUITests {
 
     }
 
+
+    @Test
+    public void tripStatusCheckforCOMPLETED() {
+      //Check if the Riders location is the end location then they both get a pop up on complete
+
+
+
+    }
+
+
     @Test
     public void viewDriverContactAndRatingTestEmail() {
         //Test email
@@ -183,7 +193,7 @@ public class RiderUITests {
             solo.waitForText("wait", 0, 5000);
             if (solo.searchText("View Contact Details", onlyVisible)) {
                 solo.clickOnButton("View Contact Details");
-                solo.clickOnText("Email");
+                solo.clickOnButton(2);
                 solo.waitForDialogToOpen(100);
                 assertTrue(solo.searchText("Do you want to email this driver", 1));
                 solo.searchText("Do you want to email this driver", 1);

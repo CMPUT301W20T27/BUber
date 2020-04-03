@@ -128,8 +128,9 @@ public class DriversUITests {
 
             if (solo.searchText("View Contact Details", onlyVisible)) {
                 solo.clickOnButton("View Contact Details");
+
                 // Test phone
-                solo.clickOnText("Phone");
+                solo.clickOnButton(1);
                 solo.waitForDialogToOpen(100);
                 assertTrue(solo.searchText("Do you want to phone this driver", 1));
                 solo.searchText("Do you want to phone this driver", 1);
@@ -147,7 +148,7 @@ public class DriversUITests {
             solo.waitForText("wait", 0, 500);
             if (solo.searchText("View Contact Details", onlyVisible)) {
                 solo.clickOnButton("View Contact Details");
-                solo.clickOnText("Email");
+                solo.clickOnButton(2);
                 solo.waitForDialogToOpen(100);
                 assertTrue(solo.searchText("Do you want to email this driver", 1));
                 solo.searchText("Do you want to email this driver", 1);
@@ -156,16 +157,6 @@ public class DriversUITests {
             }
         }
 
-    }
-
-
-    @Test
-    public void tripStatusCheckforCOMPLETED() {
-        //TODO: When luke finishes his EN_ROUTE so that it follows MVC so that the
-        // location in the controller changes when the driver Location changes
-        // So that the rider is notified ONLY based on the location in the MODEl
-
-        //check for message: Notifying rider you have arrived
     }
 
 
