@@ -104,7 +104,6 @@ public class PaymentActivity extends AppCompatActivity implements Observer, ZXin
             bitmap = qrEncoder.encodeAsBitmap();
             qrImage.setImageBitmap(bitmap);
         } catch (WriterException e) {
-            //TODO: better error handling
             Log.v(TAG, e.toString());
         }
 

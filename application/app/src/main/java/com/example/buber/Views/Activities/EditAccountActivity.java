@@ -6,10 +6,12 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.buber.App;
+import com.example.buber.Controllers.ApplicationController;
 import com.example.buber.Model.Account;
 import com.example.buber.Model.ApplicationModel;
 import com.example.buber.Model.User;
@@ -117,8 +119,9 @@ public class EditAccountActivity extends AppCompatActivity implements Observer, 
      * @param newFirstName is the new first name input
      * @param newLastName is the new last name input
      * @param newPhoneNumber is the new phone number input*/
+    /**Updates username, first name, last name, and phone number fields*/
     public void updateNonCriticalUserFields(String newUserName, String newFirstName,
-                           String newLastName,String newPhoneNumber){
+                                            String newLastName,String newPhoneNumber){
         User sessionUser = App.getModel().getSessionUser();
         if (sessionUser != null) {
             sessionUser.setUsername(newUserName);
@@ -126,8 +129,15 @@ public class EditAccountActivity extends AppCompatActivity implements Observer, 
             sessionUserAccount.setFirstName(newFirstName);
             sessionUserAccount.setLastName(newLastName);
             sessionUserAccount.setPhoneNumber(newPhoneNumber);
-            // TODO: fix this
-//            App.getController().updateNonCriticalUserFields(false, sessionUser, this);
+
+            ApplicationController.editAccountUpdate(sessionUser, sessionUser.getType(), this);  //updates db
+            App.getModel().setSessionUser(sessionUser);  //update the model
+            Toast.makeText(this, "Account Updated!", Toast.LENGTH_SHORT).show();
+            this.finish();
+        }
+        else{
+            Toast.makeText(this, "Oop! Something went wrong", Toast.LENGTH_SHORT).show();
+            btnSave.revertAnimation();
         }
     }
 

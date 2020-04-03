@@ -455,6 +455,46 @@ public class ApplicationService {
     }
 
     /**
+     * This method is for the edit account activity, for which we can update the users
+     * username, first name, last name, or phone number.
+     *
+     *
+     * @param updateSessionUser
+     * @param listener
+     */
+    public static void updateUser(User updateSessionUser, User.TYPE userType, EventCompletionListener listener) {
+        String uID = App.getAuthDBManager().getCurrentUserID();
+        switch (userType) {
+            case RIDER:
+                App.getDbManager().getRider(uID, (rider, err1) -> {
+                    if (err1 == null) {
+                        Rider correspondingRider = (Rider) rider.get("user");
+                        correspondingRider.setAccount(updateSessionUser.getAccount());
+                        correspondingRider.setUsername(updateSessionUser.getUsername());
+                        App.getDbManager().updateRider(uID, correspondingRider, (rider2, err2) -> {
+                        });
+                    } else {
+                        listener.onCompletion(null, new Error("rider does not exist"));
+                    }
+                });
+                break;
+            case DRIVER:
+                App.getDbManager().getDriver(uID, (driver, err1) -> {
+                    if (err1 == null) {
+                        Driver correspondingDriver = (Driver) driver.get("user");
+                        correspondingDriver.setAccount(updateSessionUser.getAccount());
+                        correspondingDriver.setUsername(updateSessionUser.getUsername());
+                        App.getDbManager().updateDriver(uID, correspondingDriver, (driver2, err2) -> {
+                        });
+                    } else {
+                        listener.onCompletion(null, new Error("driver does not exist"));
+                    }
+                });
+                break;
+        }
+    }
+
+    /**
      * Calls the AuthDBManager class to logout the user.
      */
     public static void logoutUser() {
