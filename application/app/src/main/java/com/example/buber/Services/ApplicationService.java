@@ -454,8 +454,15 @@ public class ApplicationService {
         }
     }
 
+    /**
+     * This method is for the edit account activity, for which we can update the users
+     * username, first name, last name, or phone number.
+     *
+     *
+     * @param updateSessionUser
+     * @param listener
+     */
     public static void updateUser(User updateSessionUser, EventCompletionListener listener) {
-
 
         String uID = App.getAuthDBManager().getCurrentUserID();
 
@@ -473,7 +480,6 @@ public class ApplicationService {
                     correspondingDriver.setUsername(updateSessionUser.getUsername());
                     App.getDbManager().updateDriver(uID, correspondingDriver, (driver2, err2) -> {
                         if (err2 != null) {
-                            //TODO:: mayhaps handle errors
                         }
                     });
             }
@@ -481,6 +487,7 @@ public class ApplicationService {
                 listener.onCompletion(null, new Error("driver does not exist"));
             }
         });
+
         //update rider in db
         App.getDbManager().getRider(uID, (rider, err1) -> {
             if (err1 == null) {
@@ -495,7 +502,6 @@ public class ApplicationService {
                 correspondingRider.setUsername(updateSessionUser.getUsername());
                 App.getDbManager().updateRider(uID, correspondingRider, (rider2, err2) -> {
                     if (err2 != null) {
-                        //TODO:: mayhaps handle errors
                     }
                 });
             }

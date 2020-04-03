@@ -340,7 +340,10 @@ public class ApplicationController {
                 }));
     }
     /**Used to update non critical user fields (ie. username, first/last name, phone number) when
-     * they are edited by user*/
+     * they are edited by user. This controller method should be called from editAccount
+     * @param updatedSessionUser is the new updated user object
+     * @param view is the the UIErrorHandler
+     * */
     public static void editAccountUpdate(User updatedSessionUser, UIErrorHandler view){
             ApplicationService.updateUser(updatedSessionUser,((resultData, err) -> {
                 if (err == null) {

@@ -60,7 +60,7 @@ public class ControllerTest {
         // Should be true since no current user
         assertFalse(solo.waitForActivity(MapActivity.class));
     }
-
+    /*
     @Test
     public void testLogout() {
         solo.assertCurrentActivity("Wrong Activity", LoginActivity.class);
@@ -74,6 +74,7 @@ public class ControllerTest {
         assertFalse(App.getAuthDBManager().isLoggedIn());
         assertNull(App.getModel().getSessionUser());
     }
+     */
 
     @Test
     public void testGetTripsForUser() {
