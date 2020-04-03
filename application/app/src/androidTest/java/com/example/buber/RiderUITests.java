@@ -102,9 +102,7 @@ public class RiderUITests {
 
             //select start point
             solo.clickOnButton("Select Start Point");
-            solo.clickOnText("Search");
-            solo.typeText(0, "Megan Johnson High-Walkability Path");
-            solo.clickOnText("Megan Johnson High-Walkability Path", 2);
+            solo.clickOnText("Select this location");
             solo.clickOnText("OK");
 
             //Select end point

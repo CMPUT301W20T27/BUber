@@ -11,6 +11,7 @@ import androidx.test.uiautomator.UiObject;
 import androidx.test.uiautomator.UiObjectNotFoundException;
 import androidx.test.uiautomator.UiSelector;
 
+import com.example.buber.Model.UserLocation;
 import com.example.buber.Views.Activities.MainActivity;
 import com.example.buber.Views.Activities.MapActivity;
 import com.robotium.solo.Solo;
@@ -70,6 +71,7 @@ public class DriversUITests {
     @Test
     public void viewContactAndSelectTripDRIVER_ACCEPT() {
         //select trip with username = tester
+        solo.waitForActivity("MapActivity", 1000000);
 
         if(solo.searchText("Show Active Ride Requests Near You", onlyVisible)) {
             solo.clickOnText("Show Active Ride Requests Near You");
@@ -87,22 +89,7 @@ public class DriversUITests {
                 solo.clickOnText("tester");
                 solo.clickOnButton(2);
             }
-
             // Second trip
-            if(solo.searchText("Madeeha", onlyVisible)) {
-                solo.clickOnText("Madeeha");
-
-                //view contact information of the rider before accepting
-                solo.clickOnText("View Contact Details");
-                solo.waitForText("wait", 0, 500);
-
-                //click the back button
-                solo.goBack();
-                solo.clickOnText("Madeeha");
-                solo.clickOnButton(2);
-            }
-
-            // Third trip
             if(solo.searchText("Evan", onlyVisible)) {
                 solo.clickOnText("Evan");
 
@@ -121,7 +108,7 @@ public class DriversUITests {
 
     @Test
     public void viewPendingTrips() {
-
+        solo.waitForText("wait", 0, 5000);
         if (solo.searchText("Pending Rides", onlyVisible)) {
             solo.clickOnButton("Pending Rides");
             solo.waitForText("wait", 0, 500);
@@ -169,16 +156,6 @@ public class DriversUITests {
             }
         }
 
-    }
-
-
-    @Test
-    public void tripStatusCheckforDRIVER_ARRIVED() {
-        //TODO: When luke finishes his EN_ROUTE so that it follows MVC so that the
-        // location in the controller changes when the driver Location changes
-        // So that the rider is notified ONLY based on the location in the MODEl
-
-        //check for message: Notifying rider you have arrived
     }
 
 
