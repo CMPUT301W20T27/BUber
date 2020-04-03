@@ -454,6 +454,57 @@ public class ApplicationService {
         }
     }
 
+    public static void updateUser(User updateSessionUser, EventCompletionListener listener) {
+
+
+        String uID = App.getAuthDBManager().getCurrentUserID();
+
+        //update driver in db
+        App.getDbManager().getDriver(uID, (driver, err1) -> {
+            if (err1 == null) {
+                Driver correspondingDriver = (Driver) driver.get("user");
+                    if(updateSessionUser.getType() == DRIVER){
+                        correspondingDriver.setLoggedOn(true);
+                    }
+                    else{
+                        correspondingDriver.setLoggedOn(false);
+                    }
+                    correspondingDriver.setAccount(updateSessionUser.getAccount());
+                    correspondingDriver.setUsername(updateSessionUser.getUsername());
+                    App.getDbManager().updateDriver(uID, correspondingDriver, (driver2, err2) -> {
+                        if (err2 != null) {
+                            //TODO:: mayhaps handle errors
+                        }
+                    });
+            }
+            else {
+                listener.onCompletion(null, new Error("driver does not exist"));
+            }
+        });
+        //update rider in db
+        App.getDbManager().getRider(uID, (rider, err1) -> {
+            if (err1 == null) {
+                Rider correspondingRider = (Rider) rider.get("user");
+                if(updateSessionUser.getType() == RIDER){
+                    correspondingRider.setRiderLoggedOn(true);
+                }
+                else{
+                    correspondingRider.setRiderLoggedOn(false);
+                }
+                correspondingRider.setAccount(updateSessionUser.getAccount());
+                correspondingRider.setUsername(updateSessionUser.getUsername());
+                App.getDbManager().updateRider(uID, correspondingRider, (rider2, err2) -> {
+                    if (err2 != null) {
+                        //TODO:: mayhaps handle errors
+                    }
+                });
+            }
+            else {
+                listener.onCompletion(null, new Error("rider does not exist"));
+            }
+        });
+    }
+
     /**
      * Calls the AuthDBManager class to logout the user.
      */

@@ -316,11 +316,12 @@ public class ApplicationController {
     }
 
     /**
-     * updateNonCriticalUserFields
-     * @param updatedSessionUser the updated user object
-     * @param view the UI Error Handler interface callback.
+     * This method is called when logging in(to update the login boolean) or when editing account
+     * @param loggingIn login boolean to be updated
+     * @param updatedSessionUser
+     * @param userType
+     * @param view
      */
-    /**/
     public static void updateNonCriticalUserFields(boolean loggingIn,
                                                    User updatedSessionUser,
                                                    User.TYPE userType,
@@ -337,6 +338,18 @@ public class ApplicationController {
                         // TODO: Handle Errors
                     }
                 }));
+    }
+    /**Used to update non critical user fields (ie. username, first/last name, phone number) when
+     * they are edited by user*/
+    public static void editAccountUpdate(User updatedSessionUser, UIErrorHandler view){
+            ApplicationService.updateUser(updatedSessionUser,((resultData, err) -> {
+                if (err == null) {
+                    App.getModel().setSessionUser(updatedSessionUser);
+                } else {
+                    // TODO: Handle Errors
+                }
+            }));
+
     }
 
     /**
