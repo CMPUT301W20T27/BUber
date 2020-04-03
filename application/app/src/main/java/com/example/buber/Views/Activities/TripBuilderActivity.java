@@ -230,6 +230,7 @@ public class TripBuilderActivity extends AppCompatActivity implements UIErrorHan
             recalculateFareOffering();
             fareOfferingEditText.setError(
                     "Please enter an amount higher than or equal to: \n" + minimumFareOffering);
+            submitTripBtn.revertAnimation();
         }
     }
 
