@@ -4,7 +4,7 @@
 Usage instructions in our **video demo [here](https://photos.app.goo.gl/gK63vDJ72ShFJrn9A).**
 
 ## FAQs:
-1. Do you support accept other forms of payment (e.g., PayPal, Debit, VISA, etc.)
+1. Do you accept other forms of payment (e.g., PayPal, Debit, VISA, etc.)
 
     _No, QR bucks is the only form of currency we accept at this time._
     
@@ -14,7 +14,7 @@ Usage instructions in our **video demo [here](https://photos.app.goo.gl/gK63vDJ7
     
 3. Are you really better than Uber?
 
-    _We'll let you decide. 🙂_
+    _We'll let you be the judge. 🙂_
     
 4. Will this be available in the Google Play Store soon?
 
