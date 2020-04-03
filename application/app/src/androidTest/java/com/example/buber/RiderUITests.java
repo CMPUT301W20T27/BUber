@@ -1,5 +1,7 @@
 package com.example.buber;
 
+import android.content.Context;
+import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.util.Log;
 import android.view.View;
@@ -227,5 +229,29 @@ public class RiderUITests {
             }
         }
     }
+    @Test
+    public void testNoNetworkConnection() throws Exception {
+        solo.waitForText("wait", 0, 5000);
+
+        setWifiEnabled(false);
+
+        // Checking active trips while wifi is off
+
+        if (solo.searchText("Ride Status", onlyVisible)) {
+            solo.clickOnButton("Ride Status");
+            solo.waitForText("wait", 0, 5000);
+
+        }
+
+
+        setWifiEnabled(true);
+
+    }
+
+    private void setWifiEnabled(boolean state) {
+        WifiManager wifiManager = (WifiManager)solo.getCurrentActivity().getSystemService(Context.WIFI_SERVICE);
+        wifiManager.setWifiEnabled(state);
+    }
+
 
 }

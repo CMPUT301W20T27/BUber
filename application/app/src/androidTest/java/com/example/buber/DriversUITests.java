@@ -1,5 +1,7 @@
 package com.example.buber;
 
+import android.content.Context;
+import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.util.Log;
 import android.widget.EditText;
@@ -171,6 +173,32 @@ public class DriversUITests {
                 }
             }
         }
+    }
+
+//    Source: https://stackoverflow.com/questions/13681695/can-wifi-be-switched-on-off-in-test-case-through-robotium
+
+    @Test
+    public void testNoNetworkConnection() throws Exception {
+        solo.waitForText("wait", 0, 5000);
+
+        setWifiEnabled(false);
+
+        // Checking active trips while wifi is off
+
+        if (solo.searchText("Pending Rides", onlyVisible)) {
+            solo.clickOnButton("Pending Rides");
+            solo.waitForText("wait", 0, 500);
+            solo.goBack();
+        }
+
+
+        setWifiEnabled(true);
+
+    }
+
+    private void setWifiEnabled(boolean state) {
+        WifiManager wifiManager = (WifiManager)solo.getCurrentActivity().getSystemService(Context.WIFI_SERVICE);
+        wifiManager.setWifiEnabled(state);
     }
 
 
