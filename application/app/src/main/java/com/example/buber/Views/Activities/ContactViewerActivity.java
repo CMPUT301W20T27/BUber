@@ -17,16 +17,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.buber.App;
-import com.example.buber.Controllers.EventCompletionListener;
 import com.example.buber.Model.Account;
 import com.example.buber.Model.ApplicationModel;
 import com.example.buber.Model.Driver;
 import com.example.buber.Model.User;
 import com.example.buber.R;
-import com.example.buber.Views.UIErrorHandler;
-
-import java.util.HashMap;
-import java.util.Observer;
 
 public class ContactViewerActivity extends AppCompatActivity {
     private String email;

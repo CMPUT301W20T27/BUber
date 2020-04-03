@@ -23,9 +23,6 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
-import static com.example.buber.Model.Trip.STATUS.DRIVER_ACCEPT;
-import static com.example.buber.Model.Trip.STATUS.PENDING;
-
 /**
  * Main Driver activity for searching for and selecting a trip. Activity loads trips and uses
  * the model to display a list of trips that are filtered based on the users current radius.

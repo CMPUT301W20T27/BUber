@@ -1,18 +1,13 @@
 package com.example.buber.Views.Activities;
 
 import android.app.Dialog;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.graphics.Point;
 import android.location.Location;
-import android.nfc.Tag;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -21,7 +16,6 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.buber.App;
-import com.example.buber.Controllers.ApplicationController;
 import com.example.buber.Model.ApplicationModel;
 import com.example.buber.Model.Trip;
 import com.example.buber.Model.User;
@@ -29,7 +23,6 @@ import com.example.buber.Model.UserLocation;
 import com.example.buber.R;
 import com.example.buber.Views.Components.BUberMapUIAddOnsManager;
 import com.example.buber.Views.Components.BUberNotificationManager;
-import com.example.buber.Views.Components.DirectionPointListener;
 import com.example.buber.Views.Components.GetPathFromLocation;
 import com.example.buber.Views.UIErrorHandler;
 import com.google.android.gms.common.ConnectionResult;
@@ -50,8 +43,6 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
-import static com.example.buber.Model.Trip.STATUS.COMPLETED;
-import static com.example.buber.Model.Trip.STATUS.DRIVER_ACCEPT;
 import static com.example.buber.Model.Trip.STATUS.DRIVER_PICKING_UP;
 import static com.example.buber.Model.Trip.STATUS.EN_ROUTE;
 import static com.example.buber.Model.User.TYPE.DRIVER;

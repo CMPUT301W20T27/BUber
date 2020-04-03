@@ -15,7 +15,6 @@ import com.example.buber.App;
 import com.example.buber.Controllers.ApplicationController;
 import com.example.buber.Model.Trip;
 import com.example.buber.Model.User;
-import com.example.buber.Model.UserLocation;
 import com.example.buber.R;
 import com.example.buber.Views.Activities.ContactViewerActivity;
 import com.example.buber.Views.Activities.EditAccountActivity;
@@ -26,7 +25,6 @@ import com.example.buber.Views.Activities.RequestStatusActivity;
 import com.example.buber.Views.Activities.TripBuilderActivity;
 import com.example.buber.Views.Activities.TripSearchActivity;
 
-import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.example.buber.Model.User.TYPE.DRIVER;
