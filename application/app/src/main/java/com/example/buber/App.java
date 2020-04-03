@@ -5,8 +5,6 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.os.Build;
 
-import androidx.core.app.NotificationManagerCompat;
-
 import com.example.buber.Controllers.ApplicationController;
 import com.example.buber.DB.AuthDBManager;
 import com.example.buber.DB.DBManager;

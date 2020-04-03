@@ -4,7 +4,6 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.example.buber.Views.Activities.MapActivity;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.PolylineOptions;
 
@@ -18,8 +17,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-import static java.security.AccessController.getContext;
 
 /**
  * GetPathFromLocation class makes an api call to DirectionsAPI. It creates a URL using the start
