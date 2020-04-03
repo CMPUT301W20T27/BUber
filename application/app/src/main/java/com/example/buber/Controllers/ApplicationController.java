@@ -159,7 +159,6 @@ public class ApplicationController {
         });
     }
 
-
     /**
      * Updates the model to hold the riders current trip request. On success start the new activity. On failure send exception to MainActivity
      * @param completionIntent Start the MapActivity  after successful retrieval of session trip

@@ -1,5 +1,7 @@
 package com.example.buber;
 
+import android.content.Context;
+import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.util.Log;
 import android.view.View;
@@ -102,9 +104,7 @@ public class RiderUITests {
 
             //select start point
             solo.clickOnButton("Select Start Point");
-            solo.clickOnText("Search");
-            solo.typeText(0, "Megan Johnson High-Walkability Path");
-            solo.clickOnText("Megan Johnson High-Walkability Path", 2);
+            solo.clickOnText("Select this location");
             solo.clickOnText("OK");
 
             //Select end point
@@ -144,7 +144,13 @@ public class RiderUITests {
             solo.waitForDialogToOpen(5000);
             assertTrue(solo.searchText("A driver has accepted! Proceed?", 1));
             solo.searchText("A driver has accepted! Proceed?", 1);
-            solo.clickOnButton(1);
+
+            //view driver information
+            solo.clickOnButton(0);
+            solo.waitForText("wait", 0, 5000);
+            solo.goBack();
+
+            solo.clickOnButton(2);
             solo.waitForActivity(MapActivity.class, 5000);
         }
 
@@ -161,7 +167,7 @@ public class RiderUITests {
             if (solo.searchText("View Contact Details", onlyVisible)) {
                 solo.clickOnButton("View Contact Details");
                 // Test phone
-                solo.clickOnText("Phone");
+                solo.clickOnButton(2);
                 solo.waitForDialogToOpen(100);
                 assertTrue(solo.searchText("Do you want to phone this driver", 1));
                 solo.searchText("Do you want to phone this driver", 1);
@@ -171,15 +177,25 @@ public class RiderUITests {
 
     }
 
+
+    @Test
+    public void tripStatusCheckforCOMPLETED() {
+      //Check if the Riders location is the end location then they both get a pop up on complete
+
+
+
+    }
+
+
     @Test
     public void viewDriverContactAndRatingTestEmail() {
         //Test email
         if (solo.searchText("Ride Status", onlyVisible)) {
             solo.clickOnButton("Ride Status");
-            solo.waitForText("wait", 0, 500);
+            solo.waitForText("wait", 0, 5000);
             if (solo.searchText("View Contact Details", onlyVisible)) {
                 solo.clickOnButton("View Contact Details");
-                solo.clickOnText("Email");
+                solo.clickOnButton(2);
                 solo.waitForDialogToOpen(100);
                 assertTrue(solo.searchText("Do you want to email this driver", 1));
                 solo.searchText("Do you want to email this driver", 1);
@@ -200,7 +216,7 @@ public class RiderUITests {
             assertFalse(solo.getView(R.id.submitTripBtn).getVisibility() == View.INVISIBLE);
         }
     }
-
+//    Code Source: https://medium.com/exploring-android/handling-android-runtime-permissions-in-ui-tests-981f9dc11a4e
     private void allowPermissionsIfNeeded()  {
         if (Build.VERSION.SDK_INT >= 23) {
             UiObject allowPermissions = mDevice.findObject(new UiSelector().text("Allow"));
@@ -213,5 +229,29 @@ public class RiderUITests {
             }
         }
     }
+    @Test
+    public void testNoNetworkConnection() throws Exception {
+        solo.waitForText("wait", 0, 5000);
+
+        setWifiEnabled(false);
+
+        // Checking active trips while wifi is off
+
+        if (solo.searchText("Ride Status", onlyVisible)) {
+            solo.clickOnButton("Ride Status");
+            solo.waitForText("wait", 0, 5000);
+
+        }
+
+
+        setWifiEnabled(true);
+
+    }
+
+    private void setWifiEnabled(boolean state) {
+        WifiManager wifiManager = (WifiManager)solo.getCurrentActivity().getSystemService(Context.WIFI_SERVICE);
+        wifiManager.setWifiEnabled(state);
+    }
+
 
 }

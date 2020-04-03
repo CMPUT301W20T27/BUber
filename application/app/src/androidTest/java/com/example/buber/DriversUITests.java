@@ -1,5 +1,7 @@
 package com.example.buber;
 
+import android.content.Context;
+import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.util.Log;
 import android.widget.EditText;
@@ -11,6 +13,7 @@ import androidx.test.uiautomator.UiObject;
 import androidx.test.uiautomator.UiObjectNotFoundException;
 import androidx.test.uiautomator.UiSelector;
 
+import com.example.buber.Model.UserLocation;
 import com.example.buber.Views.Activities.MainActivity;
 import com.example.buber.Views.Activities.MapActivity;
 import com.robotium.solo.Solo;
@@ -66,27 +69,59 @@ public class DriversUITests {
         }
     }
 
-
+//    -----------------------------SELECT MULTIPLE TRIPS-------------------------------------------
     @Test
-    public void viewContactAndSelectTripDRIVER_ACCEPT() throws InterruptedException {
+    public void viewContactAndSelectTripDRIVER_ACCEPT() {
         //select trip with username = tester
+        solo.waitForActivity("MapActivity", 1000000);
 
         if(solo.searchText("Show Active Ride Requests Near You", onlyVisible)) {
             solo.clickOnText("Show Active Ride Requests Near You");
-            solo.clickOnText("tester");
-            //view contact information of the rider before accepting
-            solo.clickOnText("View Contact Details");
-            solo.waitForText("wait", 0, 500);
 
-            //click the back button
-            solo.goBack();
-            solo.clickOnText("tester");
-            solo.clickOnButton(2);
+             // First trip
+            if(solo.searchText("tester", onlyVisible)) {
+                solo.clickOnText("tester");
+
+                //view contact information of the rider before accepting
+                solo.clickOnText("View Contact Details");
+                solo.waitForText("wait", 0, 500);
+
+                //click the back button
+                solo.goBack();
+                solo.clickOnText("tester");
+                solo.clickOnButton(2);
+            }
+            // Second trip
+            if(solo.searchText("Evan", onlyVisible)) {
+                solo.clickOnText("Evan");
+
+                //view contact information of the rider before accepting
+                solo.clickOnText("View Contact Details");
+                solo.waitForText("wait", 0, 500);
+
+                //click the back button
+                solo.goBack();
+                solo.clickOnText("Evan");
+                solo.clickOnButton(2);
+            }
         }
     }
+//    ----------------------------------------------------------------------------------------------
 
     @Test
-    public void viewDriverContactAndRatingTestPhone() {
+    public void viewPendingTrips() {
+        solo.waitForText("wait", 0, 5000);
+        if (solo.searchText("Pending Rides", onlyVisible)) {
+            solo.clickOnButton("Pending Rides");
+            solo.waitForText("wait", 0, 500);
+            solo.goBack();
+        }
+
+    }
+
+
+    @Test
+    public void viewRiderContactAndRatingTestPhone() {
         //test calling
 
         if (solo.searchText("Ride Status", onlyVisible)) {
@@ -95,8 +130,9 @@ public class DriversUITests {
 
             if (solo.searchText("View Contact Details", onlyVisible)) {
                 solo.clickOnButton("View Contact Details");
+
                 // Test phone
-                solo.clickOnText("Phone");
+                solo.clickOnButton(1);
                 solo.waitForDialogToOpen(100);
                 assertTrue(solo.searchText("Do you want to phone this driver", 1));
                 solo.searchText("Do you want to phone this driver", 1);
@@ -114,7 +150,7 @@ public class DriversUITests {
             solo.waitForText("wait", 0, 500);
             if (solo.searchText("View Contact Details", onlyVisible)) {
                 solo.clickOnButton("View Contact Details");
-                solo.clickOnText("Email");
+                solo.clickOnButton(2);
                 solo.waitForDialogToOpen(100);
                 assertTrue(solo.searchText("Do you want to email this driver", 1));
                 solo.searchText("Do you want to email this driver", 1);
@@ -123,26 +159,6 @@ public class DriversUITests {
             }
         }
 
-    }
-
-
-    @Test
-    public void tripStatusCheckforDRIVER_ARRIVED() {
-        //TODO: When luke finishes his EN_ROUTE so that it follows MVC so that the
-        // location in the controller changes when the driver Location changes
-        // So that the rider is notified ONLY based on the location in the MODEl
-
-        //check for message: Notifying rider you have arrived
-    }
-
-
-    @Test
-    public void tripStatusCheckforCOMPLETED() {
-        //TODO: When luke finishes his EN_ROUTE so that it follows MVC so that the
-        // location in the controller changes when the driver Location changes
-        // So that the rider is notified ONLY based on the location in the MODEl
-
-        //check for message: Notifying rider you have arrived
     }
 
 
@@ -157,6 +173,32 @@ public class DriversUITests {
                 }
             }
         }
+    }
+
+//    Source: https://stackoverflow.com/questions/13681695/can-wifi-be-switched-on-off-in-test-case-through-robotium
+
+    @Test
+    public void testNoNetworkConnection() throws Exception {
+        solo.waitForText("wait", 0, 5000);
+
+        setWifiEnabled(false);
+
+        // Checking active trips while wifi is off
+
+        if (solo.searchText("Pending Rides", onlyVisible)) {
+            solo.clickOnButton("Pending Rides");
+            solo.waitForText("wait", 0, 500);
+            solo.goBack();
+        }
+
+
+        setWifiEnabled(true);
+
+    }
+
+    private void setWifiEnabled(boolean state) {
+        WifiManager wifiManager = (WifiManager)solo.getCurrentActivity().getSystemService(Context.WIFI_SERVICE);
+        wifiManager.setWifiEnabled(state);
     }
 
 
