@@ -36,6 +36,7 @@ public class ControllerTest {
         solo = new Solo(InstrumentationRegistry.getInstrumentation(),rule.getActivity());
         App.getAuthDBManager().signOut();
         c = App.getController();
+
         App.getModel().clearModelForLogout();
     }
 
@@ -43,7 +44,7 @@ public class ControllerTest {
     @Test
     public void testLogin() {
         solo.assertCurrentActivity("Wrong Activity", LoginActivity.class);
-        String email = "evan@buber.ca";
+        String email = "evan2@buber.ca";
         String password = "123456";
         LoginActivity activity = (LoginActivity) solo.getCurrentActivity();
         Intent i = new Intent(activity, MapActivity.class);
@@ -60,26 +61,11 @@ public class ControllerTest {
         // Should be true since no current user
         assertFalse(solo.waitForActivity(MapActivity.class));
     }
-    /*
-    @Test
-    public void testLogout() {
-        solo.assertCurrentActivity("Wrong Activity", LoginActivity.class);
-        String email = "evan@buber.ca";
-        String password = "123456";
-        LoginActivity activity = (LoginActivity) solo.getCurrentActivity();
-        Intent i = new Intent(activity, MapActivity.class);
-        c.login(email, password, User.TYPE.RIDER, activity, i);
-        solo.waitForActivity(MapActivity.class);
-        c.logout();
-        assertFalse(App.getAuthDBManager().isLoggedIn());
-        assertNull(App.getModel().getSessionUser());
-    }
-     */
 
     @Test
     public void testGetTripsForUser() {
         solo.assertCurrentActivity("Wrong Activity", LoginActivity.class);
-        String email = "evan@buber.ca";
+        String email = "evan2@buber.ca";
         String password = "123456";
         LoginActivity activity = (LoginActivity) solo.getCurrentActivity();
         Intent i = new Intent(activity, MapActivity.class);
