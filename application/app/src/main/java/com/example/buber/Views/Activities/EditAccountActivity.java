@@ -130,7 +130,7 @@ public class EditAccountActivity extends AppCompatActivity implements Observer, 
             sessionUserAccount.setLastName(newLastName);
             sessionUserAccount.setPhoneNumber(newPhoneNumber);
 
-            ApplicationController.editAccountUpdate(sessionUser,this);  //updates db
+            ApplicationController.editAccountUpdate(sessionUser, sessionUser.getType(), this);  //updates db
             App.getModel().setSessionUser(sessionUser);  //update the model
             Toast.makeText(this, "Account Updated!", Toast.LENGTH_SHORT).show();
             this.finish();

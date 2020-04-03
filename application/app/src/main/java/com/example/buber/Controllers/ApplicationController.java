@@ -83,7 +83,7 @@ public class ApplicationController {
             if (err != null) view.onError(err);
             else {
                 User u = (User) resultData.get("user");
-                updateNonCriticalUserFields(true, u, type, view);
+                manageLoggedStateAcrossTwoUserCollections(true, u, type, view);
                 Toast.makeText(view.getApplicationContext(), "You are NOW logged in.", Toast.LENGTH_SHORT).show();
                 u.setType(type);
                 model.setSessionUser(u);
@@ -314,37 +314,13 @@ public class ApplicationController {
                 }));
     }
 
-    /**
-     * This method is called when logging in(to update the login boolean) or when editing account
-     * @param loggingIn login boolean to be updated
-     * @param updatedSessionUser
-     * @param userType
-     * @param view
-     */
-    public static void updateNonCriticalUserFields(boolean loggingIn,
-                                                   User updatedSessionUser,
-                                                   User.TYPE userType,
-                                                   UIErrorHandler view) {
-        ApplicationService.manageLoggedStateAcrossTwoUserCollections(
-                loggingIn,
-                updatedSessionUser,
-                userType,
-                ((resultData, err) -> {
-                    if (err == null) {
-                        App.getModel().setSessionUser(updatedSessionUser);
-                        view.finish();
-                    } else {
-                        // TODO: Handle Errors
-                    }
-                }));
-    }
     /**Used to update non critical user fields (ie. username, first/last name, phone number) when
      * they are edited by user. This controller method should be called from editAccount
      * @param updatedSessionUser is the new updated user object
      * @param view is the the UIErrorHandler
      * */
-    public static void editAccountUpdate(User updatedSessionUser, UIErrorHandler view){
-            ApplicationService.updateUser(updatedSessionUser,((resultData, err) -> {
+    public static void editAccountUpdate(User updatedSessionUser, User.TYPE userType, UIErrorHandler view){
+            ApplicationService.updateUser(updatedSessionUser, userType, ((resultData, err) -> {
                 if (err == null) {
                     App.getModel().setSessionUser(updatedSessionUser);
                 } else {
